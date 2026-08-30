@@ -1,1 +1,21 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Verify OTP</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Arial;background:#f5f7fb;display:grid;place-items:center;height:100vh}.card{background:white;padding:32px;border-radius:16px;box-shadow:0 10px 30px #0001;width:min(420px,90%)}input,button{width:100%;padding:13px;margin-top:12px;box-sizing:border-box}button{background:#2563eb;color:white;border:0;border-radius:8px;font-weight:700}h2{margin-top:0}.muted{color:#667085;font-size:14px}</style></head><body><div class="card"><h2>Verify OTP</h2><p class="muted">Enter the 6-digit OTP sent to {{ email }}.</p><form method="post"><input name="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="Enter 6-digit OTP" required><button type="submit">Verify OTP</button></form><p class="muted">OTP expires in 10 minutes. <a href="{{ url_for('forgot_password') }}">Request a new OTP</a></p></div></body></html>
+{% extends "base.html" %}
+{% block title %}Verify OTP{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-center-card">
+    <h2 class="fw-bold mb-2">Verify OTP</h2>
+    <p class="text-muted small mb-4">Enter the 6-digit OTP sent to {{ email }}.</p>
+    <form method="post">
+        <div class="mb-3">
+            <input class="form-control" name="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="Enter 6-digit OTP" required style="padding:13px;font-size:1.1rem;letter-spacing:4px;text-align:center;">
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Verify OTP</button>
+    </form>
+    <p class="text-muted small mt-4 mb-0">
+        OTP expires in 10 minutes. <a href="{{ url_for('forgot_password') }}" class="text-decoration-none">Request a new OTP</a>
+    </p>
+</div>
+{% endblock %}

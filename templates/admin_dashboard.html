@@ -1,5 +1,84 @@
-{% extends "base.html" %}{% block title %}Admin Dashboard{% endblock %}{% block content %}
-<div class="container py-4"><div class="d-flex justify-content-between align-items-center mb-4"><div><h2 class="fw-bold">IntelliHostel Admin Dashboard</h2><p class="text-muted">AI-assisted complaint operations and decision support.</p></div><a class="btn btn-outline-danger" href="{{ url_for('admin_logout') }}">Logout</a></div>
-<div class="row g-3 mb-4">{% for label,value,icon in [('Total',total,'fa-list'),('Pending',pending,'fa-clock'),('In Progress',progress,'fa-spinner'),('Resolved',resolved,'fa-check'),('High-risk open',high_ai,'fa-triangle-exclamation'),('Possible duplicates',duplicates,'fa-copy')] %}<div class="col-6 col-lg-2"><div class="card border-0 shadow-sm h-100"><div class="card-body"><i class="fa-solid {{ icon }} text-primary"></i><div class="text-muted small mt-2">{{ label }}</div><div class="fs-3 fw-bold">{{ value }}</div></div></div></div>{% endfor %}</div>
-<div class="row g-3 mb-4"><div class="col-md-3"><a class="btn btn-primary w-100 py-3" href="{{ url_for('manage_complaints') }}">Manage Complaints</a></div><div class="col-md-3"><a class="btn btn-success w-100 py-3" href="{{ url_for('analytics') }}">AI Analytics</a></div><div class="col-md-3"><a class="btn btn-outline-danger w-100 py-3" href="{{ url_for('export_pdf') }}">Export PDF</a></div><div class="col-md-3"><a class="btn btn-outline-success w-100 py-3" href="{{ url_for('export_excel') }}">Export Excel</a></div></div>
-<div class="card border-0 shadow-sm"><div class="card-body"><h5 class="fw-bold">Recent Complaints</h5><div class="table-responsive"><table class="table align-middle"><thead><tr><th>ID</th><th>Student</th><th>Complaint</th><th>Priority</th><th>AI prediction</th><th>Status</th><th></th></tr></thead><tbody>{% for c in recent %}<tr><td>#{{ c.id }}</td><td>{{ c.name }}</td><td>{{ c.title }}</td><td>{{ c.priority }}</td><td>{{ c.ai_category or '—' }} · {{ c.ai_resolution_days or '—' }}d</td><td>{{ c.status }}</td><td><a class="btn btn-sm btn-outline-primary" href="{{ url_for('update_status', id=c.id) }}">Open</a></td></tr>{% else %}<tr><td colspan="7" class="text-muted">No complaints yet.</td></tr>{% endfor %}</tbody></table></div></div></div></div>{% endblock %}
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">IntelliHostel Admin Dashboard</h2>
+            <p class="text-muted">AI-assisted complaint operations and decision support.</p>
+        </div>
+        <a class="btn btn-outline-danger" href="{{ url_for('admin_logout') }}">Logout</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        {% for label,value,icon in [('Total',total,'fa-list'),('Pending',pending,'fa-clock'),('In Progress',progress,'fa-spinner'),('Resolved',resolved,'fa-check'),('High-risk open',high_ai,'fa-triangle-exclamation'),('Possible duplicates',duplicates,'fa-copy')] %}
+        <div class="col-6 col-lg-2">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <i class="fa-solid {{ icon }} text-primary"></i>
+                    <div class="text-muted small mt-2">{{ label }}</div>
+                    <div class="fs-3 fw-bold">{{ value }}</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <a class="btn btn-primary w-100 py-3" href="{{ url_for('manage_complaints') }}">Manage Complaints</a>
+        </div>
+        <div class="col-md-3">
+            <a class="btn btn-success w-100 py-3" href="{{ url_for('analytics') }}">AI Analytics</a>
+        </div>
+        <div class="col-md-3">
+            <a class="btn btn-outline-danger w-100 py-3" href="{{ url_for('export_pdf') }}">Export PDF</a>
+        </div>
+        <div class="col-md-3">
+            <a class="btn btn-outline-success w-100 py-3" href="{{ url_for('export_excel') }}">Export Excel</a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <h5 class="fw-bold">Recent Complaints</h5>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Student</th>
+                            <th>Complaint</th>
+                            <th>Priority</th>
+                            <th>AI prediction</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in recent %}
+                        <tr>
+                            <td>#{{ c.id }}</td>
+                            <td>{{ c.name }}</td>
+                            <td>{{ c.title }}</td>
+                            <td>{{ c.priority }}</td>
+                            <td>{{ c.ai_category or '—' }} · {{ c.ai_resolution_days or '—' }}d</td>
+                            <td>{{ c.status }}</td>
+                            <td><a class="btn btn-sm btn-outline-primary" href="{{ url_for('update_status', id=c.id) }}">Open</a></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-muted">No complaints yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

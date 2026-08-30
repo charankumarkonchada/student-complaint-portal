@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
 {% block title %}Register - Hostel Complaint Portal{% endblock %}
 
 {% block content %}
@@ -189,57 +193,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
-<script>
-function validateRegistration() {
-
-    const idInput = document.getElementById("id_no");
-    const idError = document.getElementById("idError");
-
-    const password = document.getElementById("password").value;
-    const confirmPassword =
-        document.getElementById("confirm_password").value;
-
-    const passwordError =
-        document.getElementById("passwordError");
-
-    const idPattern = /^O[0-9]{6}$/;
-
-    let valid = true;
-
-    if (!idPattern.test(idInput.value)) {
-        idError.style.display = "block";
-        idInput.classList.add("is-invalid");
-        valid = false;
-    } else {
-        idError.style.display = "none";
-        idInput.classList.remove("is-invalid");
-    }
-
-    if (password !== confirmPassword) {
-        passwordError.style.display = "block";
-        document.getElementById("confirm_password")
-            .classList.add("is-invalid");
-        valid = false;
-    } else {
-        passwordError.style.display = "none";
-        document.getElementById("confirm_password")
-            .classList.remove("is-invalid");
-    }
-
-    return valid;
-}
-
-document.getElementById("id_no").addEventListener("input", function () {
-    this.value = this.value.toUpperCase();
-
-    const idError = document.getElementById("idError");
-
-    if (/^O[0-9]{6}$/.test(this.value)) {
-        idError.style.display = "none";
-        this.classList.remove("is-invalid");
-    }
-});
-</script>
-
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 {% endblock %}
