@@ -1,1930 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>{% block title %}Hostel Complaint Portal{% endblock %}</title>
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-
-    <style>
-
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #7c3aed;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-
-            --dark: #0f172a;
-            --text: #334155;
-            --muted: #64748b;
-
-            --light: #f8fafc;
-            --white: #ffffff;
-
-            --border: rgba(148, 163, 184, 0.22);
-
-            --shadow-sm:
-                0 4px 12px rgba(15, 23, 42, 0.06);
-
-            --shadow-md:
-                0 10px 30px rgba(15, 23, 42, 0.10);
-
-            --shadow-lg:
-                0 20px 50px rgba(15, 23, 42, 0.14);
-
-            --radius: 18px;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-
-            font-family: "Inter", sans-serif;
-
-            color: var(--text);
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #f8fafc 0%,
-                    #eef4ff 50%,
-                    #f5f3ff 100%
-                );
-
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #eef2f7;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background:
-                linear-gradient(
-                    var(--primary),
-                    var(--secondary)
-                );
-
-            border-radius: 20px;
-        }
-
-
-        .page-background {
-            position: relative;
-
-            min-height: calc(100vh - 76px);
-
-            overflow: hidden;
-
-            padding-top: 10px;
-        }
-
-        .background-blob {
-            position: fixed;
-
-            border-radius: 50%;
-
-            filter: blur(80px);
-
-            opacity: 0.22;
-
-            pointer-events: none;
-
-            z-index: 0;
-        }
-
-        .blob-one {
-            width: 320px;
-            height: 320px;
-
-            background: #60a5fa;
-
-            top: 120px;
-            left: -140px;
-
-            animation: floatBlob 12s ease-in-out infinite;
-        }
-
-        .blob-two {
-            width: 350px;
-            height: 350px;
-
-            background: #c084fc;
-
-            right: -160px;
-            bottom: 100px;
-
-            animation: floatBlob 15s ease-in-out infinite reverse;
-        }
-
-        @keyframes floatBlob {
-
-            0%,
-            100% {
-                transform:
-                    translateY(0)
-                    scale(1);
-            }
-
-            50% {
-                transform:
-                    translateY(-30px)
-                    scale(1.08);
-            }
-        }
-
-
-        .modern-navbar {
-
-            position: sticky;
-
-            top: 0;
-
-            z-index: 1000;
-
-            min-height: 76px;
-
-            padding: 8px 0;
-
-            background:
-                rgba(255, 255, 255, 0.92);
-
-            backdrop-filter: blur(20px);
-
-            -webkit-backdrop-filter: blur(20px);
-
-            border-bottom:
-                1px solid
-                rgba(148, 163, 184, 0.18);
-
-            transition:
-                all 0.3s ease;
-        }
-
-        .modern-navbar.navbar-scrolled {
-
-            background:
-                rgba(255, 255, 255, 0.97);
-
-            box-shadow:
-                0 10px 35px
-                rgba(15, 23, 42, 0.10);
-        }
-
-        .portal-brand {
-
-            display: flex;
-
-            align-items: center;
-
-            text-decoration: none;
-
-            transition:
-                all 0.3s ease;
-        }
-
-        .portal-brand:hover {
-
-            transform:
-                translateY(-1px);
-        }
-
-        .site-logo {
-
-            height: 62px;
-
-            width: auto;
-
-            max-width: 230px;
-
-            object-fit: contain;
-
-            display: block;
-        }
-
-
-        .modern-nav-link {
-
-            position: relative;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 8px;
-
-            padding: 10px 15px !important;
-
-            border-radius: 12px;
-
-            color: #475569 !important;
-
-            font-size: 14px;
-
-            font-weight: 600;
-
-            transition:
-                all 0.25s ease;
-        }
-
-        .modern-nav-link i {
-
-            font-size: 14px;
-
-            transition:
-                transform 0.25s ease;
-        }
-
-        .modern-nav-link:hover {
-
-            color:
-                var(--primary) !important;
-
-            background:
-                rgba(37, 99, 235, 0.08);
-
-            transform:
-                translateY(-1px);
-        }
-
-        .modern-nav-link:hover i {
-
-            transform:
-                scale(1.12);
-        }
-
-        .modern-nav-link.active {
-
-            color:
-                var(--primary) !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(37, 99, 235, 0.12),
-                    rgba(124, 58, 237, 0.08)
-                );
-        }
-
-
-        .user-badge {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-            padding:
-                6px 12px 6px 6px;
-
-            border-radius: 14px;
-
-            background:
-                rgba(248, 250, 252, 0.95);
-
-            border:
-                1px solid var(--border);
-
-            box-shadow:
-                var(--shadow-sm);
-
-            transition:
-                all 0.25s ease;
-        }
-
-        .user-badge:hover {
-
-            transform:
-                translateY(-2px);
-
-            box-shadow:
-                var(--shadow-md);
-        }
-
-        .user-avatar {
-
-            width: 36px;
-            height: 36px;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            color: white;
-
-            border-radius: 11px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #2563eb,
-                    #60a5fa
-                );
-
-            font-size: 14px;
-        }
-
-        .admin-avatar {
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #7c3aed,
-                    #a855f7
-                );
-        }
-
-        .user-info {
-
-            display: flex;
-
-            flex-direction: column;
-
-            line-height: 1.1;
-        }
-
-        .user-role {
-
-            color:
-                var(--dark);
-
-            font-size: 12px;
-
-            font-weight: 800;
-        }
-
-        .user-info small {
-
-            margin-top: 3px;
-
-            color:
-                var(--muted);
-
-            font-size: 9px;
-
-            font-weight: 500;
-        }
-
-
-        .logout-btn {
-
-            display: flex !important;
-
-            align-items: center;
-
-            gap: 7px;
-
-            padding:
-                9px 13px !important;
-
-            color:
-                #dc2626 !important;
-
-            border-radius: 11px;
-
-            font-size: 13px;
-
-            font-weight: 700;
-
-            transition:
-                all 0.25s ease;
-        }
-
-        .logout-btn:hover {
-
-            color: white !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #ef4444,
-                    #dc2626
-                );
-
-            transform:
-                translateY(-2px);
-        }
-
-        .admin-logout {
-
-            color:
-                #7c3aed !important;
-        }
-
-        .admin-logout:hover {
-
-            color: white !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #7c3aed,
-                    #9333ea
-                );
-        }
-
-
-        .guest-link,
-        .register-btn,
-        .admin-login-btn {
-
-            display: flex !important;
-
-            align-items: center;
-
-            gap: 7px;
-
-            padding:
-                10px 15px !important;
-
-            border-radius: 11px;
-
-            font-size: 13px;
-
-            font-weight: 700;
-
-            transition:
-                all 0.25s ease;
-        }
-
-        .guest-link {
-
-            color:
-                var(--primary) !important;
-        }
-
-        .guest-link:hover {
-
-            background:
-                rgba(37, 99, 235, 0.08);
-
-            transform:
-                translateY(-2px);
-        }
-
-        .register-btn {
-
-            color: white !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--primary),
-                    var(--secondary)
-                );
-
-            box-shadow:
-                0 8px 20px
-                rgba(37, 99, 235, 0.25);
-        }
-
-        .register-btn:hover {
-
-            color: white !important;
-
-            transform:
-                translateY(-2px);
-
-            box-shadow:
-                0 12px 25px
-                rgba(37, 99, 235, 0.35);
-        }
-
-        .admin-login-btn {
-
-            color:
-                #7c3aed !important;
-
-            border:
-                1px solid
-                rgba(124, 58, 237, 0.18);
-
-            background:
-                rgba(124, 58, 237, 0.06);
-        }
-
-        .admin-login-btn:hover {
-
-            color: white !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #7c3aed,
-                    #9333ea
-                );
-
-            transform:
-                translateY(-2px);
-        }
-
-        .custom-toggler {
-
-            width: 44px;
-            height: 44px;
-
-            border: none !important;
-
-            border-radius: 12px;
-
-            color:
-                var(--dark);
-
-            background:
-                #f1f5f9;
-
-            box-shadow:
-                none !important;
-        }
-
-        .custom-toggler:hover {
-
-            color:
-                var(--primary);
-
-            background:
-                #e8efff;
-        }
-
-
-        .main-content {
-
-            position: relative;
-
-            z-index: 2;
-
-            min-height:
-                calc(100vh - 210px);
-
-            padding-top: 30px;
-
-            padding-bottom: 50px;
-
-            animation:
-                pageEnter 0.5s ease;
-        }
-
-        @keyframes pageEnter {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(12px);
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-            }
-        }
-
-        .card {
-
-            border:
-                1px solid
-                rgba(148, 163, 184, 0.16) !important;
-
-            border-radius:
-                var(--radius) !important;
-
-            background:
-                rgba(255, 255, 255, 0.90) !important;
-
-            box-shadow:
-                var(--shadow-sm);
-
-            transition:
-                all 0.3s ease;
-        }
-
-        .card:hover {
-
-            transform:
-                translateY(-3px);
-
-            box-shadow:
-                var(--shadow-md);
-        }
-
-        .card-header {
-
-            border-bottom:
-                1px solid var(--border) !important;
-
-            background:
-                transparent !important;
-
-            font-weight: 700;
-        }
-
-
-        .btn {
-
-            border-radius:
-                11px !important;
-
-            font-weight:
-                600 !important;
-
-            transition:
-                all 0.25s ease !important;
-        }
-
-        .btn-primary {
-
-            border: none !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--primary),
-                    var(--secondary)
-                ) !important;
-
-            box-shadow:
-                0 7px 18px
-                rgba(37, 99, 235, 0.22);
-        }
-
-        .btn-primary:hover {
-
-            transform:
-                translateY(-2px);
-
-            box-shadow:
-                0 12px 25px
-                rgba(37, 99, 235, 0.30);
-        }
-
-        .btn-success {
-
-            border: none !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #059669,
-                    #10b981
-                ) !important;
-        }
-
-        .btn-danger {
-
-            border: none !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #dc2626,
-                    #ef4444
-                ) !important;
-        }
-
-
-        .form-control,
-        .form-select {
-
-            min-height: 45px;
-
-            border:
-                1px solid #dbe2ea !important;
-
-            border-radius:
-                11px !important;
-
-            background:
-                rgba(255, 255, 255, 0.85) !important;
-
-            color:
-                var(--dark) !important;
-
-            transition:
-                all 0.25s ease;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-
-            border-color:
-                var(--primary) !important;
-
-            box-shadow:
-                0 0 0 4px
-                rgba(37, 99, 235, 0.10) !important;
-
-            transform:
-                translateY(-1px);
-        }
-
-        .form-label {
-
-            color:
-                var(--dark);
-
-            font-size:
-                13px;
-
-            font-weight:
-                700;
-        }
-
-        .flash-container {
-
-            position: relative;
-
-            z-index: 20;
-
-            padding-top: 15px;
-        }
-
-        .modern-alert {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 13px;
-
-            min-height: 58px;
-
-            padding:
-                10px 15px;
-
-            border: none !important;
-
-            border-radius:
-                14px !important;
-
-            box-shadow:
-                var(--shadow-md);
-
-            animation:
-                alertSlide 0.4s ease;
-        }
-
-        @keyframes alertSlide {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(-10px);
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-            }
-        }
-
-        .alert-icon {
-
-            width: 35px;
-            height: 35px;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 10px;
-
-            background:
-                rgba(255, 255, 255, 0.35);
-        }
-
-        .alert-content {
-
-            flex: 1;
-
-            font-size: 13px;
-
-            font-weight: 600;
-        }
-
-        .alert-success {
-
-            color:
-                #065f46 !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #d1fae5,
-                    #ecfdf5
-                ) !important;
-        }
-
-        .alert-danger {
-
-            color:
-                #991b1b !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #fee2e2,
-                    #fff1f2
-                ) !important;
-        }
-
-        .alert-warning {
-
-            color:
-                #92400e !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #fef3c7,
-                    #fffbeb
-                ) !important;
-        }
-
-        .alert-info {
-
-            color:
-                #075985 !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #e0f2fe,
-                    #f0f9ff
-                ) !important;
-        }
-
-        .table {
-
-            margin-bottom: 0;
-
-            vertical-align: middle;
-        }
-
-        .table thead th {
-
-            padding:
-                14px 16px;
-
-            border: none;
-
-            color:
-                #475569;
-
-            background:
-                #f8fafc;
-
-            font-size: 12px;
-
-            text-transform:
-                uppercase;
-
-            letter-spacing:
-                0.5px;
-        }
-
-        .table tbody td {
-
-            padding:
-                14px 16px;
-
-            border-color:
-                #eef2f7;
-
-            font-size:
-                13px;
-        }
-
-        .table tbody tr {
-
-            transition:
-                all 0.2s ease;
-        }
-
-        .table tbody tr:hover {
-
-            background:
-                rgba(37, 99, 235, 0.035);
-        }
-
-        .badge {
-
-            padding:
-                7px 10px;
-
-            border-radius:
-                8px;
-
-            font-weight:
-                700;
-        }
-
-
-        .modal-content {
-
-            border: none;
-
-            border-radius:
-                20px;
-
-            overflow: hidden;
-
-            box-shadow:
-                0 30px 80px
-                rgba(15, 23, 42, 0.25);
-        }
-
-        .modal-header {
-
-            border-bottom:
-                1px solid var(--border);
-        }
-
-
-        .modern-footer {
-
-            position: relative;
-
-            z-index: 2;
-
-            margin-top: auto;
-
-            padding:
-                30px 0;
-
-            background:
-                rgba(15, 23, 42, 0.96);
-
-            color: white;
-
-            border-top:
-                1px solid
-                rgba(255, 255, 255, 0.08);
-
-            box-shadow:
-                0 -10px 35px
-                rgba(15, 23, 42, 0.08);
-        }
-
-        .footer-brand {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-        }
-
-        .footer-logo {
-
-            height: 70px;
-
-            width: auto;
-
-            max-width: 220px;
-
-            object-fit: contain;
-
-            background: white;
-
-            border-radius: 10px;
-
-            padding: 4px;
-        }
-
-        .footer-text {
-
-            color:
-                #e2e8f0;
-
-            font-size:
-                12px;
-
-            font-weight:
-                600;
-        }
-
-        .footer-subtext {
-
-            color:
-                #94a3b8;
-
-            font-size:
-                10px;
-        }
-
-        .footer-subtext i {
-
-            color:
-                #f43f5e;
-
-            margin-left:
-                3px;
-        }
-
-        #scrollTopBtn {
-
-            position: fixed;
-
-            right: 25px;
-
-            bottom: 25px;
-
-            width: 45px;
-
-            height: 45px;
-
-            display: none;
-
-            align-items: center;
-            justify-content: center;
-
-            border: none;
-
-            border-radius: 14px;
-
-            color: white;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--primary),
-                    var(--secondary)
-                );
-
-            box-shadow:
-                0 10px 25px
-                rgba(37, 99, 235, 0.28);
-
-            cursor: pointer;
-
-            z-index: 999;
-
-            transition:
-                all 0.25s ease;
-        }
-
-        #scrollTopBtn:hover {
-
-            transform:
-                translateY(-4px);
-        }
-
-
-        @media (max-width: 991px) {
-
-            .modern-navbar {
-
-                padding:
-                    8px 0;
-            }
-
-            .navbar-collapse {
-
-                margin-top:
-                    12px;
-
-                padding:
-                    15px;
-
-                border-radius:
-                    18px;
-
-                background:
-                    rgba(255, 255, 255, 0.97);
-
-                box-shadow:
-                    var(--shadow-md);
-
-                border:
-                    1px solid var(--border);
-            }
-
-            .navbar-nav {
-
-                gap:
-                    5px !important;
-
-                align-items:
-                    stretch !important;
-            }
-
-            .modern-nav-link,
-            .guest-link,
-            .register-btn,
-            .admin-login-btn,
-            .logout-btn {
-
-                justify-content:
-                    flex-start;
-
-                width:
-                    100%;
-            }
-
-            .user-badge {
-
-                margin:
-                    8px 0;
-            }
-
-            .main-content {
-
-                padding-top:
-                    20px;
-            }
-        }
-
-        @media (max-width: 576px) {
-
-            .site-logo {
-
-                height:
-                    50px;
-
-                max-width:
-                    180px;
-            }
-
-            .footer-logo {
-
-                height:
-                    60px;
-
-                max-width:
-                    180px;
-            }
-
-            .main-content {
-
-                padding-left:
-                    15px;
-
-                padding-right:
-                    15px;
-            }
-
-            .modern-footer {
-
-                text-align:
-                    center;
-            }
-
-            .footer-brand {
-
-                justify-content:
-                    center;
-            }
-
-            .footer-text {
-
-                margin-top:
-                    15px;
-            }
-
-            #scrollTopBtn {
-
-                right:
-                    15px;
-
-                bottom:
-                    15px;
-            }
-        }
-
-    </style>
-
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}Hostel Complaint Portal{% endblock %} - {{ college_name if college_name else 'RGUKT Ongole' }}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- Global Design System -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block head %}{% endblock %}
 </head>
-
 <body>
 
-
-    <nav class="navbar navbar-expand-lg modern-navbar">
-
-        <div class="container-fluid px-lg-5">
-
-
-            <a
-                class="navbar-brand portal-brand"
-                href="/">
-
-                <img
-                    src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}"
-                    alt="Student Complaint Portal"
-                    class="site-logo">
-
-            </a>
-
-
-
-            <button
-                class="navbar-toggler custom-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-
-                <i class="fa-solid fa-bars"></i>
-
-            </button>
-
-
-            <div
-                class="collapse navbar-collapse"
-                id="mainNavbar">
-
-                <ul
-                    class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-
-
-                    {% if session.get('student_id') %}
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link modern-nav-link {% if request.path == '/dashboard' %}active{% endif %}"
-                            href="/dashboard">
-
-                            <i class="fa-solid fa-chart-line"></i>
-
-                            <span>
-                                Dashboard
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link modern-nav-link {% if request.path == '/profile' %}active{% endif %}"
-                            href="/profile">
-
-                            <i class="fa-solid fa-user"></i>
-
-                            <span>
-                                Profile
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link modern-nav-link {% if request.path == '/complaints' %}active{% endif %}"
-                            href="/complaints">
-
-                            <i class="fa-solid fa-file-circle-exclamation"></i>
-
-                            <span>
-                                Complaints
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item ms-lg-2">
-
-                        <div class="user-badge">
-
-                            <div class="user-avatar">
-
-                                <i class="fa-solid fa-user"></i>
-
-                            </div>
-
-                            <div class="user-info">
-
-                                <span class="user-role">
-                                    Student
-                                </span>
-
-                                <small>
-                                    Portal User
-                                </small>
-
-                            </div>
-
-                        </div>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link logout-btn"
-                            href="/logout">
-
-                            <i class="fa-solid fa-right-from-bracket"></i>
-
-                            <span>
-                                Logout
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    {% elif session.get('admin') %}
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link modern-nav-link {% if request.path == '/admin_dashboard' %}active{% endif %}"
-                            href="/admin_dashboard">
-
-                            <i class="fa-solid fa-gauge-high"></i>
-
-                            <span>
-                                Dashboard
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link modern-nav-link {% if request.path == '/manage_complaints' %}active{% endif %}"
-                            href="/manage_complaints">
-
-                            <i class="fa-solid fa-list-check"></i>
-
-                            <span>
-                                Complaints
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link modern-nav-link {% if request.path == '/analytics' %}active{% endif %}"
-                            href="/analytics">
-
-                            <i class="fa-solid fa-chart-pie"></i>
-
-                            <span>
-                                Analytics
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item ms-lg-2">
-
-                        <div class="user-badge">
-
-                            <div class="user-avatar admin-avatar">
-
-                                <i class="fa-solid fa-shield-halved"></i>
-
-                            </div>
-
-                            <div class="user-info">
-
-                                <span class="user-role">
-                                    Administrator
-                                </span>
-
-                                <small>
-                                    Control Panel
-                                </small>
-
-                            </div>
-
-                        </div>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link logout-btn admin-logout"
-                            href="/admin_logout">
-
-                            <i class="fa-solid fa-right-from-bracket"></i>
-
-                            <span>
-                                Logout
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-
-                    {% else %}
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link guest-link"
-                            href="/login">
-
-                            <i class="fa-solid fa-right-to-bracket"></i>
-
-                            Student Login
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link register-btn"
-                            href="/register">
-
-                            <i class="fa-solid fa-user-plus"></i>
-
-                            Register
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link admin-login-btn"
-                            href="/admin_login">
-
-                            <i class="fa-solid fa-user-shield"></i>
-
-                            Admin Login
-
-                        </a>
-
-                    </li>
-
-                    {% endif %}
-
-                </ul>
-
-            </div>
-
-        </div>
-
-    </nav>
-
-    <div class="page-background">
-
-        <div class="background-blob blob-one"></div>
-
-        <div class="background-blob blob-two"></div>
-
-
-
-        <div class="container flash-container">
-
-            {% with messages = get_flashed_messages(with_categories=true) %}
-
-            {% if messages %}
-
-            {% for category, message in messages %}
-
-            <div
-                class="alert modern-alert alert-{{ category }} alert-dismissible fade show"
-                role="alert">
-
-                <div class="alert-icon">
-
-                    {% if category == 'success' %}
-
-                    <i class="fa-solid fa-circle-check"></i>
-
-                    {% elif category == 'danger' %}
-
-                    <i class="fa-solid fa-circle-xmark"></i>
-
-                    {% elif category == 'warning' %}
-
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-
-                    {% else %}
-
-                    <i class="fa-solid fa-circle-info"></i>
-
-                    {% endif %}
-
-                </div>
-
-
-                <div class="alert-content">
-
-                    {{ message }}
-
-                </div>
-
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Close">
+    <!-- Master Navigation -->
+    <header>
+        <nav class="navbar navbar-expand-lg portal-navbar">
+            <div class="container-fluid px-lg-5">
+                
+                <!-- Brand / Logo -->
+                <a class="navbar-brand portal-navbar-brand" href="/">
+                    <img src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}" 
+                         alt="IntelliHostel Portal Logo" 
+                         class="portal-logo-img">
+                    <div class="portal-brand-text d-none d-sm-flex">
+                        <span class="portal-brand-title">IntelliHostel</span>
+                        <span class="portal-brand-sub">{{ college_name if college_name else 'RGUKT Ongole' }}</span>
+                    </div>
+                </a>
+
+                <!-- Mobile Menu Toggler -->
+                <button class="navbar-toggler portal-navbar-toggler" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#mainNavbar" 
+                        aria-controls="mainNavbar" 
+                        aria-expanded="false" 
+                        aria-label="Toggle navigation">
+                    <i class="fa-solid fa-bars"></i>
                 </button>
 
-            </div>
+                <!-- Navigation Items -->
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        
+                        {% if session.get('student_id') %}
+                            <!-- Student Links -->
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-item {% if request.path == '/dashboard' %}active{% endif %}" 
+                                   href="{{ url_for('dashboard') }}">
+                                    <i class="fa-solid fa-gauge-high"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
 
-            {% endfor %}
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-item {% if request.path == '/complaints' or request.path.startswith('/complaint/') %}active{% endif %}" 
+                                   href="{{ url_for('complaints') }}">
+                                    <i class="fa-solid fa-clipboard-list"></i>
+                                    <span>My Complaints</span>
+                                </a>
+                            </li>
 
-            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-item {% if request.path == '/profile' %}active{% endif %}" 
+                                   href="{{ url_for('profile') }}">
+                                    <i class="fa-solid fa-id-card"></i>
+                                    <span>Profile</span>
+                                </a>
+                            </li>
 
-            {% endwith %}
+                            <!-- Notifications with Live Badge -->
+                            <li class="nav-item">
+                                <a class="nav-link nav-notification-link {% if request.path == '/notifications' %}active{% endif %}" 
+                                   href="{{ url_for('notifications') }}"
+                                   title="Notifications">
+                                    <i class="fa-solid fa-bell"></i>
+                                    {% if unread_notifications and unread_notifications > 0 %}
+                                        <span class="nav-notification-badge">{{ unread_notifications }}</span>
+                                    {% endif %}
+                                </a>
+                            </li>
 
-        </div>
+                            <!-- Student Identity Capsule -->
+                            <li class="nav-item ms-lg-2">
+                                <div class="nav-user-capsule">
+                                    <div class="nav-avatar-circle">
+                                        <i class="fa-solid fa-user-graduate"></i>
+                                    </div>
+                                    <div class="nav-user-details">
+                                        <span class="nav-user-name">{{ session.get('student_name', 'Student') }}</span>
+                                        <span class="nav-user-role">{{ session.get('id_no', 'Student') }}</span>
+                                    </div>
+                                </div>
+                            </li>
 
-        <main class="container main-content">
+                            <li class="nav-item ms-lg-1">
+                                <a class="nav-link nav-btn-logout" href="{{ url_for('logout') }}">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </li>
 
-            {% block content %}
+                        {% elif session.get('admin') %}
+                            <!-- Admin Links -->
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-item {% if request.path == '/admin_dashboard' %}active{% endif %}" 
+                                   href="{{ url_for('admin_dashboard') }}">
+                                    <i class="fa-solid fa-chart-line"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
 
-            {% endblock %}
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-item {% if request.path == '/manage_complaints' %}active{% endif %}" 
+                                   href="{{ url_for('manage_complaints') }}">
+                                    <i class="fa-solid fa-list-check"></i>
+                                    <span>Manage Complaints</span>
+                                </a>
+                            </li>
 
-        </main>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-item {% if request.path == '/analytics' %}active{% endif %}" 
+                                   href="{{ url_for('analytics') }}">
+                                    <i class="fa-solid fa-chart-pie"></i>
+                                    <span>AI Analytics</span>
+                                </a>
+                            </li>
 
-        <footer class="modern-footer">
+                            <!-- Admin Identity Capsule -->
+                            <li class="nav-item ms-lg-2">
+                                <div class="nav-user-capsule">
+                                    <div class="nav-avatar-circle nav-avatar-admin">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                    </div>
+                                    <div class="nav-user-details">
+                                        <span class="nav-user-name">Administrator</span>
+                                        <span class="nav-user-role">Hostel Incharge</span>
+                                    </div>
+                                </div>
+                            </li>
 
-            <div class="container">
+                            <li class="nav-item ms-lg-1">
+                                <a class="nav-link nav-btn-logout" href="{{ url_for('admin_logout') }}">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </li>
 
-                <div class="row align-items-center gy-3">
+                        {% else %}
+                            <!-- Guest Links -->
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-item" href="{{ url_for('login') }}">
+                                    <i class="fa-solid fa-right-to-bracket"></i>
+                                    <span>Student Login</span>
+                                </a>
+                            </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link nav-btn-primary" href="{{ url_for('register') }}">
+                                    <i class="fa-solid fa-user-plus"></i>
+                                    <span>Register</span>
+                                </a>
+                            </li>
 
-                    <div class="col-md-6">
+                            <li class="nav-item ms-lg-1">
+                                <a class="nav-link nav-btn-outline" href="{{ url_for('admin_login') }}">
+                                    <i class="fa-solid fa-user-shield"></i>
+                                    <span>Admin Portal</span>
+                                </a>
+                            </li>
+                        {% endif %}
 
-                        <div class="footer-brand">
-
-                            <img
-                                src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}"
-                                alt="Student Complaint Portal"
-                                class="footer-logo">
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6 text-md-end">
-
-                        <p class="footer-text mb-1">
-
-                            <i class="fa-regular fa-copyright"></i>
-
-                            {{ current_year if current_year else 2026 }}
-
-                            Student Complaint Portal
-
-                        </p>
-
-
-                        <small class="footer-subtext">
-
-                            RGUKT Ongole
-
-                            <i class="fa-solid fa-heart"></i>
-
-                        </small>
-
-                    </div>
-
+                    </ul>
                 </div>
-
             </div>
+        </nav>
+    </header>
 
-        </footer>
+    <!-- Floating Toast Notifications -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="portal-toast-container">
+                {% for category, message in messages %}
+                    <div class="portal-toast toast-{{ category }}" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-icon-wrap">
+                            {% if category == 'success' %}
+                                <i class="fa-solid fa-circle-check"></i>
+                            {% elif category == 'danger' %}
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            {% elif category == 'warning' %}
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle-info"></i>
+                            {% endif %}
+                        </div>
+                        <div class="toast-body-content">
+                            {{ message }}
+                        </div>
+                        <button type="button" class="toast-btn-close" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-    </div>
+    <!-- Main Page Content -->
+    <main class="page-wrapper">
+        <div class="container main-container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
-    <button
-        id="scrollTopBtn"
-        title="Go to top"
-        aria-label="Go to top">
+    <!-- Master Footer -->
+    <footer class="portal-footer">
+        <div class="container">
+            <div class="row align-items-center gy-3">
+                <div class="col-md-6">
+                    <div class="footer-brand-wrap">
+                        <img src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}" 
+                             alt="IntelliHostel Logo" 
+                             class="footer-logo-img">
+                        <div>
+                            <div class="fw-bold text-dark">{{ college_name if college_name else 'RGUKT Ongole' }}</div>
+                            <div class="text-muted small">IntelliHostel Complaint & Maintenance Resolution System</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="d-inline-flex align-items-center gap-2 mb-1">
+                        <span class="footer-campus-badge">
+                            <i class="fa-solid fa-building-columns"></i> Official Hostel Portal
+                        </span>
+                    </div>
+                    <div class="text-muted small">
+                        &copy; {{ current_year if current_year else 2026 }} RGUKT Ongole. All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" title="Back to top" aria-label="Back to top">
         <i class="fa-solid fa-arrow-up"></i>
-
     </button>
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-    </script>
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js">
-    </script>
-
-
-    <script>
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            function () {
-
-                const navbar =
-                    document.querySelector(
-                        ".modern-navbar"
-                    );
-
-                function updateNavbar() {
-
-                    if (window.scrollY > 20) {
-
-                        navbar.classList.add(
-                            "navbar-scrolled"
-                        );
-
-                    } else {
-
-                        navbar.classList.remove(
-                            "navbar-scrolled"
-                        );
-                    }
-                }
-
-                window.addEventListener(
-                    "scroll",
-                    updateNavbar
-                );
-
-                updateNavbar();
-
-                document
-                    .querySelectorAll(
-                        ".modern-nav-link, .guest-link, .register-btn, .admin-login-btn"
-                    )
-                    .forEach(
-                        function (link) {
-
-                            link.addEventListener(
-                                "click",
-                                function () {
-
-                                    const menu =
-                                        document.querySelector(
-                                            "#mainNavbar"
-                                        );
-
-                                    if (
-                                        menu &&
-                                        menu.classList.contains(
-                                            "show"
-                                        )
-                                    ) {
-
-                                        const bsCollapse =
-                                            bootstrap.Collapse
-                                                .getInstance(
-                                                    menu
-                                                );
-
-                                        if (bsCollapse) {
-
-                                            bsCollapse.hide();
-
-                                        }
-                                    }
-                                }
-                            );
-                        }
-                    );
-
-                setTimeout(
-                    function () {
-
-                        document
-                            .querySelectorAll(
-                                ".modern-alert"
-                            )
-                            .forEach(
-                                function (alert) {
-
-                                    const bsAlert =
-                                        bootstrap.Alert
-                                            .getOrCreateInstance(
-                                                alert
-                                            );
-
-                                    bsAlert.close();
-
-                                }
-                            );
-
-                    },
-                    5000
-                );
-
-                const scrollTopBtn =
-                    document.querySelector(
-                        "#scrollTopBtn"
-                    );
-
-
-                window.addEventListener(
-                    "scroll",
-                    function () {
-
-                        if (
-                            window.scrollY > 350
-                        ) {
-
-                            scrollTopBtn.style.display =
-                                "flex";
-
-                        } else {
-
-                            scrollTopBtn.style.display =
-                                "none";
-                        }
-                    }
-                );
-
-
-                scrollTopBtn.addEventListener(
-                    "click",
-                    function () {
-
-                        window.scrollTo({
-
-                            top: 0,
-
-                            behavior: "smooth"
-
-                        });
-
-                    }
-                );
-
-                document
-                    .querySelectorAll(
-                        ".btn"
-                    )
-                    .forEach(
-                        function (button) {
-
-                            button.addEventListener(
-                                "click",
-                                function (event) {
-
-                                    const ripple =
-                                        document.createElement(
-                                            "span"
-                                        );
-
-                                    ripple.style.position =
-                                        "absolute";
-
-                                    ripple.style.borderRadius =
-                                        "50%";
-
-                                    ripple.style.pointerEvents =
-                                        "none";
-
-                                    const rect =
-                                        button.getBoundingClientRect();
-
-                                    const size =
-                                        Math.max(
-                                            rect.width,
-                                            rect.height
-                                        );
-
-                                    ripple.style.width =
-                                        size + "px";
-
-                                    ripple.style.height =
-                                        size + "px";
-
-                                    ripple.style.left =
-                                        (
-                                            event.clientX -
-                                            rect.left -
-                                            size / 2
-                                        ) + "px";
-
-                                    ripple.style.top =
-                                        (
-                                            event.clientY -
-                                            rect.top -
-                                            size / 2
-                                        ) + "px";
-
-                                    ripple.style.background =
-                                        "rgba(255,255,255,0.25)";
-
-                                    ripple.style.transform =
-                                        "scale(0)";
-
-                                    ripple.style.transition =
-                                        "transform 0.5s ease, opacity 0.5s ease";
-
-                                    button.style.position =
-                                        "relative";
-
-                                    button.style.overflow =
-                                        "hidden";
-
-                                    button.appendChild(
-                                        ripple
-                                    );
-
-                                    requestAnimationFrame(
-                                        function () {
-
-                                            ripple.style.transform =
-                                                "scale(2)";
-
-                                            ripple.style.opacity =
-                                                "0";
-
-                                        }
-                                    );
-
-                                    setTimeout(
-                                        function () {
-
-                                            ripple.remove();
-
-                                        },
-                                        600
-                                    );
-
-                                }
-                            );
-                        }
-                    );
-
-            }
-        );
-
-    </script>
-
-
-    {% block scripts %}
-
-    {% endblock %}
-
+    <!-- Core Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
 </body>
-
 </html>
