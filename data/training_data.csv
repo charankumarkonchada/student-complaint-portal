@@ -1,0 +1,161 @@
+category,priority,title,description,resolution_days
+Water,High,Urgent: No water supply in hostel bathroom affecting several students,There is no water in the bathroom since yesterday and students cannot use the facilities. affecting several students.,1.5
+Water,High,Please check: No water supply in hostel bathroom in our hostel block,There is no water in the bathroom since yesterday and students cannot use the facilities. in our hostel block.,0.7
+Water,High,Immediate attention needed: No water supply in hostel bathroom reported by residents,There is no water in the bathroom since yesterday and students cannot use the facilities. reported by residents.,1.1
+Water,High,Maintenance request: No water supply in hostel bathroom requiring staff support,There is no water in the bathroom since yesterday and students cannot use the facilities. requiring staff support.,1.0
+Water,High,Urgent: Leaking tap in room affecting several students,The tap is leaking continuously and the floor is becoming wet. affecting several students.,1.7
+Water,High,Please check: Leaking tap in room in our hostel block,The tap is leaking continuously and the floor is becoming wet. in our hostel block.,1.6
+Water,High,Immediate attention needed: Leaking tap in room reported by residents,The tap is leaking continuously and the floor is becoming wet. reported by residents.,1.9
+Water,High,Maintenance request: Leaking tap in room requiring staff support,The tap is leaking continuously and the floor is becoming wet. requiring staff support.,0.8
+Water,High,Urgent: Low water pressure affecting several students,Water pressure is very low in Block B bathroom. affecting several students.,1.2
+Water,High,Please check: Low water pressure in our hostel block,Water pressure is very low in Block B bathroom. in our hostel block.,0.7
+Water,High,Immediate attention needed: Low water pressure reported by residents,Water pressure is very low in Block B bathroom. reported by residents.,1.0
+Water,High,Maintenance request: Low water pressure requiring staff support,Water pressure is very low in Block B bathroom. requiring staff support.,1.4
+Water,High,Urgent: Water tank issue affecting several students,The overhead tank is not supplying water to our floor. affecting several students.,0.7
+Water,High,Please check: Water tank issue in our hostel block,The overhead tank is not supplying water to our floor. in our hostel block.,1.0
+Water,High,Immediate attention needed: Water tank issue reported by residents,The overhead tank is not supplying water to our floor. reported by residents.,1.5
+Water,High,Maintenance request: Water tank issue requiring staff support,The overhead tank is not supplying water to our floor. requiring staff support.,1.4
+Water,High,Urgent: Broken shower affecting several students,The shower is broken and water is spraying from the pipe. affecting several students.,1.0
+Water,High,Please check: Broken shower in our hostel block,The shower is broken and water is spraying from the pipe. in our hostel block.,1.5
+Water,High,Immediate attention needed: Broken shower reported by residents,The shower is broken and water is spraying from the pipe. reported by residents.,1.8
+Water,High,Maintenance request: Broken shower requiring staff support,The shower is broken and water is spraying from the pipe. requiring staff support.,0.7
+Electricity,High,Urgent: Power outage in room affecting several students,There is no electricity in my room while other rooms have power. affecting several students.,1.7
+Electricity,High,Please check: Power outage in room in our hostel block,There is no electricity in my room while other rooms have power. in our hostel block.,1.6
+Electricity,High,Immediate attention needed: Power outage in room reported by residents,There is no electricity in my room while other rooms have power. reported by residents.,1.1
+Electricity,High,Maintenance request: Power outage in room requiring staff support,There is no electricity in my room while other rooms have power. requiring staff support.,0.9
+Electricity,High,Urgent: Fan not working affecting several students,The ceiling fan stopped working and the room is very hot. affecting several students.,1.9
+Electricity,High,Please check: Fan not working in our hostel block,The ceiling fan stopped working and the room is very hot. in our hostel block.,1.1
+Electricity,High,Immediate attention needed: Fan not working reported by residents,The ceiling fan stopped working and the room is very hot. reported by residents.,0.8
+Electricity,High,Maintenance request: Fan not working requiring staff support,The ceiling fan stopped working and the room is very hot. requiring staff support.,0.8
+Electricity,High,Urgent: Tube light flickering affecting several students,The tube light keeps flickering and sometimes turns off. affecting several students.,1.8
+Electricity,High,Please check: Tube light flickering in our hostel block,The tube light keeps flickering and sometimes turns off. in our hostel block.,1.5
+Electricity,High,Immediate attention needed: Tube light flickering reported by residents,The tube light keeps flickering and sometimes turns off. reported by residents.,1.7
+Electricity,High,Maintenance request: Tube light flickering requiring staff support,The tube light keeps flickering and sometimes turns off. requiring staff support.,1.6
+Electricity,High,Urgent: Electrical socket damaged affecting several students,The wall socket is loose and cannot safely hold a plug. affecting several students.,1.4
+Electricity,High,Please check: Electrical socket damaged in our hostel block,The wall socket is loose and cannot safely hold a plug. in our hostel block.,2.0
+Electricity,High,Immediate attention needed: Electrical socket damaged reported by residents,The wall socket is loose and cannot safely hold a plug. reported by residents.,1.2
+Electricity,High,Maintenance request: Electrical socket damaged requiring staff support,The wall socket is loose and cannot safely hold a plug. requiring staff support.,1.4
+Electricity,High,Urgent: Frequent power cuts affecting several students,Our hostel block has repeated power interruptions. affecting several students.,1.8
+Electricity,High,Please check: Frequent power cuts in our hostel block,Our hostel block has repeated power interruptions. in our hostel block.,1.5
+Electricity,High,Immediate attention needed: Frequent power cuts reported by residents,Our hostel block has repeated power interruptions. reported by residents.,1.8
+Electricity,High,Maintenance request: Frequent power cuts requiring staff support,Our hostel block has repeated power interruptions. requiring staff support.,1.5
+Food,Medium,Urgent: Food quality is poor affecting several students,Dinner was undercooked and the food quality has been poor for several days. affecting several students.,3.0
+Food,Medium,Please check: Food quality is poor in our hostel block,Dinner was undercooked and the food quality has been poor for several days. in our hostel block.,2.2
+Food,Medium,Immediate attention needed: Food quality is poor reported by residents,Dinner was undercooked and the food quality has been poor for several days. reported by residents.,2.4
+Food,Medium,Maintenance request: Food quality is poor requiring staff support,Dinner was undercooked and the food quality has been poor for several days. requiring staff support.,2.5
+Food,Medium,Urgent: Food served late affecting several students,Lunch is repeatedly being served much later than the scheduled time. affecting several students.,2.2
+Food,Medium,Please check: Food served late in our hostel block,Lunch is repeatedly being served much later than the scheduled time. in our hostel block.,2.4
+Food,Medium,Immediate attention needed: Food served late reported by residents,Lunch is repeatedly being served much later than the scheduled time. reported by residents.,2.2
+Food,Medium,Maintenance request: Food served late requiring staff support,Lunch is repeatedly being served much later than the scheduled time. requiring staff support.,2.5
+Food,Medium,Urgent: Foreign object in food affecting several students,I found a small foreign object in the meal served today. affecting several students.,2.9
+Food,Medium,Please check: Foreign object in food in our hostel block,I found a small foreign object in the meal served today. in our hostel block.,2.6
+Food,Medium,Immediate attention needed: Foreign object in food reported by residents,I found a small foreign object in the meal served today. reported by residents.,2.6
+Food,Medium,Maintenance request: Foreign object in food requiring staff support,I found a small foreign object in the meal served today. requiring staff support.,2.4
+Food,Medium,Urgent: Breakfast shortage affecting several students,Breakfast items finished before many students could eat. affecting several students.,2.4
+Food,Medium,Please check: Breakfast shortage in our hostel block,Breakfast items finished before many students could eat. in our hostel block.,3.3
+Food,Medium,Immediate attention needed: Breakfast shortage reported by residents,Breakfast items finished before many students could eat. reported by residents.,2.9
+Food,Medium,Maintenance request: Breakfast shortage requiring staff support,Breakfast items finished before many students could eat. requiring staff support.,2.9
+Food,Medium,Urgent: Mess hygiene issue affecting several students,The dining area and serving utensils are not being cleaned properly. affecting several students.,2.3
+Food,Medium,Please check: Mess hygiene issue in our hostel block,The dining area and serving utensils are not being cleaned properly. in our hostel block.,3.0
+Food,Medium,Immediate attention needed: Mess hygiene issue reported by residents,The dining area and serving utensils are not being cleaned properly. reported by residents.,2.3
+Food,Medium,Maintenance request: Mess hygiene issue requiring staff support,The dining area and serving utensils are not being cleaned properly. requiring staff support.,2.6
+Cleanliness,Medium,Urgent: Bathroom is dirty affecting several students,The common bathroom has not been cleaned and smells bad. affecting several students.,3.4
+Cleanliness,Medium,Please check: Bathroom is dirty in our hostel block,The common bathroom has not been cleaned and smells bad. in our hostel block.,2.9
+Cleanliness,Medium,Immediate attention needed: Bathroom is dirty reported by residents,The common bathroom has not been cleaned and smells bad. reported by residents.,2.8
+Cleanliness,Medium,Maintenance request: Bathroom is dirty requiring staff support,The common bathroom has not been cleaned and smells bad. requiring staff support.,3.0
+Cleanliness,Medium,Urgent: Garbage not collected affecting several students,Waste has remained outside the hostel for two days. affecting several students.,3.2
+Cleanliness,Medium,Please check: Garbage not collected in our hostel block,Waste has remained outside the hostel for two days. in our hostel block.,3.1
+Cleanliness,Medium,Immediate attention needed: Garbage not collected reported by residents,Waste has remained outside the hostel for two days. reported by residents.,2.4
+Cleanliness,Medium,Maintenance request: Garbage not collected requiring staff support,Waste has remained outside the hostel for two days. requiring staff support.,2.1
+Cleanliness,Medium,Urgent: Room cleaning required affecting several students,The common corridor is dusty and needs cleaning. affecting several students.,2.5
+Cleanliness,Medium,Please check: Room cleaning required in our hostel block,The common corridor is dusty and needs cleaning. in our hostel block.,2.4
+Cleanliness,Medium,Immediate attention needed: Room cleaning required reported by residents,The common corridor is dusty and needs cleaning. reported by residents.,2.4
+Cleanliness,Medium,Maintenance request: Room cleaning required requiring staff support,The common corridor is dusty and needs cleaning. requiring staff support.,3.3
+Cleanliness,Medium,Urgent: Mosquito problem affecting several students,There are many mosquitoes around the hostel due to stagnant water. affecting several students.,3.2
+Cleanliness,Medium,Please check: Mosquito problem in our hostel block,There are many mosquitoes around the hostel due to stagnant water. in our hostel block.,2.5
+Cleanliness,Medium,Immediate attention needed: Mosquito problem reported by residents,There are many mosquitoes around the hostel due to stagnant water. reported by residents.,3.0
+Cleanliness,Medium,Maintenance request: Mosquito problem requiring staff support,There are many mosquitoes around the hostel due to stagnant water. requiring staff support.,2.6
+Cleanliness,Medium,Urgent: Bad smell in corridor affecting several students,A strong unpleasant smell is coming from the corridor. affecting several students.,3.3
+Cleanliness,Medium,Please check: Bad smell in corridor in our hostel block,A strong unpleasant smell is coming from the corridor. in our hostel block.,2.7
+Cleanliness,Medium,Immediate attention needed: Bad smell in corridor reported by residents,A strong unpleasant smell is coming from the corridor. reported by residents.,2.4
+Cleanliness,Medium,Maintenance request: Bad smell in corridor requiring staff support,A strong unpleasant smell is coming from the corridor. requiring staff support.,2.4
+Internet,Medium,Urgent: WiFi not working affecting several students,The hostel WiFi is unavailable in my room. affecting several students.,2.8
+Internet,Medium,Please check: WiFi not working in our hostel block,The hostel WiFi is unavailable in my room. in our hostel block.,2.4
+Internet,Medium,Immediate attention needed: WiFi not working reported by residents,The hostel WiFi is unavailable in my room. reported by residents.,2.9
+Internet,Medium,Maintenance request: WiFi not working requiring staff support,The hostel WiFi is unavailable in my room. requiring staff support.,3.3
+Internet,Medium,Urgent: Slow internet connection affecting several students,Internet speed is extremely slow during evening hours. affecting several students.,2.6
+Internet,Medium,Please check: Slow internet connection in our hostel block,Internet speed is extremely slow during evening hours. in our hostel block.,2.4
+Internet,Medium,Immediate attention needed: Slow internet connection reported by residents,Internet speed is extremely slow during evening hours. reported by residents.,3.4
+Internet,Medium,Maintenance request: Slow internet connection requiring staff support,Internet speed is extremely slow during evening hours. requiring staff support.,2.8
+Internet,Medium,Urgent: WiFi disconnects frequently affecting several students,The connection drops every few minutes. affecting several students.,2.2
+Internet,Medium,Please check: WiFi disconnects frequently in our hostel block,The connection drops every few minutes. in our hostel block.,2.2
+Internet,Medium,Immediate attention needed: WiFi disconnects frequently reported by residents,The connection drops every few minutes. reported by residents.,2.2
+Internet,Medium,Maintenance request: WiFi disconnects frequently requiring staff support,The connection drops every few minutes. requiring staff support.,2.9
+Internet,Medium,Urgent: No network in study area affecting several students,There is no usable WiFi signal in the study room. affecting several students.,3.1
+Internet,Medium,Please check: No network in study area in our hostel block,There is no usable WiFi signal in the study room. in our hostel block.,2.6
+Internet,Medium,Immediate attention needed: No network in study area reported by residents,There is no usable WiFi signal in the study room. reported by residents.,2.2
+Internet,Medium,Maintenance request: No network in study area requiring staff support,There is no usable WiFi signal in the study room. requiring staff support.,2.6
+Internet,Medium,Urgent: Router issue affecting several students,The access point appears to be offline on our floor. affecting several students.,3.4
+Internet,Medium,Please check: Router issue in our hostel block,The access point appears to be offline on our floor. in our hostel block.,2.8
+Internet,Medium,Immediate attention needed: Router issue reported by residents,The access point appears to be offline on our floor. reported by residents.,3.4
+Internet,Medium,Maintenance request: Router issue requiring staff support,The access point appears to be offline on our floor. requiring staff support.,3.2
+Room Maintenance,High,Urgent: Ceiling leakage affecting several students,Water is leaking from the ceiling into the room. affecting several students.,0.7
+Room Maintenance,High,Please check: Ceiling leakage in our hostel block,Water is leaking from the ceiling into the room. in our hostel block.,1.6
+Room Maintenance,High,Immediate attention needed: Ceiling leakage reported by residents,Water is leaking from the ceiling into the room. reported by residents.,1.6
+Room Maintenance,High,Maintenance request: Ceiling leakage requiring staff support,Water is leaking from the ceiling into the room. requiring staff support.,1.4
+Room Maintenance,High,Urgent: Door lock broken affecting several students,The room door lock is damaged and does not close properly. affecting several students.,1.0
+Room Maintenance,High,Please check: Door lock broken in our hostel block,The room door lock is damaged and does not close properly. in our hostel block.,1.5
+Room Maintenance,High,Immediate attention needed: Door lock broken reported by residents,The room door lock is damaged and does not close properly. reported by residents.,0.8
+Room Maintenance,High,Maintenance request: Door lock broken requiring staff support,The room door lock is damaged and does not close properly. requiring staff support.,1.3
+Room Maintenance,High,Urgent: Window glass broken affecting several students,The window glass is cracked and needs replacement. affecting several students.,1.3
+Room Maintenance,High,Please check: Window glass broken in our hostel block,The window glass is cracked and needs replacement. in our hostel block.,1.9
+Room Maintenance,High,Immediate attention needed: Window glass broken reported by residents,The window glass is cracked and needs replacement. reported by residents.,1.8
+Room Maintenance,High,Maintenance request: Window glass broken requiring staff support,The window glass is cracked and needs replacement. requiring staff support.,1.0
+Room Maintenance,High,Urgent: Bed damaged affecting several students,The bed frame is broken and unsafe to use. affecting several students.,1.4
+Room Maintenance,High,Please check: Bed damaged in our hostel block,The bed frame is broken and unsafe to use. in our hostel block.,0.9
+Room Maintenance,High,Immediate attention needed: Bed damaged reported by residents,The bed frame is broken and unsafe to use. reported by residents.,1.9
+Room Maintenance,High,Maintenance request: Bed damaged requiring staff support,The bed frame is broken and unsafe to use. requiring staff support.,1.8
+Room Maintenance,High,Urgent: Furniture repair needed affecting several students,The cupboard door is damaged and cannot close. affecting several students.,1.1
+Room Maintenance,High,Please check: Furniture repair needed in our hostel block,The cupboard door is damaged and cannot close. in our hostel block.,1.5
+Room Maintenance,High,Immediate attention needed: Furniture repair needed reported by residents,The cupboard door is damaged and cannot close. reported by residents.,1.5
+Room Maintenance,High,Maintenance request: Furniture repair needed requiring staff support,The cupboard door is damaged and cannot close. requiring staff support.,0.9
+Security,High,Urgent: Unknown person entered block affecting several students,An unknown person entered the hostel block without authorization. affecting several students.,1.7
+Security,High,Please check: Unknown person entered block in our hostel block,An unknown person entered the hostel block without authorization. in our hostel block.,1.4
+Security,High,Immediate attention needed: Unknown person entered block reported by residents,An unknown person entered the hostel block without authorization. reported by residents.,1.7
+Security,High,Maintenance request: Unknown person entered block requiring staff support,An unknown person entered the hostel block without authorization. requiring staff support.,1.4
+Security,High,Urgent: CCTV camera not working affecting several students,The CCTV camera near the entrance appears to be offline. affecting several students.,0.7
+Security,High,Please check: CCTV camera not working in our hostel block,The CCTV camera near the entrance appears to be offline. in our hostel block.,1.1
+Security,High,Immediate attention needed: CCTV camera not working reported by residents,The CCTV camera near the entrance appears to be offline. reported by residents.,0.7
+Security,High,Maintenance request: CCTV camera not working requiring staff support,The CCTV camera near the entrance appears to be offline. requiring staff support.,1.9
+Security,High,Urgent: Gate left open affecting several students,The hostel gate is being left open at night. affecting several students.,1.8
+Security,High,Please check: Gate left open in our hostel block,The hostel gate is being left open at night. in our hostel block.,1.8
+Security,High,Immediate attention needed: Gate left open reported by residents,The hostel gate is being left open at night. reported by residents.,1.1
+Security,High,Maintenance request: Gate left open requiring staff support,The hostel gate is being left open at night. requiring staff support.,0.8
+Security,High,Urgent: Lost access card affecting several students,My hostel access card has been lost. affecting several students.,1.8
+Security,High,Please check: Lost access card in our hostel block,My hostel access card has been lost. in our hostel block.,1.9
+Security,High,Immediate attention needed: Lost access card reported by residents,My hostel access card has been lost. reported by residents.,0.8
+Security,High,Maintenance request: Lost access card requiring staff support,My hostel access card has been lost. requiring staff support.,1.3
+Security,High,Urgent: Broken security light affecting several students,The security light near the entrance is not working. affecting several students.,0.8
+Security,High,Please check: Broken security light in our hostel block,The security light near the entrance is not working. in our hostel block.,1.7
+Security,High,Immediate attention needed: Broken security light reported by residents,The security light near the entrance is not working. reported by residents.,1.7
+Security,High,Maintenance request: Broken security light requiring staff support,The security light near the entrance is not working. requiring staff support.,0.9
+Other,Low,Urgent: Need general assistance affecting several students,I need assistance with a hostel facility issue. affecting several students.,4.6
+Other,Low,Please check: Need general assistance in our hostel block,I need assistance with a hostel facility issue. in our hostel block.,4.7
+Other,Low,Immediate attention needed: Need general assistance reported by residents,I need assistance with a hostel facility issue. reported by residents.,4.3
+Other,Low,Maintenance request: Need general assistance requiring staff support,I need assistance with a hostel facility issue. requiring staff support.,5.1
+Other,Low,Urgent: Notice board damaged affecting several students,The notice board in the common area is damaged. affecting several students.,4.6
+Other,Low,Please check: Notice board damaged in our hostel block,The notice board in the common area is damaged. in our hostel block.,4.3
+Other,Low,Immediate attention needed: Notice board damaged reported by residents,The notice board in the common area is damaged. reported by residents.,4.7
+Other,Low,Maintenance request: Notice board damaged requiring staff support,The notice board in the common area is damaged. requiring staff support.,4.9
+Other,Low,Urgent: Common room issue affecting several students,The common room equipment needs attention. affecting several students.,4.3
+Other,Low,Please check: Common room issue in our hostel block,The common room equipment needs attention. in our hostel block.,4.4
+Other,Low,Immediate attention needed: Common room issue reported by residents,The common room equipment needs attention. reported by residents.,5.3
+Other,Low,Maintenance request: Common room issue requiring staff support,The common room equipment needs attention. requiring staff support.,4.8
+Other,Low,Urgent: Hostel facility request affecting several students,Please check a facility issue in our hostel block. affecting several students.,4.6
+Other,Low,Please check: Hostel facility request in our hostel block,Please check a facility issue in our hostel block. in our hostel block.,4.7
+Other,Low,Immediate attention needed: Hostel facility request reported by residents,Please check a facility issue in our hostel block. reported by residents.,4.2
+Other,Low,Maintenance request: Hostel facility request requiring staff support,Please check a facility issue in our hostel block. requiring staff support.,4.3
+Other,Low,Urgent: General maintenance request affecting several students,There is a maintenance issue that needs staff attention. affecting several students.,4.4
+Other,Low,Please check: General maintenance request in our hostel block,There is a maintenance issue that needs staff attention. in our hostel block.,4.8
+Other,Low,Immediate attention needed: General maintenance request reported by residents,There is a maintenance issue that needs staff attention. reported by residents.,4.3
+Other,Low,Maintenance request: General maintenance request requiring staff support,There is a maintenance issue that needs staff attention. requiring staff support.,4.3

@@ -1,0 +1,1625 @@
+{% extends "base.html" %}
+
+{% block title %}
+Smart Hostel Complaint & Maintenance Portal
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .home-page {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section {
+        position: relative;
+
+        min-height: 500px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 70px 20px 50px;
+
+        text-align: center;
+
+        border-radius: 30px;
+
+        background:
+            radial-gradient(circle at 20% 20%,
+                rgba(96, 165, 250, 0.20),
+                transparent 35%),
+            radial-gradient(circle at 80% 80%,
+                rgba(168, 85, 247, 0.20),
+                transparent 35%),
+            rgba(255, 255, 255, 0.68);
+
+        border:
+            1px solid rgba(255, 255, 255, 0.7);
+
+        box-shadow:
+            0 25px 70px rgba(15, 23, 42, 0.10);
+
+        backdrop-filter: blur(15px);
+
+        overflow: hidden;
+    }
+
+    .hero-section::before,
+    .hero-section::after {
+        content: "";
+
+        position: absolute;
+
+        border-radius: 50%;
+
+        pointer-events: none;
+    }
+
+    .hero-section::before {
+        width: 220px;
+        height: 220px;
+
+        top: -100px;
+        left: -80px;
+
+        background:
+            linear-gradient(135deg,
+                rgba(37, 99, 235, 0.16),
+                rgba(124, 58, 237, 0.08));
+
+        animation:
+            homeFloat 8s ease-in-out infinite;
+    }
+
+    .hero-section::after {
+        width: 260px;
+        height: 260px;
+
+        right: -110px;
+        bottom: -120px;
+
+        background:
+            linear-gradient(135deg,
+                rgba(124, 58, 237, 0.15),
+                rgba(96, 165, 250, 0.08));
+
+        animation:
+            homeFloat 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes homeFloat {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-25px);
+        }
+    }
+
+    .hero-content {
+        position: relative;
+
+        z-index: 2;
+
+        max-width: 850px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        padding: 8px 15px;
+
+        margin-bottom: 20px;
+
+        border-radius: 50px;
+
+        color: #2563eb;
+
+        background:
+            rgba(37, 99, 235, 0.09);
+
+        border:
+            1px solid rgba(37, 99, 235, 0.12);
+
+        font-size: 12px;
+
+        font-weight: 700;
+
+        letter-spacing: 0.3px;
+    }
+
+    .hero-badge i {
+        font-size: 11px;
+    }
+
+    .hero-title {
+
+        margin-bottom: 18px;
+
+        color: #0f172a;
+
+        font-size:
+            clamp(2.2rem, 5vw, 4rem);
+
+        line-height: 1.08;
+
+        font-weight: 800;
+
+        letter-spacing: -2px;
+    }
+
+    .hero-title .gradient-text {
+
+        background:
+            linear-gradient(135deg,
+                #2563eb,
+                #7c3aed);
+
+        -webkit-background-clip: text;
+
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+
+        max-width: 680px;
+
+        margin:
+            0 auto 30px;
+
+        color: #64748b;
+
+        font-size: 17px;
+
+        line-height: 1.7;
+    }
+
+    .hero-buttons {
+
+        display: flex;
+
+        justify-content: center;
+
+        flex-wrap: wrap;
+
+        gap: 12px;
+    }
+
+    .hero-btn {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 9px;
+
+        min-width: 175px;
+
+        padding: 13px 22px;
+
+        border-radius: 13px;
+
+        text-decoration: none;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+        transition:
+            all 0.3s ease;
+    }
+
+    .hero-btn-primary {
+
+        color: white;
+
+        background:
+            linear-gradient(135deg,
+                #2563eb,
+                #7c3aed);
+
+        box-shadow:
+            0 12px 25px rgba(37, 99, 235, 0.25);
+    }
+
+    .hero-btn-primary:hover {
+
+        color: white;
+
+        transform:
+            translateY(-4px);
+
+        box-shadow:
+            0 18px 35px rgba(37, 99, 235, 0.32);
+    }
+
+    .hero-btn-secondary {
+
+        color: #334155;
+
+        background:
+            rgba(255, 255, 255, 0.8);
+
+        border:
+            1px solid #e2e8f0;
+    }
+
+    .hero-btn-secondary:hover {
+
+        color: #2563eb;
+
+        transform:
+            translateY(-4px);
+
+        background:
+            white;
+
+        box-shadow:
+            0 12px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    .stats-section {
+
+        margin-top: 35px;
+    }
+
+    .stat-card {
+
+        height: 100%;
+
+        padding: 22px;
+
+        text-align: center;
+
+        border-radius: 18px;
+
+        background:
+            rgba(255, 255, 255, 0.85);
+
+        border:
+            1px solid rgba(148, 163, 184, 0.15);
+
+        box-shadow:
+            0 8px 25px rgba(15, 23, 42, 0.06);
+
+        transition:
+            all 0.3s ease;
+    }
+
+    .stat-card:hover {
+
+        transform:
+            translateY(-5px);
+
+        box-shadow:
+            0 15px 35px rgba(15, 23, 42, 0.10);
+    }
+
+    .stat-icon {
+
+        width: 45px;
+        height: 45px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        margin:
+            0 auto 10px;
+
+        border-radius: 13px;
+
+        color: white;
+
+        background:
+            linear-gradient(135deg,
+                #2563eb,
+                #7c3aed);
+    }
+
+    .stat-number {
+
+        display: block;
+
+        color: #0f172a;
+
+        font-size: 22px;
+
+        font-weight: 800;
+    }
+
+    .stat-label {
+
+        color: #64748b;
+
+        font-size: 11px;
+
+        font-weight: 600;
+    }
+
+    .section-header {
+
+        margin:
+            75px auto 35px;
+
+        text-align: center;
+
+        max-width: 650px;
+    }
+
+    .section-label {
+
+        display: inline-block;
+
+        margin-bottom: 8px;
+
+        color: #2563eb;
+
+        font-size: 11px;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        letter-spacing: 1.5px;
+    }
+
+    .section-title {
+
+        margin-bottom: 10px;
+
+        color: #0f172a;
+
+        font-size: 28px;
+
+        font-weight: 800;
+
+        letter-spacing: -0.7px;
+    }
+
+    .section-description {
+
+        margin: 0;
+
+        color: #64748b;
+
+        font-size: 14px;
+
+        line-height: 1.7;
+    }
+
+    .portal-card {
+
+        position: relative;
+
+        height: 100%;
+
+        padding: 35px;
+
+        overflow: hidden;
+
+        border-radius: 24px;
+
+        background:
+            rgba(255, 255, 255, 0.90);
+
+        border:
+            1px solid rgba(255, 255, 255, 0.8);
+
+        box-shadow:
+            0 15px 40px rgba(15, 23, 42, 0.08);
+
+        transition:
+            all 0.35s ease;
+    }
+
+    .portal-card::before {
+
+        content: "";
+
+        position: absolute;
+
+        width: 160px;
+        height: 160px;
+
+        right: -70px;
+        top: -70px;
+
+        border-radius: 50%;
+
+        opacity: 0.08;
+    }
+
+    .student-card::before {
+
+        background: #2563eb;
+    }
+
+    .admin-card::before {
+
+        background: #7c3aed;
+    }
+
+    .portal-card:hover {
+
+        transform:
+            translateY(-8px);
+
+        box-shadow:
+            0 25px 55px rgba(15, 23, 42, 0.13);
+    }
+
+    .portal-icon {
+
+        width: 75px;
+        height: 75px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        margin:
+            0 auto 20px;
+
+        border-radius: 22px;
+
+        color: white;
+
+        font-size: 30px;
+    }
+
+    .student-icon {
+
+        background:
+            linear-gradient(135deg,
+                #2563eb,
+                #60a5fa);
+
+        box-shadow:
+            0 12px 25px rgba(37, 99, 235, 0.25);
+    }
+
+    .admin-icon {
+
+        background:
+            linear-gradient(135deg,
+                #7c3aed,
+                #a855f7);
+
+        box-shadow:
+            0 12px 25px rgba(124, 58, 237, 0.25);
+    }
+
+    .portal-card h3 {
+
+        margin-bottom: 10px;
+
+        color: #0f172a;
+
+        font-size: 21px;
+
+        font-weight: 800;
+    }
+
+    .portal-card p {
+
+        min-height: 48px;
+
+        margin-bottom: 25px;
+
+        color: #64748b;
+
+        font-size: 13px;
+
+        line-height: 1.7;
+    }
+
+    .portal-buttons {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 9px;
+    }
+
+    .portal-btn {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 8px;
+
+        padding: 12px;
+
+        border-radius: 11px;
+
+        text-decoration: none;
+
+        font-size: 13px;
+
+        font-weight: 700;
+
+        transition:
+            all 0.25s ease;
+    }
+
+    .student-login {
+
+        color: white;
+
+        background:
+            linear-gradient(135deg,
+                #2563eb,
+                #3b82f6);
+    }
+
+    .student-login:hover {
+
+        color: white;
+
+        transform:
+            translateY(-2px);
+
+        box-shadow:
+            0 10px 20px rgba(37, 99, 235, 0.25);
+    }
+
+    .student-register {
+
+        color: #2563eb;
+
+        background:
+            #eff6ff;
+
+        border:
+            1px solid #dbeafe;
+    }
+
+    .student-register:hover {
+
+        color: white;
+
+        background:
+            #2563eb;
+    }
+
+    .admin-login {
+
+        color: white;
+
+        background:
+            linear-gradient(135deg,
+                #7c3aed,
+                #9333ea);
+    }
+
+    .admin-login:hover {
+
+        color: white;
+
+        transform:
+            translateY(-2px);
+
+        box-shadow:
+            0 10px 20px rgba(124, 58, 237, 0.25);
+    }
+
+    .feature-card {
+
+        height: 100%;
+
+        padding: 25px 20px;
+
+        text-align: center;
+
+        border-radius: 18px;
+
+        background:
+            rgba(255, 255, 255, 0.82);
+
+        border:
+            1px solid rgba(148, 163, 184, 0.14);
+
+        box-shadow:
+            0 7px 22px rgba(15, 23, 42, 0.05);
+
+        transition:
+            all 0.3s ease;
+    }
+
+    .feature-card:hover {
+
+        transform:
+            translateY(-7px);
+
+        background:
+            white;
+
+        box-shadow:
+            0 18px 35px rgba(15, 23, 42, 0.10);
+    }
+
+    .feature-icon {
+
+        width: 52px;
+        height: 52px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        margin:
+            0 auto 15px;
+
+        border-radius: 15px;
+
+        font-size: 19px;
+
+        transition:
+            all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+
+        transform:
+            scale(1.1) rotate(3deg);
+    }
+
+    .icon-blue {
+
+        color: #2563eb;
+
+        background: #eff6ff;
+    }
+
+    .icon-orange {
+
+        color: #f59e0b;
+
+        background: #fffbeb;
+    }
+
+    .icon-green {
+
+        color: #10b981;
+
+        background: #ecfdf5;
+    }
+
+    .icon-purple {
+
+        color: #7c3aed;
+
+        background: #f5f3ff;
+    }
+
+    .icon-red {
+
+        color: #ef4444;
+
+        background: #fef2f2;
+    }
+
+    .icon-cyan {
+
+        color: #0891b2;
+
+        background: #ecfeff;
+    }
+
+    .feature-card h6 {
+
+        margin-bottom: 6px;
+
+        color: #0f172a;
+
+        font-size: 13px;
+
+        font-weight: 800;
+    }
+
+    .feature-card p {
+
+        margin: 0;
+
+        color: #64748b;
+
+        font-size: 11px;
+
+        line-height: 1.6;
+    }
+
+    .steps-section {
+
+        margin-top: 75px;
+
+        padding:
+            40px 25px;
+
+        border-radius: 25px;
+
+        background:
+            linear-gradient(135deg,
+                rgba(239, 246, 255, 0.9),
+                rgba(245, 243, 255, 0.9));
+
+        border:
+            1px solid rgba(148, 163, 184, 0.13);
+    }
+
+    .step {
+
+        position: relative;
+
+        text-align: center;
+    }
+
+    .step-number {
+
+        width: 45px;
+        height: 45px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        margin:
+            0 auto 14px;
+
+        border-radius: 50%;
+
+        color: white;
+
+        background:
+            linear-gradient(135deg,
+                #2563eb,
+                #7c3aed);
+
+        font-size: 14px;
+
+        font-weight: 800;
+
+        box-shadow:
+            0 8px 20px rgba(37, 99, 235, 0.20);
+    }
+
+    .step h6 {
+
+        margin-bottom: 6px;
+
+        color: #0f172a;
+
+        font-size: 13px;
+
+        font-weight: 800;
+    }
+
+    .step p {
+
+        margin: 0;
+
+        color: #64748b;
+
+        font-size: 11px;
+
+        line-height: 1.6;
+    }
+
+    .cta-section {
+
+        position: relative;
+
+        margin:
+            70px 0 25px;
+
+        padding:
+            45px 25px;
+
+        text-align: center;
+
+        border-radius: 25px;
+
+        color: white;
+
+        background:
+            linear-gradient(135deg,
+                #1d4ed8,
+                #7c3aed);
+
+        overflow: hidden;
+
+        box-shadow:
+            0 20px 50px rgba(37, 99, 235, 0.20);
+    }
+
+    .cta-section::before {
+
+        content: "";
+
+        position: absolute;
+
+        width: 200px;
+        height: 200px;
+
+        left: -70px;
+        top: -100px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255, 255, 255, 0.08);
+    }
+
+    .cta-section::after {
+
+        content: "";
+
+        position: absolute;
+
+        width: 250px;
+        height: 250px;
+
+        right: -100px;
+        bottom: -150px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255, 255, 255, 0.08);
+    }
+
+    .cta-content {
+
+        position: relative;
+
+        z-index: 2;
+    }
+
+    .cta-section h3 {
+
+        margin-bottom: 10px;
+
+        font-size: 25px;
+
+        font-weight: 800;
+    }
+
+    .cta-section p {
+
+        margin-bottom: 22px;
+
+        color:
+            rgba(255, 255, 255, 0.80);
+
+        font-size: 13px;
+    }
+
+    .cta-btn {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        padding: 12px 22px;
+
+        color: #2563eb;
+
+        background: white;
+
+        border-radius: 11px;
+
+        text-decoration: none;
+
+        font-size: 13px;
+
+        font-weight: 800;
+
+        transition:
+            all 0.3s ease;
+    }
+
+    .cta-btn:hover {
+
+        color: #1d4ed8;
+
+        transform:
+            translateY(-3px);
+
+        box-shadow:
+            0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 768px) {
+
+        .hero-section {
+
+            min-height: 460px;
+
+            padding:
+                50px 20px;
+
+            border-radius: 22px;
+        }
+
+        .hero-title {
+
+            letter-spacing:
+                -1px;
+        }
+
+        .hero-description {
+
+            font-size:
+                14px;
+        }
+
+        .portal-card {
+
+            padding:
+                28px 20px;
+        }
+
+        .section-header {
+
+            margin-top:
+                55px;
+        }
+
+        .steps-section {
+
+            padding:
+                30px 20px;
+        }
+
+    }
+
+    @media (max-width: 576px) {
+
+        .hero-buttons {
+
+            flex-direction:
+                column;
+        }
+
+        .hero-btn {
+
+            width:
+                100%;
+        }
+
+        .hero-title {
+
+            font-size:
+                2.2rem;
+        }
+
+        .stat-card {
+
+            padding:
+                18px 10px;
+        }
+
+    }
+</style>
+
+<div class="home-page">
+
+    <section class="hero-section">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+
+                <i class="fa-solid fa-sparkles"></i>
+
+                SMART HOSTEL MANAGEMENT SYSTEM
+
+            </div>
+
+            <h1 class="hero-title">
+
+                Smart Hostel
+
+                <br>
+
+                <span class="gradient-text">
+                    Complaint & Maintenance Portal
+                </span>
+
+            </h1>
+
+            <p class="hero-description">
+
+                A centralized digital platform to raise,
+                track and manage hostel complaints efficiently.
+                Connect students and administrators through
+                one intelligent portal.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="{{ url_for('login') }}" class="hero-btn hero-btn-primary">
+
+                    <i class="fa-solid fa-user-graduate"></i>
+
+                    Student Portal
+
+                </a>
+
+                <a href="{{ url_for('admin_login') }}" class="hero-btn hero-btn-secondary">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    Admin Portal
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="stats-section">
+
+        <div class="row g-3">
+
+            <div class="col-6 col-md-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="fa-solid fa-users"></i>
+
+                    </div>
+
+                    <span class="stat-number">
+                        24/7
+                    </span>
+
+                    <span class="stat-label">
+                        Portal Access
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="fa-solid fa-bolt"></i>
+
+                    </div>
+
+                    <span class="stat-number">
+                        Fast
+                    </span>
+
+                    <span class="stat-label">
+                        Complaint Processing
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="fa-solid fa-chart-line"></i>
+
+                    </div>
+
+                    <span class="stat-number">
+                        Live
+                    </span>
+
+                    <span class="stat-label">
+                        Status Tracking
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                    </div>
+
+                    <span class="stat-number">
+                        Secure
+                    </span>
+
+                    <span class="stat-label">
+                        User Access
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <div class="section-header">
+
+        <span class="section-label">
+            Get Started
+        </span>
+
+        <h2 class="section-title">
+            Choose Your Portal
+        </h2>
+
+        <p class="section-description">
+
+            Select the portal based on your role
+            and access the features designed for you.
+
+        </p>
+
+    </div>
+
+    <section>
+
+        <div class="row justify-content-center g-4">
+
+            <div class="col-lg-5 col-md-6">
+
+                <div class="portal-card student-card text-center">
+
+                    <div class="portal-icon student-icon">
+
+                        <i class="fa-solid fa-user-graduate"></i>
+
+                    </div>
+
+                    <h3>
+                        Student Portal
+                    </h3>
+
+                    <p>
+
+                        Register your account, raise hostel
+                        complaints, upload supporting images
+                        and track complaint status.
+
+                    </p>
+
+                    <div class="portal-buttons">
+
+                        <a href="{{ url_for('login') }}" class="portal-btn student-login">
+
+                            <i class="fa-solid fa-right-to-bracket"></i>
+
+                            Student Login
+
+                        </a>
+
+                        <a href="{{ url_for('register') }}" class="portal-btn student-register">
+
+                            <i class="fa-solid fa-user-plus"></i>
+
+                            Create Student Account
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-5 col-md-6">
+
+                <div class="portal-card admin-card text-center">
+
+                    <div class="portal-icon admin-icon">
+
+                        <i class="fa-solid fa-user-shield"></i>
+
+                    </div>
+
+                    <h3>
+                        Administrator Portal
+                    </h3>
+
+                    <p>
+
+                        Manage complaints, assign staff,
+                        update complaint status and monitor
+                        hostel maintenance analytics.
+
+                    </p>
+
+                    <div class="portal-buttons">
+
+                        <a href="{{ url_for('admin_login') }}" class="portal-btn admin-login">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            Administrator Login
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <div class="section-header">
+
+        <span class="section-label">
+            Powerful Features
+        </span>
+
+        <h2 class="section-title">
+            Everything You Need
+        </h2>
+
+        <p class="section-description">
+
+            Designed to make hostel complaint management
+            faster, easier and more transparent.
+
+        </p>
+
+    </div>
+
+    <section>
+
+        <div class="row g-3">
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon icon-orange">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                    </div>
+
+                    <h6>
+                        Raise Complaints
+                    </h6>
+
+                    <p>
+                        Submit hostel issues quickly.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon icon-green">
+
+                        <i class="fa-solid fa-image"></i>
+
+                    </div>
+
+                    <h6>
+                        Upload Images
+                    </h6>
+
+                    <p>
+                        Attach images as complaint evidence.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon icon-blue">
+
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+
+                    </div>
+
+                    <h6>
+                        Complaint History
+                    </h6>
+
+                    <p>
+                        View previously submitted complaints.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon icon-purple">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                    </div>
+
+                    <h6>
+                        Search & Filter
+                    </h6>
+
+                    <p>
+                        Find complaints easily.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon icon-red">
+
+                        <i class="fa-solid fa-bell"></i>
+
+                    </div>
+
+                    <h6>
+                        Notifications
+                    </h6>
+
+                    <p>
+                        Stay informed about complaint updates.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon icon-blue">
+
+                        <i class="fa-solid fa-user-check"></i>
+
+                    </div>
+
+                    <h6>
+                        Staff Assignment
+                    </h6>
+
+                    <p>
+                        Administrators can assign maintenance staff.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon icon-cyan">
+
+                        <i class="fa-solid fa-chart-column"></i>
+
+                    </div>
+
+                    <h6>
+                        Analytics
+                    </h6>
+
+                    <p>
+                        Monitor complaint trends and categories.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon icon-green">
+
+                        <i class="fa-solid fa-user-lock"></i>
+
+                    </div>
+
+                    <h6>
+                        Secure Access
+                    </h6>
+
+                    <p>
+                        Separate student and administrator access.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="steps-section">
+
+        <div class="text-center mb-4">
+
+            <span class="section-label">
+                Simple Process
+            </span>
+
+            <h2 class="section-title mb-2">
+                How It Works
+            </h2>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-3">
+
+                <div class="step">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+                    <h6>
+                        Register
+                    </h6>
+
+                    <p>
+                        Create your student account.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="step">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+                    <h6>
+                        Raise Complaint
+                    </h6>
+
+                    <p>
+                        Describe the hostel issue.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="step">
+
+                    <div class="step-number">
+                        3
+                    </div>
+
+                    <h6>
+                        Track Status
+                    </h6>
+
+                    <p>
+                        Monitor your complaint progress.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="step">
+
+                    <div class="step-number">
+                        4
+                    </div>
+
+                    <h6>
+                        Get Resolution
+                    </h6>
+
+                    <p>
+                        Receive updates when the issue is resolved.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="cta-section">
+
+        <div class="cta-content">
+
+            <h3>
+                Ready to Manage Hostel Complaints?
+            </h3>
+
+            <p>
+
+                Access the portal and experience
+                smarter complaint management.
+
+            </p>
+
+            <a href="{{ url_for('register') }}" class="cta-btn">
+
+                <i class="fa-solid fa-rocket"></i>
+
+                Get Started
+
+            </a>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

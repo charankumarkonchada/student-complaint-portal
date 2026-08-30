@@ -1,0 +1,832 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+404 - Page Not Found
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+.error-page {
+
+    min-height:
+        calc(100vh - 230px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        40px 15px;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+
+.error-page::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    top: -120px;
+    left: -100px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(37,99,235,0.12),
+            rgba(124,58,237,0.05)
+        );
+
+    filter:
+        blur(10px);
+
+    animation:
+        errorFloat 8s ease-in-out infinite;
+}
+
+
+.error-page::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    right: -140px;
+    bottom: -160px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(124,58,237,0.12),
+            rgba(37,99,235,0.05)
+        );
+
+    filter:
+        blur(10px);
+
+    animation:
+        errorFloat 10s ease-in-out infinite reverse;
+}
+
+
+@keyframes errorFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translateY(-25px)
+            scale(1.08);
+    }
+}
+
+
+
+.error-card {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    max-width: 760px;
+
+    padding:
+        55px 40px;
+
+    text-align: center;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,255,255,0.82);
+
+    border:
+        1px solid rgba(255,255,255,0.85);
+
+    backdrop-filter:
+        blur(20px);
+
+    -webkit-backdrop-filter:
+        blur(20px);
+
+    box-shadow:
+        0 25px 70px
+        rgba(15,23,42,0.12);
+
+    animation:
+        errorCardEnter 0.6s ease;
+}
+
+
+@keyframes errorCardEnter {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(25px)
+            scale(0.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+}
+
+.error-icon-wrapper {
+
+    position: relative;
+
+    width: 100px;
+    height: 100px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin:
+        0 auto 20px;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fef3c7,
+            #fff7ed
+        );
+
+    box-shadow:
+        0 15px 35px
+        rgba(245,158,11,0.18);
+
+    animation:
+        iconFloat 3s ease-in-out infinite;
+}
+
+
+.error-icon-wrapper::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -8px;
+
+    border-radius: 34px;
+
+    border:
+        1px solid
+        rgba(245,158,11,0.18);
+}
+
+
+.error-icon-wrapper i {
+
+    color:
+        #f59e0b;
+
+    font-size:
+        48px;
+
+    filter:
+        drop-shadow(
+            0 5px 8px
+            rgba(245,158,11,0.18)
+        );
+}
+
+
+@keyframes iconFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-8px);
+    }
+}
+
+.error-number {
+
+    margin:
+        0 0 5px;
+
+    font-size:
+        clamp(6rem, 15vw, 10rem);
+
+    line-height:
+        0.95;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        -8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #ef4444
+        );
+
+    -webkit-background-clip:
+        text;
+
+    -webkit-text-fill-color:
+        transparent;
+
+    text-shadow:
+        0 15px 35px
+        rgba(245,158,11,0.10);
+}
+
+
+.error-title {
+
+    margin:
+        15px 0 10px;
+
+    color:
+        #0f172a;
+
+    font-size:
+        28px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -0.7px;
+}
+
+
+.error-description {
+
+    max-width:
+        530px;
+
+    margin:
+        0 auto 25px;
+
+    color:
+        #64748b;
+
+    font-size:
+        14px;
+
+    line-height:
+        1.7;
+}
+
+
+.error-tag {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        7px;
+
+    margin-bottom:
+        25px;
+
+    padding:
+        7px 13px;
+
+    border-radius:
+        50px;
+
+    color:
+        #92400e;
+
+    background:
+        rgba(245,158,11,0.10);
+
+    border:
+        1px solid
+        rgba(245,158,11,0.16);
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+}
+
+
+.error-tag i {
+
+    font-size:
+        10px;
+}
+
+
+.error-actions {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        10px;
+
+    margin-top:
+        25px;
+}
+
+
+.error-btn {
+
+    min-width:
+        150px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        8px;
+
+    padding:
+        12px 20px;
+
+    border-radius:
+        12px;
+
+    text-decoration:
+        none;
+
+    border:
+        none;
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+
+    transition:
+        all 0.3s ease;
+}
+
+
+.home-btn {
+
+    color:
+        white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #7c3aed
+        );
+
+    box-shadow:
+        0 10px 22px
+        rgba(37,99,235,0.22);
+}
+
+
+.home-btn:hover {
+
+    color:
+        white;
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 15px 30px
+        rgba(37,99,235,0.30);
+}
+
+
+.back-btn {
+
+    color:
+        #475569;
+
+    background:
+        #f1f5f9;
+
+    border:
+        1px solid #e2e8f0;
+}
+
+
+.back-btn:hover {
+
+    color:
+        #2563eb;
+
+    background:
+        white;
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 10px 20px
+        rgba(15,23,42,0.08);
+}
+
+.error-divider {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        15px;
+
+    margin:
+        35px auto 25px;
+
+    max-width:
+        500px;
+
+    color:
+        #94a3b8;
+
+    font-size:
+        10px;
+
+    font-weight:
+        600;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        1px;
+}
+
+
+.error-divider::before,
+.error-divider::after {
+
+    content:
+        "";
+
+    flex:
+        1;
+
+    height:
+        1px;
+
+    background:
+        #e2e8f0;
+}
+
+
+.error-help {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        18px;
+}
+
+
+.help-item {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        6px;
+
+    color:
+        #64748b;
+
+    font-size:
+        11px;
+
+    font-weight:
+        600;
+}
+
+
+.help-item i {
+
+    color:
+        #2563eb;
+}
+
+@media (max-width: 576px) {
+
+    .error-page {
+
+        min-height:
+            calc(100vh - 200px);
+
+        padding:
+            25px 10px;
+    }
+
+
+    .error-card {
+
+        padding:
+            40px 20px;
+
+        border-radius:
+            22px;
+    }
+
+
+    .error-icon-wrapper {
+
+        width:
+            80px;
+
+        height:
+            80px;
+
+        border-radius:
+            22px;
+    }
+
+
+    .error-icon-wrapper i {
+
+        font-size:
+            38px;
+    }
+
+
+    .error-number {
+
+        font-size:
+            6rem;
+
+        letter-spacing:
+            -5px;
+    }
+
+
+    .error-title {
+
+        font-size:
+            23px;
+    }
+
+
+    .error-description {
+
+        font-size:
+            13px;
+    }
+
+
+    .error-actions {
+
+        flex-direction:
+            column;
+    }
+
+
+    .error-btn {
+
+        width:
+            100%;
+    }
+
+
+    .error-help {
+
+        flex-direction:
+            column;
+
+        gap:
+            9px;
+    }
+
+}
+
+</style>
+
+
+
+<div class="error-page">
+
+
+    <div class="error-card">
+
+
+
+        <div class="error-icon-wrapper">
+
+            <i
+                class="fa-solid fa-circle-xmark"
+            ></i>
+
+        </div>
+
+
+        <div class="error-tag">
+
+            <i
+                class="fa-solid fa-triangle-exclamation"
+            ></i>
+
+            PAGE NOT FOUND
+
+        </div>
+
+
+
+        <h1 class="error-number">
+
+            404
+
+        </h1>
+
+
+
+
+        <h2 class="error-title">
+
+            Oops! Page Not Found
+
+        </h2>
+
+
+        <p class="error-description">
+
+            Sorry! The page you are looking for doesn't exist,
+            may have been moved, or the URL may be incorrect.
+
+            <br>
+
+            Don't worry — you can safely return to the
+            Hostel Portal.
+
+        </p>
+
+
+        <div class="error-actions">
+
+
+            <a
+                href="{{ url_for('home') }}"
+                class="error-btn home-btn"
+            >
+
+                <i
+                    class="fa-solid fa-house"
+                ></i>
+
+                Back to Home
+
+            </a>
+
+
+
+            <button
+                onclick="history.back()"
+                class="error-btn back-btn"
+            >
+
+                <i
+                    class="fa-solid fa-arrow-left"
+                ></i>
+
+                Go Back
+
+            </button>
+
+
+        </div>
+
+
+        <div class="error-divider">
+
+            <span>
+                Quick Help
+            </span>
+
+        </div>
+
+
+        <div class="error-help">
+
+
+            <div class="help-item">
+
+                <i
+                    class="fa-solid fa-house"
+                ></i>
+
+                Return Home
+
+            </div>
+
+
+            <div class="help-item">
+
+                <i
+                    class="fa-solid fa-arrow-left"
+                ></i>
+
+                Previous Page
+
+            </div>
+
+
+            <div class="help-item">
+
+                <i
+                    class="fa-solid fa-circle-question"
+                ></i>
+
+                Check URL
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+{% endblock %}
