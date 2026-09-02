@@ -1,0 +1,22 @@
+/* AI Analytics Dashboard Styles - Owned by K. Charankumar */
+.analytics-metric-card {
+    border: none;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+.chart-card {
+    border: none;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    padding: 10px;
+}
+
+.chart-card h5 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 16px;
+}

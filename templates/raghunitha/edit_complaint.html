@@ -1,0 +1,377 @@
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/raghunitha/edit_complaint.css') }}">
+{% endblock %}
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block title %}
+Edit Complaint
+{% endblock %}
+
+{% block favicon %}
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-edit.svg') }}">
+{% endblock %}
+
+{% block content %}
+<div class="edit-page">
+
+    <div class="edit-header">
+
+        <div class="edit-heading">
+
+            <div class="edit-heading-icon">
+
+                <i class="fa-solid fa-pen-to-square"></i>
+
+            </div>
+
+            <div>
+
+                <h1>
+                    Edit Complaint
+                </h1>
+
+                <p>
+                    Update your complaint details and supporting information
+                </p>
+
+            </div>
+
+        </div>
+
+        <a href="{{ url_for('complaints') }}" class="edit-back-btn">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back to Complaint History
+
+        </a>
+
+    </div>
+
+    <div class="edit-card">
+
+        <div class="edit-card-header">
+
+            <div class="edit-card-icon">
+
+                <i class="fa-solid fa-file-pen"></i>
+
+            </div>
+
+            <div>
+
+                <h2>
+                    Update Complaint Details
+                </h2>
+
+                <p>
+                    Make the necessary changes and save your complaint
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="edit-card-body">
+
+            <form method="POST" enctype="multipart/form-data" id="editComplaintForm">
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+
+                        <div class="form-group-custom">
+
+                            <label class="custom-label" for="category">
+
+                                <i class="fa-solid fa-layer-group label-icon"></i>
+
+                                Category
+
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <i class="fa-solid fa-list select-icon"></i>
+
+                                <select class="custom-select" name="category" id="category" required>
+
+                                    <option {% if complaint.category=="Electrical" %} selected {% endif %}>
+                                        Electrical
+                                    </option>
+
+                                    <option {% if complaint.category=="Water" %} selected {% endif %}>
+                                        Water
+                                    </option>
+
+                                    <option {% if complaint.category=="Cleaning" %} selected {% endif %}>
+                                        Cleaning
+                                    </option>
+
+                                    <option {% if complaint.category=="Furniture" %} selected {% endif %}>
+                                        Furniture
+                                    </option>
+
+                                    <option {% if complaint.category=="Internet" %} selected {% endif %}>
+                                        Internet
+                                    </option>
+
+                                    <option {% if complaint.category=="Other" %} selected {% endif %}>
+                                        Other
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-group-custom">
+
+                            <label class="custom-label" for="priority">
+
+                                <i class="fa-solid fa-signal label-icon"></i>
+
+                                Priority
+
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <i class="fa-solid fa-gauge-high select-icon"></i>
+
+                                <select class="custom-select" name="priority" id="priority" required>
+
+                                    <option {% if complaint.priority=="Low" %} selected {% endif %}>
+                                        Low
+                                    </option>
+
+                                    <option {% if complaint.priority=="Medium" %} selected {% endif %}>
+                                        Medium
+                                    </option>
+
+                                    <option {% if complaint.priority=="High" %} selected {% endif %}>
+                                        High
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="priority-hint">
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                                Select the urgency level of your complaint.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-12">
+
+                        <div class="form-group-custom">
+
+                            <label class="custom-label" for="title">
+
+                                <i class="fa-solid fa-heading label-icon"></i>
+
+                                Complaint Title
+
+                            </label>
+
+                            <input type="text" class="custom-input" name="title" id="title"
+                                value="{{ complaint.title }}" placeholder="Enter a clear complaint title"
+                                maxlength="150" required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-12">
+
+                        <div class="form-group-custom">
+
+                            <label class="custom-label" for="description">
+
+                                <i class="fa-solid fa-align-left label-icon"></i>
+
+                                Description
+
+                            </label>
+
+                            <div class="description-wrapper">
+
+                                <textarea class="custom-input description-input" rows="6" name="description"
+                                    id="description" maxlength="1000" placeholder="Describe the problem clearly..."
+                                    required>{{ complaint.description }}</textarea>
+
+                                <span class="character-counter" id="characterCounter">
+                                    0 / 1000
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% if complaint.image %}
+
+                <div class="current-image-section">
+
+                    <div class="current-image-header">
+
+                        <i class="fa-solid fa-image"></i>
+
+                        Current Complaint Image
+
+                    </div>
+
+                    <div class="current-image-wrapper">
+
+                        <img src="{{ complaint.image if (complaint.image.startswith('http://') or complaint.image.startswith('https://') or complaint.image.startswith('/')) else url_for('static', filename='uploads/' + complaint.image) }}" class="current-image"
+                            id="currentImage" alt="Current Complaint Image" onclick="openEditImage(this.src)">
+
+                        <div class="image-caption">
+
+                            Click the image to view it in full size.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+                <div class="form-group-custom">
+
+                    <label class="custom-label">
+
+                        <i class="fa-solid fa-camera label-icon"></i>
+
+                        Replace Image
+
+                        <span style="
+                            color:#94a3b8;
+                            font-weight:500;
+                            ">
+                            (Optional)
+                        </span>
+
+                    </label>
+
+                    <div class="upload-box" id="uploadBox">
+
+                        <div class="upload-icon">
+
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                        </div>
+
+                        <p class="upload-text">
+
+                            Upload a new complaint image
+
+                        </p>
+
+                        <p class="upload-subtext">
+
+                            JPG, JPEG or PNG images are supported.
+
+                        </p>
+
+                        <input type="file" class="form-control file-input" name="image" id="image"
+                            accept="image/png,image/jpeg,image/jpg">
+
+                        <div class="new-image-preview" id="newImagePreview">
+
+                            <img id="previewImage" src="" alt="New Image Preview">
+
+                            <div class="preview-text">
+
+                                New image selected
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <a href="{{ url_for('complaints') }}" class="cancel-btn">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit" class="update-btn" id="updateBtn">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Update Complaint
+
+                    </button>
+
+                </div>
+
+                <div class="edit-info">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    <span>
+
+                        Make sure your complaint information is accurate
+                        before updating. If you replace the image, the new
+                        image will be associated with this complaint.
+
+                    </span>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="edit-image-modal" id="editImageModal" onclick="closeEditImage(event)">
+
+    <button type="button" class="edit-modal-close" onclick="closeEditImage()">
+
+        <i class="fa-solid fa-xmark"></i>
+
+    </button>
+
+    <img id="editModalImage" class="edit-modal-image" src="" alt="Complaint Image">
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/complaints.js') }}"></script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/raghunitha/edit_complaint.js') }}"></script>
+{% endblock %}

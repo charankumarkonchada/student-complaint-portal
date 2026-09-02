@@ -1,0 +1,575 @@
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jagan/add_complaint.css') }}">
+{% endblock %}
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block title %}
+Raise Complaint
+{% endblock %}
+
+{% block favicon %}
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-add.svg') }}">
+{% endblock %}
+
+{% block content %}
+<div class="complaint-page">
+
+    <div class="complaint-page-header">
+
+        <div class="complaint-heading">
+
+            <div class="complaint-heading-icon">
+
+                <i
+                    class="fa-solid fa-circle-exclamation"
+                ></i>
+
+            </div>
+
+            <div>
+
+                <h1>
+                    Raise Complaint
+                </h1>
+
+                <p>
+                    Report a hostel issue and help us resolve it quickly
+                </p>
+
+            </div>
+
+        </div>
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="complaint-back-btn"
+        >
+
+            <i
+                class="fa-solid fa-arrow-left"
+            ></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+    <div class="complaint-form-card">
+
+        <div class="form-top">
+
+            <div class="form-top-content">
+
+                <div class="form-top-icon">
+
+                    <i
+                        class="fa-solid fa-file-circle-plus"
+                    ></i>
+
+                </div>
+
+                <div>
+
+                    <h2>
+                        Complaint Details
+                    </h2>
+
+                    <p>
+                        Provide accurate information about the issue
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="form-body">
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                id="complaintForm"
+            >
+
+                <div class="form-section">
+
+                    <div class="section-title">
+
+                        <i
+                            class="fa-solid fa-layer-group"
+                        ></i>
+
+                        Issue Classification
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="form-label-modern">
+
+                            Category
+
+                            <span class="required-star">
+                                *
+                            </span>
+
+                        </label>
+
+                        <div class="category-grid">
+
+                            <div class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    id="catElectrical"
+                                    value="Electrical"
+                                    required
+                                >
+
+                                <label
+                                    for="catElectrical"
+                                    class="category-label"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-bolt"
+                                    ></i>
+
+                                    Electrical
+
+                                </label>
+
+                            </div>
+
+                            <div class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    id="catWater"
+                                    value="Water"
+                                >
+
+                                <label
+                                    for="catWater"
+                                    class="category-label"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-droplet"
+                                    ></i>
+
+                                    Water
+
+                                </label>
+
+                            </div>
+
+                            <div class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    id="catCleaning"
+                                    value="Cleaning"
+                                >
+
+                                <label
+                                    for="catCleaning"
+                                    class="category-label"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-broom"
+                                    ></i>
+
+                                    Cleaning
+
+                                </label>
+
+                            </div>
+
+                            <div class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    id="catFurniture"
+                                    value="Furniture"
+                                >
+
+                                <label
+                                    for="catFurniture"
+                                    class="category-label"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-chair"
+                                    ></i>
+
+                                    Furniture
+
+                                </label>
+
+                            </div>
+
+                            <div class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    id="catInternet"
+                                    value="Internet"
+                                >
+
+                                <label
+                                    for="catInternet"
+                                    class="category-label"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-wifi"
+                                    ></i>
+
+                                    Internet
+
+                                </label>
+
+                            </div>
+
+                            <div class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    id="catOther"
+                                    value="Other"
+                                >
+
+                                <label
+                                    for="catOther"
+                                    class="category-label"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-ellipsis"
+                                    ></i>
+
+                                    Other
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="form-label-modern">
+
+                            Priority
+
+                            <span class="required-star">
+                                *
+                            </span>
+
+                        </label>
+
+                        <div class="priority-options">
+
+                            <div class="priority-option priority-low">
+
+                                <input
+                                    type="radio"
+                                    name="priority"
+                                    id="priorityLow"
+                                    value="Low"
+                                    required
+                                >
+
+                                <label
+                                    for="priorityLow"
+                                    class="priority-label"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-arrow-down"
+                                    ></i>
+
+                                    Low
+
+                                </label>
+
+                            </div>
+
+                            <div class="priority-option priority-medium">
+
+                                <input
+                                    type="radio"
+                                    name="priority"
+                                    id="priorityMedium"
+                                    value="Medium"
+                                >
+
+                                <label
+                                    for="priorityMedium"
+                                    class="priority-label"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-minus"
+                                    ></i>
+
+                                    Medium
+
+                                </label>
+
+                            </div>
+
+                            <div class="priority-option priority-high">
+
+                                <input
+                                    type="radio"
+                                    name="priority"
+                                    id="priorityHigh"
+                                    value="High"
+                                >
+
+                                <label
+                                    for="priorityHigh"
+                                    class="priority-label"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-arrow-up"
+                                    ></i>
+
+                                    High
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-section">
+
+                    <div class="section-title">
+
+                        <i
+                            class="fa-solid fa-file-lines"
+                        ></i>
+
+                        Complaint Information
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label
+                            for="title"
+                            class="form-label-modern"
+                        >
+
+                            Complaint Title
+
+                            <span class="required-star">
+                                *
+                            </span>
+
+                        </label>
+
+                        <input
+                            class="form-control complaint-input"
+                            type="text"
+                            id="title"
+                            name="title"
+                            placeholder="Example: Bathroom tap is leaking"
+                            maxlength="100"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label
+                            for="description"
+                            class="form-label-modern"
+                        >
+
+                            Description
+
+                            <span class="required-star">
+                                *
+                            </span>
+
+                        </label>
+
+                        <textarea
+                            class="form-control complaint-input"
+                            id="description"
+                            rows="5"
+                            name="description"
+                            maxlength="1000"
+                            placeholder="Describe the problem clearly. Mention the location, what happened and any other useful details..."
+                            required
+                        ></textarea>
+
+                        <div class="description-footer">
+
+                            <span class="description-help">
+
+                                Please provide enough details to help resolve the issue.
+
+                            </span>
+
+                            <span
+                                class="character-counter"
+                                id="characterCounter"
+                            >
+                                0 / 1000
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-section">
+
+                    <div class="section-title">
+
+                        <i
+                            class="fa-solid fa-camera"
+                        ></i>
+
+                        Supporting Evidence
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="form-label-modern">
+
+                            Complaint Image
+
+                            <span
+                                style="
+                                color:#94a3b8;
+                                font-weight:500;
+                                "
+                            >
+                                (Optional)
+                            </span>
+
+                        </label>
+
+                        <div class="upload-area">
+
+                            <div class="upload-icon">
+
+                                <i
+                                    class="fa-solid fa-cloud-arrow-up"
+                                ></i>
+
+                            </div>
+
+                            <div class="upload-title">
+
+                                Upload an image of the issue
+
+                            </div>
+
+                            <div class="upload-description">
+
+                                JPG, JPEG or PNG images are recommended
+
+                            </div>
+
+                            <input
+                                class="form-control file-input"
+                                type="file"
+                                id="image"
+                                name="image"
+                                accept="image/*"
+                            >
+
+                            <div
+                                class="image-preview"
+                                id="imagePreview"
+                            >
+
+                                <img
+                                    id="previewImage"
+                                    src=""
+                                    alt="Selected image preview"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="submit-area">
+
+                    <button
+                        type="submit"
+                        class="submit-btn"
+                        id="submitBtn"
+                    >
+
+                        <i
+                            class="fa-solid fa-paper-plane"
+                        ></i>
+
+                        Submit Complaint
+
+                    </button>
+
+                    <div class="form-note">
+
+                        <i
+                            class="fa-solid fa-shield-halved"
+                        ></i>
+
+                        Your complaint information is securely submitted
+                        to the hostel administration.
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/complaints.js') }}"></script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/jagan/add_complaint.js') }}"></script>
+{% endblock %}

@@ -20,7 +20,7 @@ def create_postgresql_tables(conn):
         CREATE TABLE IF NOT EXISTS students (
             id BIGSERIAL PRIMARY KEY,
             name TEXT NOT NULL,
-            roll_no TEXT UNIQUE NOT NULL,
+            id_no TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
             phone TEXT,
             hostel TEXT,
@@ -118,7 +118,7 @@ def create_sqlite_tables(conn):
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            roll_no TEXT UNIQUE NOT NULL,
+            id_no TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
             phone TEXT,
             hostel TEXT,

@@ -1,0 +1,12 @@
+/* Notifications Styles - Owned by K. Deepthi */
+.notification-card {
+    border: none;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    margin-bottom: 12px;
+}
+.notification-unread {
+    border-left: 4px solid #2563eb;
+    background: #f8fafc;
+}

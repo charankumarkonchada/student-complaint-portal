@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="gEdit" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#gEdit)"/>
+  <path d="M42 16 L48 22 L24 46 L16 48 L18 40 Z" fill="#ffffff"/>
+  <path d="M38 20 L44 26" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>
+  <path d="M16 48 L20 44 L18 40 Z" fill="#78350f"/>
+</svg>

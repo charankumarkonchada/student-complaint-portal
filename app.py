@@ -30,14 +30,14 @@ def create_app():
             "current_year": 2026
         }
 
-    # Global Error Handlers
+    # Global Error Handlers (Member-owned templates: Charan 404, Vennela 500)
     @app.errorhandler(404)
     def page_not_found(e):
-        return render_template("404.html"), 404
+        return render_template("charan/404.html"), 404
 
     @app.errorhandler(500)
     def server_error(e):
-        return render_template("500.html"), 500
+        return render_template("vennela/500.html"), 500
 
     # Register all modular route blueprints
     register_blueprints(app)

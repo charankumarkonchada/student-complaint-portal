@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="gProf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#0e7490"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#gProf)"/>
+  <circle cx="32" cy="22" r="10" fill="#ffffff"/>
+  <path d="M16 50 C16 40 23 37 32 37 C41 37 48 40 48 50" fill="#ffffff"/>
+</svg>

@@ -35,15 +35,18 @@ def unread_count():
     if "student_id" not in session:
         return 0
 
-    conn = get_db_connection()
-    value = conn.execute(
-        """
-        SELECT COUNT(*)
-        FROM notifications
-        WHERE student_id=?
-        AND is_read=0
-        """,
-        (session["student_id"],)
-    ).fetchone()[0]
-    conn.close()
-    return value
+    try:
+        conn = get_db_connection()
+        value = conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM notifications
+            WHERE student_id=?
+            AND is_read=0
+            """,
+            (session["student_id"],)
+        ).fetchone()[0]
+        conn.close()
+        return value
+    except Exception:
+        return 0

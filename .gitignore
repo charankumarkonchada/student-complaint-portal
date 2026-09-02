@@ -1,7 +1,29 @@
+# Environment variables and secrets
 .env
+.env.*
+!.env.example
+
+# Python virtual environment
 .venv/
+env/
+venv/
+
+# Byte-compiled / cache files
 __pycache__/
 *.pyc
-static/uploads/*
-*.log
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Local databases and uploads
 database.db
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Logs and OS files
+*.log
+.DS_Store
+
+# Temporary team distribution packages
+TEAM_PACKAGES/
+TEAM_FILE_DISTRIBUTION/

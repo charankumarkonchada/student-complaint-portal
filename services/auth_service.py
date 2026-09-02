@@ -12,10 +12,10 @@ def is_college_email(email):
     )
 
 def is_valid_id(id_no):
-    """Validates that the student ID matches the RGUKT pattern O123456."""
+    """Validates that the student ID matches the RGUKT pattern: O, N, R, or S followed by 6 digits."""
     return bool(
         re.fullmatch(
-            r"O\d{6}",
+            r"[ONRS]\d{6}",
             (id_no or "").strip().upper()
         )
     )

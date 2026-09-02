@@ -1,0 +1,35 @@
+/* Admin Dashboard Styles - Owned by K. Charankumar */
+.admin-kpi-card {
+    border: none;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+.admin-action-btn {
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transition: all 0.2s ease;
+}
+
+.admin-recent-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    font-weight: 700;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.admin-recent-table td {
+    font-size: 13px;
+    color: #334155;
+    vertical-align: middle;
+}
