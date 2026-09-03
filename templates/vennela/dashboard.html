@@ -1,0 +1,347 @@
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vennela/student_dashboard.css') }}">
+{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block favicon %}
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-dashboard.svg') }}">
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <!-- 1. Welcome Hero Section -->
+    <div class="welcome-hero">
+        <div class="welcome-hero-content">
+            <div class="welcome-identity">
+                <div class="welcome-avatar-icon">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <div class="welcome-text">
+                    <h1><span id="dynamicGreeting">Welcome</span>, {{ session.get('student_name', 'Student') }}!</h1>
+                    <div class="welcome-meta-chips">
+                        <span class="meta-chip">
+                            <i class="fa-solid fa-id-badge"></i> {{ session.get('id_no', 'Student ID') }}
+                        </span>
+                        {% if session.get('hostel') %}
+                        <span class="meta-chip">
+                            <i class="fa-solid fa-hotel"></i> {{ session.get('hostel') }}
+                        </span>
+                        {% endif %}
+                        {% if session.get('room_no') %}
+                        <span class="meta-chip">
+                            <i class="fa-solid fa-door-closed"></i> Room {{ session.get('room_no') }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <div class="status-live-chip d-none d-md-inline-flex">
+                    <span class="status-dot-pulse"></span>
+                    <span>Student Portal Active</span>
+                </div>
+                <a href="{{ url_for('add_complaint') }}" class="btn btn-primary-gradient">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Raise Complaint</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Metric KPI Cards -->
+    <div class="kpi-grid">
+        <div class="row g-3">
+            <!-- Total Complaints -->
+            <div class="col-6 col-lg-3">
+                <div class="kpi-card kpi-total">
+                    <div class="kpi-card-top">
+                        <span class="kpi-label">Total Complaints</span>
+                        <div class="kpi-icon-wrap">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value" data-target="{{ total }}">{{ total }}</div>
+                    <div class="kpi-subtext">All submitted requests</div>
+                </div>
+            </div>
+
+            <!-- Pending -->
+            <div class="col-6 col-lg-3">
+                <div class="kpi-card kpi-pending">
+                    <div class="kpi-card-top">
+                        <span class="kpi-label">Pending Action</span>
+                        <div class="kpi-icon-wrap">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value" data-target="{{ pending }}">{{ pending }}</div>
+                    <div class="kpi-subtext">Awaiting staff review</div>
+                </div>
+            </div>
+
+            <!-- In Progress -->
+            <div class="col-6 col-lg-3">
+                <div class="kpi-card kpi-progress">
+                    <div class="kpi-card-top">
+                        <span class="kpi-label">In Progress</span>
+                        <div class="kpi-icon-wrap">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value" data-target="{{ progress }}">{{ progress }}</div>
+                    <div class="kpi-subtext">Currently assigned / active</div>
+                </div>
+            </div>
+
+            <!-- Resolved -->
+            <div class="col-6 col-lg-3">
+                <div class="kpi-card kpi-resolved">
+                    <div class="kpi-card-top">
+                        <span class="kpi-label">Resolved</span>
+                        <div class="kpi-icon-wrap">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value" data-target="{{ resolved }}">{{ resolved }}</div>
+                    <div class="kpi-subtext">Successfully completed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Quick Actions Section -->
+    <div class="dashboard-section-header">
+        <div class="section-title-wrap">
+            <div class="section-icon-badge">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="section-subtitle">Frequently accessed portal services</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Action 1: Raise Complaint -->
+        <div class="col-md-6 col-xl-3">
+            <div class="action-card">
+                <div class="action-card-header">
+                    <div class="action-icon-circle" style="background:#eff6ff; color:#2563eb;">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                    </div>
+                    <h3 class="action-card-title">Raise Complaint</h3>
+                </div>
+                <p class="action-card-desc">
+                    Report electrical, plumbing, sanitation, wifi, or room repair issues with AI triage.
+                </p>
+                <a href="{{ url_for('add_complaint') }}" class="action-card-btn btn-raise-action">
+                    <i class="fa-solid fa-plus"></i> New Complaint
+                </a>
+            </div>
+        </div>
+
+        <!-- Action 2: Complaint History -->
+        <div class="col-md-6 col-xl-3">
+            <div class="action-card">
+                <div class="action-card-header">
+                    <div class="action-icon-circle" style="background:#f5f3ff; color:#7c3aed;">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <h3 class="action-card-title">Complaint History</h3>
+                </div>
+                <p class="action-card-desc">
+                    Track ticket lifecycles, filter past reports, and review staff resolution remarks.
+                </p>
+                <a href="{{ url_for('complaints') }}" class="action-card-btn btn-secondary-action">
+                    <i class="fa-solid fa-list-ul"></i> View History
+                </a>
+            </div>
+        </div>
+
+        <!-- Action 3: My Profile -->
+        <div class="col-md-6 col-xl-3">
+            <div class="action-card">
+                <div class="action-card-header">
+                    <div class="action-icon-circle" style="background:#ecfdf5; color:#059669;">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <h3 class="action-card-title">My Profile</h3>
+                </div>
+                <p class="action-card-desc">
+                    Update phone number, verify room details, and review account security settings.
+                </p>
+                <a href="{{ url_for('profile') }}" class="action-card-btn btn-secondary-action">
+                    <i class="fa-solid fa-id-card"></i> Manage Profile
+                </a>
+            </div>
+        </div>
+
+        <!-- Action 4: Notifications & Activity -->
+        <div class="col-md-6 col-xl-3">
+            <div class="action-card">
+                <div class="action-card-header">
+                    <div class="action-icon-circle" style="background:#fffbeb; color:#d97706;">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <h3 class="action-card-title">Notifications</h3>
+                </div>
+                <p class="action-card-desc">
+                    Check complaint status changes, alerts, and hostel administration notices.
+                </p>
+                <a href="{{ url_for('notifications') }}" class="action-card-btn btn-secondary-action">
+                    <i class="fa-solid fa-envelope-open-text"></i> Open Inbox
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Recent Complaints Section -->
+    <div class="recent-complaints-card">
+        <div class="card-surface-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-primary"></i>
+                <h3 class="m-0 fs-5 fw-bold text-dark">Recent Complaints</h3>
+            </div>
+            <a href="{{ url_for('complaints') }}" class="btn btn-sm btn-outline-primary">
+                View All Complaints <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-modern">
+                <thead>
+                    <tr>
+                        <th style="width: 90px;">Ticket ID</th>
+                        <th>Complaint Details</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>AI Est. Time</th>
+                        <th>Status</th>
+                        <th style="width: 100px;" class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in recent %}
+                    <tr>
+                        <td>
+                            <span class="complaint-id-tag">#{{ c.id }}</span>
+                        </td>
+                        <td>
+                            <span class="complaint-title-text" title="{{ c.title }}">{{ c.title }}</span>
+                            <span class="complaint-date-text">
+                                <i class="fa-regular fa-calendar me-1"></i>{{ (c.created_at|string)[:16] if c.created_at else 'Recent' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge-category">
+                                {% if c.category == 'Water' %}<i class="fa-solid fa-faucet-drip text-primary"></i>
+                                {% elif c.category == 'Electricity' %}<i class="fa-solid fa-bolt text-warning"></i>
+                                {% elif c.category == 'Cleaning' %}<i class="fa-solid fa-broom text-success"></i>
+                                {% elif c.category == 'WiFi' %}<i class="fa-solid fa-wifi text-info"></i>
+                                {% elif c.category == 'Carpentry' %}<i class="fa-solid fa-hammer text-secondary"></i>
+                                {% else %}<i class="fa-solid fa-wrench text-muted"></i>
+                                {% endif %}
+                                {{ c.category }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if c.priority == 'High' %}
+                                <span class="badge-priority badge-priority-high"><i class="fa-solid fa-circle-exclamation"></i> High</span>
+                            {% elif c.priority == 'Medium' %}
+                                <span class="badge-priority badge-priority-medium"><i class="fa-solid fa-triangle-exclamation"></i> Medium</span>
+                            {% else %}
+                                <span class="badge-priority badge-priority-low"><i class="fa-solid fa-circle-info"></i> Low</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if c.ai_resolution_days %}
+                                <span class="ai-prediction-pill" title="AI Predicted Resolution Time">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> {{ c.ai_resolution_days }}d
+                                </span>
+                            {% else %}
+                                <span class="text-muted small">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if c.status == 'Pending' %}
+                                <span class="badge-status badge-status-pending">Pending</span>
+                            {% elif c.status == 'In Progress' %}
+                                <span class="badge-status badge-status-progress">In Progress</span>
+                            {% elif c.status == 'Resolved' %}
+                                <span class="badge-status badge-status-resolved">Resolved</span>
+                            {% else %}
+                                <span class="badge-status badge-status-pending">{{ c.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{{ url_for('view_complaint', id=c.id) }}" class="btn btn-sm btn-outline-primary">
+                                <span>View</span> <i class="fa-solid fa-chevron-right small"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="p-0">
+                            <div class="empty-state-wrap">
+                                <div class="empty-state-icon">
+                                    <i class="fa-regular fa-clipboard"></i>
+                                </div>
+                                <h4>No Complaints Registered Yet</h4>
+                                <p>You have not submitted any maintenance requests. Need help with room maintenance or amenities?</p>
+                                <a href="{{ url_for('add_complaint') }}" class="btn btn-primary-gradient">
+                                    <i class="fa-solid fa-plus"></i> Raise Your First Complaint
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 5. Guidelines & SLA Panel -->
+    <div class="guidelines-card">
+        <div class="guidelines-header">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>Hostel Maintenance & SLA Guidelines</h3>
+        </div>
+        <ul class="guidelines-list">
+            <li class="guideline-item">
+                <i class="fa-solid fa-circle-check"></i>
+                <span><strong>Electrical & Water issues</strong> are treated with High priority (target SLA: 24–48 hours).</span>
+            </li>
+            <li class="guideline-item">
+                <i class="fa-solid fa-circle-check"></i>
+                <span><strong>Clear supporting photos</strong> expedite verification and worker dispatch.</span>
+            </li>
+            <li class="guideline-item">
+                <i class="fa-solid fa-circle-check"></i>
+                <span><strong>AI Duplicate Check</strong> flags repeated complaints across the same hostel wing.</span>
+            </li>
+            <li class="guideline-item">
+                <i class="fa-solid fa-circle-check"></i>
+                <span><strong>Emergency?</strong> Contact your Block Warden directly during non-office hours.</span>
+            </li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/vennela/student_dashboard.js') }}"></script>
+{% endblock %}
