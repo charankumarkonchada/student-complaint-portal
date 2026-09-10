@@ -46,4 +46,4 @@ def profile():
     ).fetchone()
     conn.close()
 
-    return render_template("raghunitha/profile.html", student=student)
+    return render_template("rushmitha/profile.html", student=student)

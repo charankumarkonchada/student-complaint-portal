@@ -1,5 +1,5 @@
 /**
- * Student Registration JavaScript Module - Owned by M. Raghunitha
+ * Student Registration JavaScript Module - Owned by M. Rushmitha
  */
 function validateRegistration() {
     const idInput = document.getElementById("id_no");

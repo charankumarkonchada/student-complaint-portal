@@ -1,5 +1,5 @@
 /**
- * Student Profile JavaScript Module - Owned by M. Raghunitha
+ * Student Profile JavaScript Module - Owned by M. Rushmitha
  */
 document.addEventListener("DOMContentLoaded", function () {
     const profileForm = document.querySelector(".profile-form") || document.querySelector("form[action*='profile']");

@@ -1,5 +1,5 @@
 /**
- * Edit Complaint JavaScript Module - Owned by M. Raghunitha
+ * Edit Complaint JavaScript Module - Owned by M. Rushmitha
  */
 function openEditImage(src) {
     const modal = document.getElementById("editImageModal");

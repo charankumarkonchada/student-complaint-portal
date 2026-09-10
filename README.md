@@ -11,7 +11,7 @@ An enterprise-grade, AI-assisted Student Hostel Complaint Management System desi
 | **R. Charan Kumar** | `0210894` | Admin Login, Admin Logout, Manage Complaints, Update Status, 404 Error Page | `routes/charan/`<br>`templates/charan/`<br>`static/css/charan/`<br>`static/js/charan/` |
 | **K. Charankumar** | `0221168` | Admin Dashboard, Analytics Dashboard, Export Reports (PDF/Excel), **Project Admin & Integration Owner** | `routes/charankumar/`<br>`templates/charankumar/`<br>`static/css/charankumar/`<br>`static/js/charankumar/`<br>+ Shared Infrastructure |
 | **B. Jagan** | `0221078` | Home Page, Add Complaint, Complaint History, View Complaint Details | `routes/jagan/`<br>`templates/jagan/`<br>`static/css/jagan/`<br>`static/js/jagan/` |
-| **M. Rushmitha** | `0220917` | Student Registration, Edit Complaint, Delete Complaint, Student Profile | `routes/raghunitha/`<br>`templates/rushmitha/`<br>`static/css/rushmitha/`<br>`static/js/rushmitha/` |
+| **M. Rushmitha** | `0220917` | Student Registration, Edit Complaint, Delete Complaint, Student Profile | `routes/rushmitha/`<br>`templates/rushmitha/`<br>`static/css/rushmitha/`<br>`static/js/rushmitha/` |
 | **K. Deepthi** | `0220836` | Student Login, Logout, Forgot Password, OTP Verification, Reset Password, Change Password, Notifications | `routes/deepthi/`<br>`templates/deepthi/`<br>`static/css/deepthi/`<br>`static/js/deepthi/` |
 | **K. Vennela** | `0210785` | Student Dashboard, Recent Activity, 500 Server Error Page | `routes/vennela/`<br>`templates/vennela/`<br>`static/css/vennela/`<br>`static/js/vennela/` |
 

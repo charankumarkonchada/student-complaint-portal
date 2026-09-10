@@ -93,7 +93,7 @@ def edit_complaint(id):
         return redirect(url_for("complaints"))
 
     conn.close()
-    return render_template("raghunitha/edit_complaint.html", complaint=complaint)
+    return render_template("rushmitha/edit_complaint.html", complaint=complaint)
 
 @edit_complaint_bp.route("/complaint/<int:id>/delete", methods=["POST"])
 @edit_complaint_bp.route("/delete_complaint/<int:id>", methods=["POST"])

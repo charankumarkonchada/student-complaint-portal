@@ -19,10 +19,10 @@ from routes.jagan.add_complaint import add_complaint_bp
 from routes.jagan.complaint_history import complaint_history_bp
 from routes.jagan.view_complaint import view_complaint_bp
 
-# Team 4: M. Raghunitha
-from routes.raghunitha.register import register_bp
-from routes.raghunitha.edit_complaint import edit_complaint_bp
-from routes.raghunitha.profile import profile_bp
+# Team 4: M. Rushmitha
+from routes.rushmitha.register import register_bp
+from routes.rushmitha.edit_complaint import edit_complaint_bp
+from routes.rushmitha.profile import profile_bp
 
 # Team 5: K. Deepthi
 from routes.deepthi.login import login_bp
@@ -50,7 +50,7 @@ ALL_BLUEPRINTS = [
     add_complaint_bp,
     complaint_history_bp,
     view_complaint_bp,
-    # Raghunitha
+    # Rushmitha
     register_bp,
     edit_complaint_bp,
     profile_bp,

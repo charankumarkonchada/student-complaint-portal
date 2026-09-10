@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="app.diagrams.net" modified="2026-09-10T16:40:00.000Z" agent="Antigravity SE DFD Builder" version="21.0.0" type="device">
+  <diagram id="level-0-context" name="Level 0 - Context Diagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="750" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t0" value="&amp;lt;b style=&amp;quot;font-size:16px;&amp;quot;&amp;gt;STUDENT COMPLAINT PORTAL&amp;lt;/b&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;span style=&amp;quot;font-size:12px; font-weight:bold;&amp;quot;&amp;gt;Level 0 Data Flow Diagram (Context Diagram)&amp;lt;/span&amp;gt;" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Helvetica;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="350" y="30" width="500" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="proc_0" value="&amp;lt;table style=&amp;quot;width:100%; height:100%; border-collapse:collapse; text-align:center;&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;border-bottom:1.5px solid #000000; height:32px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:14px;&amp;quot;&amp;gt;0&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;vertical-align:middle; padding:12px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:14px;&amp;quot;&amp;gt;Student Complaint&amp;lt;br/&amp;gt;Portal&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="475" y="190" width="250" height="340" as="geometry"/>
+        </mxCell>
+        <mxCell id="ent_student_0" value="Student" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=13;fontStyle=1;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="190" width="150" height="340" as="geometry"/>
+        </mxCell>
+        <mxCell id="ent_admin_0" value="Admin" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=13;fontStyle=1;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="970" y="190" width="150" height="340" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_s1" value="Registration &amp;amp; Login Details" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.10;entryX=0;entryY=0.10;" edge="1" parent="1" source="ent_student_0" target="proc_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_s2" value="Authentication &amp;amp; Session Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.26;entryX=1;entryY=0.26;" edge="1" parent="1" source="proc_0" target="ent_student_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_s3" value="Complaint Details &amp;amp; Attachments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.45;entryX=0;entryY=0.45;" edge="1" parent="1" source="ent_student_0" target="proc_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_s4" value="Complaint Status &amp;amp; History" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.62;entryX=1;entryY=0.62;" edge="1" parent="1" source="proc_0" target="ent_student_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_s5" value="Notifications &amp;amp; Resolution Estimates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.82;entryX=1;entryY=0.82;" edge="1" parent="1" source="proc_0" target="ent_student_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_s6" value="Profile Updates &amp;amp; Notification Reads" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.94;entryX=0;entryY=0.94;" edge="1" parent="1" source="ent_student_0" target="proc_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_a1" value="Admin Login Credentials" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.10;entryX=1;entryY=0.10;" edge="1" parent="1" source="ent_admin_0" target="proc_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_a2" value="Authentication Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.26;entryX=0;entryY=0.26;" edge="1" parent="1" source="proc_0" target="ent_admin_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_a3" value="Status Updates &amp;amp; Staff Assignments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.45;entryX=1;entryY=0.45;" edge="1" parent="1" source="ent_admin_0" target="proc_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_a4" value="Complaint Records &amp;amp; Details" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.62;entryX=0;entryY=0.62;" edge="1" parent="1" source="proc_0" target="ent_admin_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_a5" value="Report &amp;amp; Analytics Requests" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.82;entryX=1;entryY=0.82;" edge="1" parent="1" source="ent_admin_0" target="proc_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f0_a6" value="Analytics &amp;amp; Exported Reports" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.94;entryX=0;entryY=0.94;" edge="1" parent="1" source="proc_0" target="ent_admin_0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="level-1-dfd" name="Level 1 - Data Flow Diagram">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1550" pageHeight="900" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t1" value="&amp;lt;b style=&amp;quot;font-size:16px;&amp;quot;&amp;gt;STUDENT COMPLAINT PORTAL&amp;lt;/b&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;span style=&amp;quot;font-size:12px; font-weight:bold;&amp;quot;&amp;gt;Level 1 Data Flow Diagram (Functional Decomposition)&amp;lt;/span&amp;gt;" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Helvetica;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="450" y="15" width="600" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="ent_student_1" value="Student" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=13;fontStyle=1;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="200" width="130" height="480" as="geometry"/>
+        </mxCell>
+        <mxCell id="ent_admin_1" value="Admin" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=13;fontStyle=1;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="200" width="130" height="480" as="geometry"/>
+        </mxCell>
+        <mxCell id="proc_1" value="&amp;lt;table style=&amp;quot;width:100%; height:100%; border-collapse:collapse; text-align:center;&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;border-bottom:1.5px solid #000000; height:24px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:12px;&amp;quot;&amp;gt;1.0&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;vertical-align:middle; padding:5px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:11.5px;&amp;quot;&amp;gt;Authentication &amp;amp;amp;&amp;lt;br/&amp;gt;User Profile Management&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="110" width="230" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="proc_2" value="&amp;lt;table style=&amp;quot;width:100%; height:100%; border-collapse:collapse; text-align:center;&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;border-bottom:1.5px solid #000000; height:24px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:12px;&amp;quot;&amp;gt;2.0&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;vertical-align:middle; padding:5px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:11.5px;&amp;quot;&amp;gt;Complaint Submission&amp;lt;br/&amp;gt;&amp;amp;amp; Management&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="280" width="230" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="store_files" value="D2 | Attachment Store" style="shape=partialRectangle;right=0;left=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="435" width="230" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="proc_5" value="&amp;lt;table style=&amp;quot;width:100%; height:100%; border-collapse:collapse; text-align:center;&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;border-bottom:1.5px solid #000000; height:24px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:12px;&amp;quot;&amp;gt;5.0&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;vertical-align:middle; padding:5px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:11.5px;&amp;quot;&amp;gt;Notifications &amp;amp;amp;&amp;lt;br/&amp;gt;Activity Tracking&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="575" width="230" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="proc_3" value="&amp;lt;table style=&amp;quot;width:100%; height:100%; border-collapse:collapse; text-align:center;&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;border-bottom:1.5px solid #000000; height:24px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:12px;&amp;quot;&amp;gt;3.0&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;vertical-align:middle; padding:5px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:11.5px;&amp;quot;&amp;gt;AI Analysis &amp;amp;amp;&amp;lt;br/&amp;gt;Duplicate Detection&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="630" y="180" width="240" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="store_db" value="D1 | Complaint Database" style="shape=partialRectangle;right=0;left=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="620" y="350" width="260" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="proc_4" value="&amp;lt;table style=&amp;quot;width:100%; height:100%; border-collapse:collapse; text-align:center;&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;border-bottom:1.5px solid #000000; height:24px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:12px;&amp;quot;&amp;gt;4.0&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;vertical-align:middle; padding:5px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:11.5px;&amp;quot;&amp;gt;Admin Complaint&amp;lt;br/&amp;gt;Management &amp;amp;amp; Tracking&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="990" y="280" width="230" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="proc_6" value="&amp;lt;table style=&amp;quot;width:100%; height:100%; border-collapse:collapse; text-align:center;&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;border-bottom:1.5px solid #000000; height:24px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:12px;&amp;quot;&amp;gt;6.0&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td style=&amp;quot;vertical-align:middle; padding:5px;&amp;quot;&amp;gt;&amp;lt;b style=&amp;quot;font-size:11.5px;&amp;quot;&amp;gt;Analytics &amp;amp;amp;&amp;lt;br/&amp;gt;Report Generation&amp;lt;/b&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="990" y="575" width="230" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_s_to_p1" value="Login &amp;amp; Registration Info" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.7;exitY=0;entryX=0;entryY=0.3;" edge="1" parent="1" source="ent_student_1" target="proc_1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="141" y="135"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_p1_to_s" value="Session &amp;amp; Profile Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.65;entryX=0.9;entryY=0;" edge="1" parent="1" source="proc_1" target="ent_student_1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="170" y="165"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_s_to_p2" value="Complaint Form &amp;amp; File" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.23;entryX=0;entryY=0.32;" edge="1" parent="1" source="ent_student_1" target="proc_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_p2_to_s" value="Submission Confirmation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.68;entryX=1;entryY=0.32;" edge="1" parent="1" source="proc_2" target="ent_student_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_s_to_p5" value="Read Action &amp;amp; Activity Request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.83;entryX=0;entryY=0.32;" edge="1" parent="1" source="ent_student_1" target="proc_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_p5_to_s" value="Notifications &amp;amp; Activity Feed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.68;entryX=1;entryY=0.91;" edge="1" parent="1" source="proc_5" target="ent_student_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_a_to_p1" value="Admin Credentials" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.15;exitY=0;entryX=0.75;entryY=0;" edge="1" parent="1" source="ent_admin_1" target="proc_1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1360" y="60"/>
+              <mxPoint x="442" y="60"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_p1_to_a" value="Admin Session Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.3;entryX=0.4;entryY=0;" edge="1" parent="1" source="proc_1" target="ent_admin_1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1392" y="135"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_a_to_p4" value="Status Updates &amp;amp; Staff Assignments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.23;entryX=1;entryY=0.32;" edge="1" parent="1" source="ent_admin_1" target="proc_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_p4_to_a" value="Complaint Lists &amp;amp; Details" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.68;entryX=0;entryY=0.32;" edge="1" parent="1" source="proc_4" target="ent_admin_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_a_to_p6" value="Report &amp;amp; Analytics Requests" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.83;entryX=1;entryY=0.32;" edge="1" parent="1" source="ent_admin_1" target="proc_6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_p6_to_a" value="Analytics &amp;amp; Exported Reports" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.68;entryX=0;entryY=0.91;" edge="1" parent="1" source="proc_6" target="ent_admin_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_p2_to_d2" value="File Upload" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.35;exitY=1;entryX=0.35;entryY=0;" edge="1" parent="1" source="proc_2" target="store_files">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_d2_to_p2" value="File Reference Link" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.65;exitY=0;entryX=0.65;entryY=1;" edge="1" parent="1" source="store_files" target="proc_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_p2_to_p3" value="Complaint Text" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.75;exitY=0;entryX=0;entryY=0.3;" edge="1" parent="1" source="proc_2" target="proc_3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="442" y="205"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_p3_to_p2" value="Predictions &amp;amp; Duplicate Info" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.75;entryX=0.9;entryY=0;" edge="1" parent="1" source="proc_3" target="proc_2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="477" y="244"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_db_to_p3" value="Existing Complaints for Similarity Check" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="store_db" target="proc_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_p2_to_db" value="New Complaint &amp;amp; History" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.45;entryX=0;entryY=0.25;" edge="1" parent="1" source="proc_2" target="store_db">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_db_to_p2" value="Complaint Records" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.55;entryX=1;entryY=0.8;" edge="1" parent="1" source="store_db" target="proc_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_p4_to_db" value="Status, Assignment &amp;amp; Remarks" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.45;entryX=1;entryY=0.25;" edge="1" parent="1" source="proc_4" target="store_db">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_db_to_p4" value="Complaints &amp;amp; Student Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.55;entryX=0;entryY=0.8;" edge="1" parent="1" source="store_db" target="proc_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f1_p1_to_db" value="User Accounts &amp;amp; OTPs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.85;exitY=1;entryX=0.15;entryY=0;" edge="1" parent="1" source="proc_1" target="store_db">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="465" y="300"/>
+              <mxPoint x="659" y="300"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_db_to_p1" value="Authentication Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.08;exitY=0;entryX=0.6;entryY=1;" edge="1" parent="1" source="store_db" target="proc_1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="641" y="320"/>
+              <mxPoint x="408" y="320"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_p5_to_db" value="Read Status Updates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.85;exitY=0;entryX=0.15;entryY=1;" edge="1" parent="1" source="proc_5" target="store_db">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="465" y="520"/>
+              <mxPoint x="659" y="520"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_db_to_p5" value="Unread Notifications &amp;amp; History" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.08;exitY=1;entryX=0.6;entryY=0;" edge="1" parent="1" source="store_db" target="proc_5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="641" y="540"/>
+              <mxPoint x="408" y="540"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1_db_to_p6" value="Complaint Datasets &amp;amp; Metrics" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=10;fontFamily=Helvetica;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.85;exitY=1;entryX=0.15;entryY=0;" edge="1" parent="1" source="store_db" target="proc_6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="841" y="540"/>
+              <mxPoint x="1024" y="540"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

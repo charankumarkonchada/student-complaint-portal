@@ -91,4 +91,4 @@ def register():
         flash("Registration Successful.", "success")
         return redirect(url_for("login"))
 
-    return render_template("raghunitha/register.html")
+    return render_template("rushmitha/register.html")
