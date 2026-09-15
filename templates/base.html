@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Immediate Theme Application (Anti-FOUT) -->
+    <script>
+        (function() {
+            try {
+                var stored = localStorage.getItem("theme");
+                var theme = stored;
+                if (!theme) {
+                    var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+                    theme = prefersDark ? "dark" : "light";
+                }
+                document.documentElement.setAttribute("data-theme", theme);
+            } catch (e) {
+                document.documentElement.setAttribute("data-theme", "light");
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -11,45 +27,61 @@
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-home.svg') }}">
     {% endblock %}
 
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Awesome Icons -->
+    <!-- Font Awesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <!-- Global Design System -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
     {% block head %}{% endblock %}
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-    <!-- Master Navigation -->
+    <!-- Master Navigation Header -->
     <header>
         <nav class="navbar navbar-expand-lg portal-navbar">
             <div class="container-fluid px-lg-5">
                 
                 <!-- Brand / Logo -->
-                <a class="navbar-brand portal-navbar-brand" href="/">
+                <a class="navbar-brand portal-navbar-brand" href="{{ url_for('home') }}">
                     <img src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}" 
                          alt="IntelliHostel Portal Logo" 
                          class="portal-logo-img">
                     <div class="portal-brand-text d-none d-sm-flex">
-                        <span class="portal-brand-title">IntelliHostel</span>
+                        <span class="portal-brand-title">Intelli<span>Hostel</span></span>
                         <span class="portal-brand-sub">{{ college_name if college_name else 'RGUKT Ongole' }}</span>
                     </div>
                 </a>
 
-                <!-- Mobile Menu Toggler -->
-                <button class="navbar-toggler portal-navbar-toggler" 
-                        type="button" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#mainNavbar" 
-                        aria-controls="mainNavbar" 
-                        aria-expanded="false" 
-                        aria-label="Toggle navigation">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+                <!-- Mobile Actions (Theme Toggle + Menu Toggler) -->
+                <div class="d-flex align-items-center gap-2 d-lg-none">
+                    <button class="theme-toggle-btn" 
+                            type="button" 
+                            id="mobileThemeToggle"
+                            aria-label="Switch to dark mode"
+                            aria-pressed="false"
+                            title="Switch to dark mode">
+                        <i class="fa-solid fa-moon theme-toggle-icon"></i>
+                    </button>
+                    <button class="navbar-toggler portal-navbar-toggler" 
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#mainNavbar" 
+                            aria-controls="mainNavbar" 
+                            aria-expanded="false" 
+                            aria-label="Toggle navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
 
                 <!-- Navigation Items -->
                 <div class="collapse navbar-collapse" id="mainNavbar">
@@ -70,6 +102,14 @@
                                    href="{{ url_for('complaints') }}">
                                     <i class="fa-solid fa-clipboard-list"></i>
                                     <span>My Complaints</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-item {% if request.path == '/activity' %}active{% endif %}" 
+                                   href="{{ url_for('activity') }}">
+                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                    <span>Activity</span>
                                 </a>
                             </li>
 
@@ -162,6 +202,13 @@
                         {% else %}
                             <!-- Guest Links -->
                             <li class="nav-item">
+                                <a class="nav-link nav-link-item" href="{{ url_for('home') }}">
+                                    <i class="fa-solid fa-house"></i>
+                                    <span>Home</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a class="nav-link nav-link-item" href="{{ url_for('login') }}">
                                     <i class="fa-solid fa-right-to-bracket"></i>
                                     <span>Student Login</span>
@@ -182,6 +229,18 @@
                                 </a>
                             </li>
                         {% endif %}
+                        
+                        <!-- Theme Toggle (Desktop) -->
+                        <li class="nav-item ms-lg-2 d-none d-lg-block">
+                            <button class="theme-toggle-btn" 
+                                    type="button" 
+                                    id="themeToggle"
+                                    aria-label="Switch to dark mode"
+                                    aria-pressed="false"
+                                    title="Switch to dark mode">
+                                <i class="fa-solid fa-moon theme-toggle-icon"></i>
+                            </button>
+                        </li>
 
                     </ul>
                 </div>
@@ -236,18 +295,18 @@
                              class="footer-logo-img">
                         <div>
                             <div class="fw-bold text-dark">{{ college_name if college_name else 'RGUKT Ongole' }}</div>
-                            <div class="text-muted small">IntelliHostel Complaint & Maintenance Resolution System</div>
+                            <div class="text-muted small">IntelliHostel — Smart Complaint & Maintenance Portal</div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div class="d-inline-flex align-items-center gap-2 mb-1">
                         <span class="footer-campus-badge">
-                            <i class="fa-solid fa-building-columns"></i> Official Hostel Portal
+                            <i class="fa-solid fa-building-columns"></i> Official Hostel System
                         </span>
                     </div>
                     <div class="text-muted small">
-                        &copy; {{ current_year if current_year else 2026 }} RGUKT Ongole. All rights reserved.
+                        &copy; {{ current_year if current_year else 2026 }} {{ college_name if college_name else 'RGUKT Ongole' }}. All rights reserved.
                     </div>
                 </div>
             </div>
@@ -264,5 +323,6 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     
     {% block scripts %}{% endblock %}
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

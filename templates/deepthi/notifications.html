@@ -1,10 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - IntelliHostel{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/deepthi/notifications.css') }}">
 {% endblock %}
-{% extends "base.html" %}{% block title %}Notifications{% endblock %}
-{% block favicon %}<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-notifications.svg') }}">{% endblock %}
+
 {% block content %}
-<div class="container py-4"><div class="d-flex justify-content-between align-items-center mb-4"><div><h2 class="fw-bold">Notifications</h2><p class="text-muted">Updates about your complaints.</p></div><form method="post" action="{{ url_for('notifications_read_all') }}"><button class="btn btn-outline-primary">Mark all as read</button></form></div><div class="list-group shadow-sm">{% for n in notifications %}<div class="list-group-item {% if not n.is_read %}list-group-item-primary{% endif %} d-flex justify-content-between align-items-center"><div><div>{{ n.message }}</div><small class="text-muted">{{ n.created_at }}</small></div>{% if not n.is_read %}<form method="post" action="{{ url_for('notification_read', id=n.id) }}"><button class="btn btn-sm btn-primary">Mark read</button></form>{% else %}<span class="badge text-bg-light">Read</span>{% endif %}</div>{% else %}<div class="alert alert-info mb-0">No notifications.</div>{% endfor %}</div></div>{% endblock %}
+<div class="notifications-page">
+    <!-- Header Topbar -->
+    <div class="notifications-topbar reveal-up">
+        <div class="notifications-heading">
+            <div class="notifications-heading-icon">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+            <div>
+                <h1>Notification Center</h1>
+                <p>Live alerts, administrative remarks, and status updates on your complaints</p>
+            </div>
+        </div>
+
+        <div class="topbar-actions">
+            {% set unread_list = notifications | selectattr('is_read', 'equalto', 0) | list %}
+            {% if unread_list | length > 0 %}
+            <form method="post" action="{{ url_for('notifications_read_all') }}" class="inline-form">
+                <button type="submit" class="btn-mark-all-read">
+                    <i class="fa-solid fa-check-double"></i>
+                    <span>Mark All as Read</span>
+                </button>
+            </form>
+            {% endif %}
+            <a href="{{ url_for('dashboard') }}" class="btn-back-dash">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="notifications-stats-row reveal-up reveal-delay-1">
+        <div class="stat-pill-card">
+            <div class="stat-pill-icon total">
+                <i class="fa-solid fa-inbox"></i>
+            </div>
+            <div>
+                <span class="stat-pill-num">{{ notifications | length }}</span>
+                <span class="stat-pill-label">Total Notifications</span>
+            </div>
+        </div>
+
+        <div class="stat-pill-card">
+            <div class="stat-pill-icon unread">
+                <i class="fa-solid fa-envelope-open-text"></i>
+            </div>
+            <div>
+                <span class="stat-pill-num">{{ unread_list | length }}</span>
+                <span class="stat-pill-label">Unread Updates</span>
+            </div>
+        </div>
+
+        <div class="stat-pill-card">
+            <div class="stat-pill-icon read">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <span class="stat-pill-num">{{ (notifications | length) - (unread_list | length) }}</span>
+                <span class="stat-pill-label">Acknowledged</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Notification Stream -->
+    <div class="notifications-container">
+        {% if notifications %}
+            <div class="notifications-feed">
+                {% for n in notifications %}
+                <div class="notification-item reveal-up {% if not n.is_read %}unread{% endif %}">
+                    <div class="notification-status-icon {% if not n.is_read %}icon-unread{% else %}icon-read{% endif %}">
+                        {% if 'resolved' in n.message | lower %}
+                            <i class="fa-solid fa-circle-check"></i>
+                        {% elif 'in progress' in n.message | lower or 'assigned' in n.message | lower %}
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        {% elif 'rejected' in n.message | lower %}
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        {% else %}
+                            <i class="fa-solid fa-bell"></i>
+                        {% endif %}
+                    </div>
+
+                    <div class="notification-body">
+                        <div class="notification-header-row">
+                            <div class="notification-category-pill">
+                                {% if 'resolved' in n.message | lower %}
+                                    <span class="status-chip success">Resolved</span>
+                                {% elif 'in progress' in n.message | lower %}
+                                    <span class="status-chip progress">In Progress</span>
+                                {% elif 'rejected' in n.message | lower %}
+                                    <span class="status-chip danger">Rejected</span>
+                                {% else %}
+                                    <span class="status-chip neutral">System Alert</span>
+                                {% endif %}
+
+                                {% if not n.is_read %}
+                                    <span class="new-dot-badge">New</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="notification-time">
+                                <i class="fa-regular fa-clock"></i>
+                                <span>{{ n.created_at }}</span>
+                            </div>
+                        </div>
+
+                        <p class="notification-message">{{ n.message }}</p>
+
+                        <div class="notification-footer">
+                            {% if not n.is_read %}
+                            <form method="post" action="{{ url_for('notification_read', id=n.id) }}" class="inline-form">
+                                <button type="submit" class="btn-read-single">
+                                    <i class="fa-solid fa-check"></i>
+                                    <span>Mark as Read</span>
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="badge-read-confirmed">
+                                <i class="fa-solid fa-check-double"></i> Read
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="notifications-empty">
+                <div class="empty-icon-wrap">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="empty-sparkle"><i class="fa-solid fa-sparkles"></i></span>
+                </div>
+                <h3>All Caught Up!</h3>
+                <p>You don't have any notifications or pending alerts. When the administration updates your complaints, updates will appear here in real-time.</p>
+                <a href="{{ url_for('dashboard') }}" class="btn-empty-action">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Back to Dashboard</span>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/deepthi/notifications.js') }}"></script>

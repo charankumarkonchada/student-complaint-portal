@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}Common Issues Management - IntelliHostel Admin{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/charan/manage_complaints.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="manage-page">
+    <!-- Header Banner -->
+    <div class="manage-header">
+        <div class="manage-heading">
+            <div class="manage-heading-icon" style="background: linear-gradient(135deg, #0f766e, #0d9488);">
+                <i class="fa-solid fa-users-gear"></i>
+            </div>
+            <div>
+                <h1>Common & Shared Issues</h1>
+                <p>Manage hostel-wide maintenance incidents affecting multiple students with single-action updates</p>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCommonIssueModal" style="background: linear-gradient(135deg, #ff5733, #ff7847); border: none; border-radius: 12px; font-weight: 700; padding: 10px 18px;">
+                <i class="fa-solid fa-plus me-1"></i> Create Master Issue
+            </button>
+            <a href="{{ url_for('admin_dashboard') }}" class="manage-back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Scalability Overview Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm p-3 rounded-4 bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="small text-muted fw-bold text-uppercase">Total Issues</span>
+                    <i class="fa-solid fa-layer-group text-primary fs-5"></i>
+                </div>
+                <div class="fs-2 fw-bold text-dark mt-2">{{ total_issues }}</div>
+                <small class="text-muted">Master campus incidents</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm p-3 rounded-4 bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="small text-muted fw-bold text-uppercase">Active Issues</span>
+                    <i class="fa-solid fa-spinner text-warning fs-5"></i>
+                </div>
+                <div class="fs-2 fw-bold text-warning mt-2">{{ active_issues }}</div>
+                <small class="text-muted">Currently undergoing repairs</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm p-3 rounded-4 bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="small text-muted fw-bold text-uppercase">Resolved</span>
+                    <i class="fa-solid fa-circle-check text-success fs-5"></i>
+                </div>
+                <div class="fs-2 fw-bold text-success mt-2">{{ resolved_issues }}</div>
+                <small class="text-muted">Completed campus fixes</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm p-3 rounded-4 common-issue-spotlight-card" style="border: 1px solid #ccfbf1 !important;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="small fw-bold text-uppercase text-teal">Affected Students</span>
+                    <i class="fa-solid fa-users fs-5 text-teal"></i>
+                </div>
+                <div class="fs-2 fw-bold mt-2 text-teal">{{ total_affected }}</div>
+                <small class="text-teal">Synchronized tickets</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="manage-filter-card mb-4">
+        <form method="GET" action="{{ url_for('common_issues.list_common_issues') }}" class="row g-2 align-items-end">
+            <!-- Search -->
+            <div class="col-md-4">
+                <label class="form-label small">Search Common Issues</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0 ps-0" name="search"
+                        value="{{ request.args.get('search', '') }}" placeholder="Search title, hostel, or details...">
+                </div>
+            </div>
+
+            <!-- Hostel Filter -->
+            <div class="col-6 col-md-2">
+                <label class="form-label small">Hostel</label>
+                <select class="form-select" name="hostel">
+                    <option value="">All Hostels</option>
+                    {% for h in hostels %}
+                        <option value="{{ h }}" {% if request.args.get('hostel') == h %}selected{% endif %}>{{ h }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="col-6 col-md-2">
+                <label class="form-label small">Category</label>
+                <select class="form-select" name="category">
+                    <option value="">All Categories</option>
+                    {% for c in categories %}
+                        <option value="{{ c }}" {% if request.args.get('category') == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="col-6 col-md-2">
+                <label class="form-label small">Status</label>
+                <select class="form-select" name="status">
+                    <option value="">All Statuses</option>
+                    {% for s in ['Pending', 'In Progress', 'Resolved'] %}
+                        <option value="{{ s }}" {% if request.args.get('status') == s %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Submit -->
+            <div class="col-6 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #ff5733, #ff7847); border: none;">
+                    Filter
+                </button>
+                {% if request.args.get('search') or request.args.get('status') or request.args.get('hostel') or request.args.get('category') %}
+                    <a href="{{ url_for('common_issues.list_common_issues') }}" class="btn btn-outline-secondary" title="Reset Filters">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Common Issues Data Table -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="fa-solid fa-list-check me-2 text-primary"></i> Master Common Issues
+                </h5>
+                <span class="badge text-bg-light border px-3 py-2">
+                    {{ issues|length }} issues recorded
+                </span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 70px;">ID</th>
+                            <th>Issue Title & Details</th>
+                            <th>Hostel Location</th>
+                            <th>Category</th>
+                            <th>Affected Students</th>
+                            <th>Status</th>
+                            <th>Assigned Staff</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for issue in issues %}
+                        <tr>
+                            <td>
+                                <span class="fw-bold text-teal">#{{ issue.id }}</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">{{ issue.title }}</div>
+                                {% if issue.admin_remarks %}
+                                    <small class="text-muted d-block text-truncate" style="max-width: 320px;">
+                                        <i class="fa-solid fa-comment-dots me-1 text-primary"></i> {{ issue.admin_remarks }}
+                                    </small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge text-bg-light border">
+                                    <i class="fa-solid fa-building me-1"></i> {{ issue.hostel }}
+                                </span>
+                                {% if issue.location_details %}
+                                    <small class="text-muted d-block">{{ issue.location_details }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary-subtle text-secondary">{{ issue.category }}</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-teal px-3 py-1" style="font-size: 0.85rem;">
+                                    <i class="fa-solid fa-users me-1"></i> <strong>{{ issue.affected_count }}</strong>
+                                </span>
+                            </td>
+                            <td>
+                                {% if issue.status == 'Pending' %}
+                                    <span class="badge badge-pending">Pending</span>
+                                {% elif issue.status == 'In Progress' %}
+                                    <span class="badge badge-progress">In Progress</span>
+                                {% else %}
+                                    <span class="badge badge-resolved">Resolved</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ issue.assigned_to or 'Unassigned' }}</small>
+                            </td>
+                            <td style="text-align: right;">
+                                <a href="{{ url_for('common_issues.view_common_issue', id=issue.id) }}"
+                                   class="btn btn-sm btn-outline-primary" style="border-radius: 10px; font-weight: 700;">
+                                    <i class="fa-solid fa-pen-to-square me-1"></i> View & Update
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <div class="mb-2"><i class="fa-solid fa-folder-open fs-2 text-muted"></i></div>
+                                No common issues found matching the criteria.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Create Master Common Issue -->
+<div class="modal fade" id="createCommonIssueModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom p-4">
+                <h5 class="modal-title fw-bold" id="createModalLabel">
+                    <i class="fa-solid fa-circle-plus me-2 text-primary"></i> Create Master Common Issue
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('common_issues.create_new_common_issue') }}">
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold small">Issue Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="title" placeholder="e.g. Water Supply Outage in Hostel Block A" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">Priority</label>
+                            <select class="form-select" name="priority">
+                                <option value="High">High</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Hostel Location <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="hostel" placeholder="e.g. Hostel A or Kaveri Bhavan" required>
+                            <small class="text-muted" style="font-size: 0.75rem;">Strictly bounds matching student complaints to this hostel.</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Category <span class="text-danger">*</span></label>
+                            <select class="form-select" name="category" required>
+                                <option value="Plumbing">Plumbing</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="Carpentry">Carpentry</option>
+                                <option value="Internet / Wi-Fi">Internet / Wi-Fi</option>
+                                <option value="Cleanliness">Cleanliness</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Specific Location Details</label>
+                            <input type="text" class="form-control" name="location_details" placeholder="e.g. All Wings / 2nd and 3rd Floors">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Description</label>
+                            <textarea class="form-control" name="description" rows="3" placeholder="Explain the root problem and context..."></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Assigned Maintenance Staff</label>
+                            <input type="text" class="form-control" name="assigned_to" placeholder="e.g. Campus Plumbing Supervisor">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Initial Remarks</label>
+                            <input type="text" class="form-control" name="admin_remarks" placeholder="e.g. Maintenance crew dispatched">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top p-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #ff5733, #ff7847); border: none; font-weight: 700;">
+                        Create Master Issue
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,12 +1,5 @@
 import io
 from flask import Blueprint, redirect, url_for, send_file
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import Paragraph
-from reportlab.lib.enums import TA_CENTER
-from reportlab.lib import colors
-from openpyxl import Workbook
 
 import config
 from database.db import get_db_connection
@@ -28,7 +21,12 @@ def export_pdf():
         ORDER BY complaints.created_at DESC
         """
     ).fetchall()
-    conn.close()
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.platypus import Paragraph
+    from reportlab.lib.enums import TA_CENTER
+    from reportlab.lib import colors
 
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=A4)
@@ -106,6 +104,8 @@ def export_excel():
         """
     ).fetchall()
     conn.close()
+
+    from openpyxl import Workbook
 
     wb = Workbook()
     ws = wb.active

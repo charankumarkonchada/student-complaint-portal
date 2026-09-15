@@ -5,6 +5,7 @@ from services.auth_service import student_required
 complaint_history_bp = Blueprint("complaint_history", __name__)
 
 @complaint_history_bp.route("/complaints")
+@complaint_history_bp.route("/complaint_history")
 def complaints():
     if not student_required():
         return redirect(url_for("login"))

@@ -1,211 +1,196 @@
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/rushmitha/register.css') }}">
-{% endblock %}
 {% extends "base.html" %}
 
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-{% endblock %}
-
-{% block title %}Register - Hostel Complaint Portal{% endblock %}
+{% block title %}Student Registration - Hostel Complaint Portal{% endblock %}
 
 {% block favicon %}
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-register.svg') }}">
 {% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rushmitha/register.css') }}">
+{% endblock %}
+
 {% block content %}
+<div class="register-page">
+    <div class="register-card">
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-7 col-md-9">
+        <div class="register-header">
+            <div class="register-icon">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h1>Student Registration</h1>
+            <p>Create your RGUKT student account to access hostel maintenance services</p>
+        </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4 p-md-5">
+        <div class="register-body">
+            <form method="POST" action="{{ url_for('register') }}" onsubmit="return validateRegistration()">
+                <div class="row g-3">
 
-                    <div class="text-center mb-4">
-                        <h2 class="fw-bold">Student Registration</h2>
-                        <p class="text-muted">
-                            Register using your RGUKT Ongole ID number
-                        </p>
+                    <!-- Full Name -->
+                    <div class="col-md-6 form-group-reg">
+                        <label class="form-label-reg" for="name">
+                            Full Name <span class="req-star">*</span>
+                        </label>
+                        <div class="input-wrapper-reg">
+                            <i class="fa-solid fa-user input-icon-reg"></i>
+                            <input
+                                type="text"
+                                class="input-reg"
+                                id="name"
+                                name="name"
+                                placeholder="Enter your full name"
+                                required>
+                        </div>
                     </div>
 
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }} alert-dismissible fade show">
-                                    {{ message }}
-                                    <button type="button"
-                                            class="btn-close"
-                                            data-bs-dismiss="alert"></button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
-
-                    <form method="POST"
-                          action="{{ url_for('register') }}"
-                          onsubmit="return validateRegistration()">
-
-                        <div class="mb-3">
-                            <label for="name" class="form-label fw-semibold">
-                                Full Name
-                            </label>
-
-                            <input type="text"
-                                   class="form-control"
-                                   id="name"
-                                   name="name"
-                                   placeholder="Enter your full name"
-                                   required>
+                    <!-- ID Number -->
+                    <div class="col-md-6 form-group-reg">
+                        <label class="form-label-reg" for="id_no">
+                            University ID No. <span class="req-star">*</span>
+                        </label>
+                        <div class="input-wrapper-reg">
+                            <i class="fa-solid fa-id-card input-icon-reg"></i>
+                            <input
+                                type="text"
+                                class="input-reg"
+                                id="id_no"
+                                name="id_no"
+                                placeholder="e.g. OXXXXXX, NXXXXXX, RXXXXXX, SXXXXXX"
+                                maxlength="7"
+                                minlength="7"
+                                pattern="[ONRSonrs][0-9]{6}"
+                                style="text-transform: uppercase;"
+                                required>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="id_no" class="form-label fw-semibold">
-                                ID No.
-                            </label>
-
-                            <input type="text"
-                                   class="form-control"
-                                   id="id_no"
-                                   name="id_no"
-                                   placeholder="Example: OXXXXXX, NXXXXXX, RXXXXXX, SXXXXXX"
-                                   maxlength="7"
-                                   minlength="7"
-                                   pattern="[ONRSonrs][0-9]{6}"
-                                   title="ID No. must start with O, N, R, or S followed by exactly 6 digits"
-                                   style="text-transform: uppercase;"
-                                   required>
-
-                            <div class="form-text">
-                                Enter your RGUKT ID in the format:
-                                <strong>Oxxxxxx, Nxxxxxx, Rxxxxxx, or Sxxxxxx</strong>
-                            </div>
-
-                            <div id="idError"
-                                 class="text-danger small mt-1"
-                                 style="display:none;">
-                                ID No. must start with O, N, R, or S followed by exactly 6 digits.
-                            </div>
+                        <div class="reg-help-text">Format: O, N, R, or S followed by 6 digits.</div>
+                        <div id="idError" class="text-danger small mt-1" style="display:none;">
+                            ID must start with O, N, R, or S followed by 6 digits.
                         </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-semibold">
-                                College Email
-                            </label>
-
-                            <input type="email"
-                                   class="form-control"
-                                   id="email"
-                                   name="email"
-                                   placeholder="Example: oxxxxxx@rguktong.ac.in"
-                                   required>
-
-                            <div class="form-text">
-                                Use your RGUKT Ongole college email.
-                            </div>
+                    <!-- College Email -->
+                    <div class="col-12 form-group-reg">
+                        <label class="form-label-reg" for="email">
+                            College Email Address <span class="req-star">*</span>
+                        </label>
+                        <div class="input-wrapper-reg">
+                            <i class="fa-solid fa-envelope input-icon-reg"></i>
+                            <input
+                                type="email"
+                                class="input-reg"
+                                id="email"
+                                name="email"
+                                placeholder="e.g. oxxxxxx@rguktong.ac.in"
+                                required>
                         </div>
+                        <div class="reg-help-text">Must match your university email address.</div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="phone" class="form-label fw-semibold">
-                                Phone Number
-                            </label>
-
-                            <input type="tel"
-                                   class="form-control"
-                                   id="phone"
-                                   name="phone"
-                                   placeholder="Enter your phone number">
+                    <!-- Phone Number -->
+                    <div class="col-md-4 form-group-reg">
+                        <label class="form-label-reg" for="phone">Phone Number</label>
+                        <div class="input-wrapper-reg">
+                            <i class="fa-solid fa-phone input-icon-reg"></i>
+                            <input
+                                type="tel"
+                                class="input-reg"
+                                id="phone"
+                                name="phone"
+                                placeholder="10-digit mobile number">
                         </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="hostel" class="form-label fw-semibold">
-                                Hostel
-                            </label>
-
-                            <input type="text"
-                                   class="form-control"
-                                   id="hostel"
-                                   name="hostel"
-                                   placeholder="Enter your hostel">
+                    <!-- Hostel -->
+                    <div class="col-md-4 form-group-reg">
+                        <label class="form-label-reg" for="hostel">Hostel Wing / Block</label>
+                        <div class="input-wrapper-reg">
+                            <i class="fa-solid fa-hotel input-icon-reg"></i>
+                            <input
+                                type="text"
+                                class="input-reg"
+                                id="hostel"
+                                name="hostel"
+                                placeholder="e.g. KKR Boys / BH-1">
                         </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="room" class="form-label fw-semibold">
-                                Room Number
-                            </label>
-
-                            <input type="text"
-                                   class="form-control"
-                                   id="room"
-                                   name="room"
-                                   placeholder="Enter your room number">
+                    <!-- Room Number -->
+                    <div class="col-md-4 form-group-reg">
+                        <label class="form-label-reg" for="room">Room Number</label>
+                        <div class="input-wrapper-reg">
+                            <i class="fa-solid fa-door-closed input-icon-reg"></i>
+                            <input
+                                type="text"
+                                class="input-reg"
+                                id="room"
+                                name="room"
+                                placeholder="e.g. 204">
                         </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-semibold">
-                                Password
-                            </label>
-
-                            <input type="password"
-                                   class="form-control"
-                                   id="password"
-                                   name="password"
-                                   placeholder="Create a password"
-                                   minlength="6"
-                                   required>
+                    <!-- Password -->
+                    <div class="col-md-6 form-group-reg">
+                        <label class="form-label-reg" for="password">
+                            Password <span class="req-star">*</span>
+                        </label>
+                        <div class="input-wrapper-reg">
+                            <i class="fa-solid fa-lock input-icon-reg"></i>
+                            <input
+                                type="password"
+                                class="input-reg"
+                                id="password"
+                                name="password"
+                                placeholder="Min. 6 characters"
+                                minlength="6"
+                                required>
+                            <button type="button" class="password-toggle" id="passwordToggle" data-target="password" aria-controls="password" aria-label="Show password" aria-pressed="false" title="Show password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
                         </div>
+                    </div>
 
-                        <div class="mb-4">
-                            <label for="confirm_password"
-                                   class="form-label fw-semibold">
-                                Confirm Password
-                            </label>
-
-                            <input type="password"
-                                   class="form-control"
-                                   id="confirm_password"
-                                   name="confirm_password"
-                                   placeholder="Confirm your password"
-                                   minlength="6"
-                                   required>
-
-                            <div id="passwordError"
-                                 class="text-danger small mt-1"
-                                 style="display:none;">
-                                Passwords do not match.
-                            </div>
+                    <!-- Confirm Password -->
+                    <div class="col-md-6 form-group-reg">
+                        <label class="form-label-reg" for="confirm_password">
+                            Confirm Password <span class="req-star">*</span>
+                        </label>
+                        <div class="input-wrapper-reg">
+                            <i class="fa-solid fa-lock-open input-icon-reg"></i>
+                            <input
+                                type="password"
+                                class="input-reg"
+                                id="confirm_password"
+                                name="confirm_password"
+                                placeholder="Re-enter password"
+                                minlength="6"
+                                required>
+                            <button type="button" class="password-toggle" id="confirmPasswordToggle" data-target="confirm_password" aria-controls="confirm_password" aria-label="Show password" aria-pressed="false" title="Show password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
                         </div>
-
-                        <button type="submit"
-                                class="btn btn-primary w-100 py-2">
-                            Register
-                        </button>
-
-                    </form>
-
-                    <div class="text-center mt-4">
-                        <span class="text-muted">
-                            Already have an account?
-                        </span>
-
-                        <a href="{{ url_for('login') }}"
-                           class="text-decoration-none fw-semibold">
-                            Login
-                        </a>
+                        <div id="passwordError" class="text-danger small mt-1" style="display:none;">
+                            Passwords do not match.
+                        </div>
                     </div>
 
                 </div>
-            </div>
 
+                <button type="submit" class="register-btn">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Complete Registration</span>
+                </button>
+            </form>
+
+            <div class="register-footer-text">
+                <span>Already registered? </span>
+                <a href="{{ url_for('login') }}">Sign In to Your Account</a>
+            </div>
         </div>
+
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
-{% endblock %}
-
-{% block extra_js %}
 <script src="{{ url_for('static', filename='js/rushmitha/register.js') }}"></script>
 {% endblock %}

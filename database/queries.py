@@ -31,22 +31,40 @@ def complaint_for_student(conn, complaint_id):
     ).fetchone()
 
 def unread_count():
-    """Calculates unread notifications count for the active student session."""
+    """Calculates unread notifications count for the active student session (both individual and common)."""
     if "student_id" not in session:
         return 0
 
     try:
         conn = get_db_connection()
-        value = conn.execute(
+        sid = session["student_id"]
+        
+        # Count unread individual notifications
+        ind_row = conn.execute(
             """
-            SELECT COUNT(*)
+            SELECT COUNT(*) AS total
             FROM notifications
             WHERE student_id=?
             AND is_read=0
             """,
-            (session["student_id"],)
-        ).fetchone()[0]
+            (sid,)
+        ).fetchone()
+        ind_count = ind_row["total"] if ind_row else 0
+
+        # Count unread common issue notifications
+        common_row = conn.execute(
+            """
+            SELECT COUNT(DISTINCT cin.id) AS total
+            FROM common_issue_notifications cin
+            JOIN complaints c ON c.common_issue_id = cin.common_issue_id
+            LEFT JOIN notification_reads nr ON nr.common_issue_notification_id = cin.id AND nr.student_id = ?
+            WHERE c.student_id = ? AND nr.id IS NULL
+            """,
+            (sid, sid)
+        ).fetchone()
+        common_count = common_row["total"] if common_row else 0
+
         conn.close()
-        return value
+        return ind_count + common_count
     except Exception:
         return 0

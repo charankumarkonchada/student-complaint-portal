@@ -1,158 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Page Not Found | IntelliHostel{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/charan/error_404.css') }}">
 {% endblock %}
-{% extends "base.html" %}
-
-
-{% block title %}
-404 - Page Not Found
-{% endblock %}
-
 
 {% block content %}
 <div class="error-page">
-
-
     <div class="error-card">
+        <!-- Floating glow circle -->
+        <div class="error-glow-orb"></div>
 
-
-
-        <div class="error-icon-wrapper">
-
-            <i
-                class="fa-solid fa-circle-xmark"
-            ></i>
-
+        <div class="error-badge">
+            <i class="fa-solid fa-compass"></i>
+            <span>Error 404 &bull; Page Not Found</span>
         </div>
 
+        <div class="error-display-num">404</div>
 
-        <div class="error-tag">
-
-            <i
-                class="fa-solid fa-triangle-exclamation"
-            ></i>
-
-            PAGE NOT FOUND
-
-        </div>
-
-
-
-        <h1 class="error-number">
-
-            404
-
-        </h1>
-
-
-
-
-        <h2 class="error-title">
-
-            Oops! Page Not Found
-
-        </h2>
-
-
+        <h1 class="error-title">Looking for something that isn't here?</h1>
+        
         <p class="error-description">
-
-            Sorry! The page you are looking for doesn't exist,
-            may have been moved, or the URL may be incorrect.
-
-            <br>
-
-            Don't worry — you can safely return to the
-            Hostel Portal.
-
+            The page or hostel record you requested doesn't exist, may have been relocated, or the link may be mistyped.
         </p>
 
-
         <div class="error-actions">
-
-
-            <a
-                href="{{ url_for('home') }}"
-                class="error-btn home-btn"
-            >
-
-                <i
-                    class="fa-solid fa-house"
-                ></i>
-
-                Back to Home
-
+            <a href="{{ url_for('home') }}" class="btn-error-primary">
+                <i class="fa-solid fa-house"></i>
+                <span>Return to Home</span>
             </a>
-
-
-
-            <button
-                onclick="history.back()"
-                class="error-btn back-btn"
-            >
-
-                <i
-                    class="fa-solid fa-arrow-left"
-                ></i>
-
-                Go Back
-
+            {% if session.get('student_id') %}
+            <a href="{{ url_for('dashboard') }}" class="btn-error-secondary">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Student Dashboard</span>
+            </a>
+            {% elif session.get('admin_id') %}
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-error-secondary">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Admin Console</span>
+            </a>
+            {% else %}
+            <button onclick="history.back()" class="btn-error-secondary">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Go Back</span>
             </button>
-
-
+            {% endif %}
         </div>
 
-
-        <div class="error-divider">
-
-            <span>
-                Quick Help
-            </span>
-
+        <div class="error-quick-links">
+            <span class="quick-links-title">Quick Destinations</span>
+            <div class="quick-chips">
+                <a href="{{ url_for('home') }}" class="chip-item">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+                <a href="{{ url_for('login') }}" class="chip-item">
+                    <i class="fa-solid fa-right-to-bracket"></i> Student Login
+                </a>
+                <a href="{{ url_for('admin_login') }}" class="chip-item">
+                    <i class="fa-solid fa-user-tie"></i> Admin Login
+                </a>
+            </div>
         </div>
-
-
-        <div class="error-help">
-
-
-            <div class="help-item">
-
-                <i
-                    class="fa-solid fa-house"
-                ></i>
-
-                Return Home
-
-            </div>
-
-
-            <div class="help-item">
-
-                <i
-                    class="fa-solid fa-arrow-left"
-                ></i>
-
-                Previous Page
-
-            </div>
-
-
-            <div class="help-item">
-
-                <i
-                    class="fa-solid fa-circle-question"
-                ></i>
-
-                Check URL
-
-            </div>
-
-
-        </div>
-
-
     </div>
-
 </div>
-
-
 {% endblock %}

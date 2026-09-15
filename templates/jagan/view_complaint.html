@@ -1,275 +1,237 @@
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/jagan/view_complaint.css') }}">
-{% endblock %}
 {% extends "base.html" %}
 
-{% block title %}Complaint #{{ complaint.id }}{% endblock %}
+{% block title %}Complaint #{{ complaint.id }} - Hostel Complaint Portal{% endblock %}
+
 {% block favicon %}
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-report.svg') }}">
 {% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jagan/view_complaint.css') }}">
+{% endblock %}
+
 {% block content %}
+<div class="view-complaint-page">
 
-<div class="container py-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Header Banner -->
+    <div class="view-header reveal-up">
         <div>
-            <div class="text-muted small">
-                Complaint #{{ complaint.id }}
+            <div class="view-meta-bar mb-2">
+                <span class="badge text-bg-light">#{{ complaint.id }}</span>
+                <span>&bull;</span>
+                <span>Submitted on {{ complaint.created_at }}</span>
+                <span>&bull;</span>
+                <span class="badge text-bg-light">{{ complaint.category }}</span>
             </div>
-            <h2 class="fw-bold">{{ complaint.title }}</h2>
+            <h1 class="view-header-title">{{ complaint.title }}</h1>
         </div>
 
-        <a href="{{ url_for('complaints') }}" class="btn btn-outline-secondary">
-            Back
-        </a>
-    </div>
+        <div class="d-flex align-items-center gap-2">
+            {% if complaint.status == 'Pending' %}
+                <span class="badge badge-pending fs-6 py-2 px-3">
+                    <i class="fa-solid fa-clock me-1"></i> Pending
+                </span>
+            {% elif complaint.status == 'In Progress' %}
+                <span class="badge badge-progress fs-6 py-2 px-3">
+                    <i class="fa-solid fa-spinner fa-spin me-1"></i> In Progress
+                </span>
+            {% else %}
+                <span class="badge badge-resolved fs-6 py-2 px-3">
+                    <i class="fa-solid fa-circle-check me-1"></i> Resolved
+                </span>
+            {% endif %}
 
+            <a href="{{ url_for('complaints') }}" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back
+            </a>
+        </div>
+    </div>
 
     <div class="row g-4">
 
-        <div class="col-lg-7">
-
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body">
-
-                    <h5 class="fw-bold mb-3">
-                        Complaint Details
-                    </h5>
-
-                    <p>{{ complaint.description }}</p>
-
-
-                    <div class="row g-3">
-
-                        <div class="col-md-4">
-                            <small class="text-muted">
-                                Category
-                            </small>
-
-                            <div class="fw-semibold">
-                                {{ complaint.category }}
+        <!-- Left Column: Details & Attachment -->
+        <div class="col-lg-7 reveal-left">
+            <!-- Common Issue Association (if linked) -->
+            {% if common_issue %}
+                <div class="alert border shadow-sm p-4 rounded-4 mb-4 common-issue-alert">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center common-issue-icon-box" style="width: 46px; height: 46px; flex-shrink: 0;">
+                            <i class="fa-solid fa-users fs-5"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                                <span class="badge common-issue-badge-count" style="padding: 6px 12px; font-size: 0.75rem;">
+                                    <i class="fa-solid fa-link me-1"></i> Common Issue #{{ common_issue.id }}
+                                </span>
+                                <span class="badge text-bg-light border px-3 py-1">
+                                    <i class="fa-solid fa-user-group me-1 text-primary"></i> <strong>{{ common_issue.affected_count }}</strong> Affected Students in {{ common_issue.hostel }}
+                                </span>
                             </div>
+                            <h5 class="fw-bold mb-1 common-issue-alert-title">{{ common_issue.title }}</h5>
+                            <p class="small mb-2 text-muted">
+                                This complaint is linked to an institution-wide master issue in <strong>{{ common_issue.hostel }}</strong>. Single administrative actions automatically resolve your report.
+                            </p>
+                            {% if common_issue.admin_remarks %}
+                                <div class="p-2 px-3 rounded-3 mt-2 common-issue-remark-box">
+                                    <small class="text-muted d-block fw-bold" style="font-size: 0.72rem;">LATEST ADMINISTRATION REMARK:</small>
+                                    <span class="small fw-semibold common-issue-remark-text">{{ common_issue.admin_remarks }}</span>
+                                </div>
+                            {% endif %}
                         </div>
-
-
-                        <div class="col-md-4">
-                            <small class="text-muted">
-                                Priority
-                            </small>
-
-                            <div class="fw-semibold">
-                                {{ complaint.priority }}
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-4">
-                            <small class="text-muted">
-                                Status
-                            </small>
-
-                            <div class="fw-semibold">
-                                {{ complaint.status }}
-                            </div>
-                        </div>
-
                     </div>
-
-
-                    {% if complaint.image %}
-
-                    <div class="mt-4">
-
-                        <h6 class="fw-bold mb-3">
-                            Attached Image
-                        </h6>
-
-                        <div class="border rounded p-2 text-center">
-
-                            <img
-                                src="{{ complaint.image }}"
-                                alt="Complaint attachment"
-                                class="img-fluid rounded"
-                                style="max-height:500px; object-fit:contain;"
-                            >
-
-                        </div>
-
-                        <div class="mt-2">
-                            <a
-                                href="{{ complaint.image }}"
-                                target="_blank"
-                                class="btn btn-sm btn-outline-primary"
-                            >
-                                Open Image
-                            </a>
-                        </div>
-
-                    </div>
-
-                    {% else %}
-
-                    <div class="alert alert-secondary mt-4">
-                        No image attached to this complaint.
-                    </div>
-
-                    {% endif %}
-
                 </div>
+            {% endif %}
+
+            <div class="detail-card">
+                <div class="detail-card-title">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>Issue Description</span>
+                </div>
+
+                <div class="complaint-full-desc">{{ complaint.description }}</div>
+
+                <!-- Meta Stats Pill Grid -->
+                <div class="meta-stats-grid">
+                    <div class="meta-stat-item">
+                        <small>Category</small>
+                        <div class="val">{{ complaint.category }}</div>
+                    </div>
+                    <div class="meta-stat-item">
+                        <small>Priority</small>
+                        <div class="val">
+                            {% if complaint.priority == 'High' %}
+                                <span class="text-danger"><i class="fa-solid fa-circle-exclamation"></i> High</span>
+                            {% elif complaint.priority == 'Medium' %}
+                                <span class="text-warning"><i class="fa-solid fa-triangle-exclamation"></i> Medium</span>
+                            {% else %}
+                                <span class="text-secondary">Low</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="meta-stat-item">
+                        <small>Current Status</small>
+                        <div class="val">{{ complaint.status }}</div>
+                    </div>
+                </div>
+
+                <!-- Image Attachment -->
+                {% if complaint.image %}
+                    <div class="mt-4">
+                        <div class="fw-bold mb-2 small text-muted text-uppercase">Attached Photo Evidence</div>
+                        <div class="attachment-frame">
+                            <img src="{{ complaint.image }}" alt="Complaint Photo Evidence" class="img-fluid">
+                            <div class="mt-3">
+                                <a href="{{ complaint.image }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open Original Image
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
 
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <h5 class="fw-bold mb-3">
-                        Status Timeline
-                    </h5>
-
-
-                    {% for h in history %}
-
-                    <div class="d-flex gap-3 border-start ps-3 py-2">
-
-                        <div>
-                            <strong>
-                                {{ h.status }}
-                            </strong>
-
-                            <div class="text-muted small">
-                                {{ h.date }}
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {% else %}
-
-                    <p class="text-muted">
-                        No history yet.
-                    </p>
-
-                    {% endfor %}
-
+            <!-- Status Timeline -->
+            <div class="detail-card">
+                <div class="detail-card-title">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Status History Timeline</span>
                 </div>
 
+                <div class="timeline-list">
+                    {% for h in history %}
+                        <div class="timeline-entry">
+                            <div class="timeline-dot" {% if h.is_common %}style="background: #0f766e; box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.2);"{% endif %}></div>
+                            <div class="timeline-title d-flex align-items-center gap-2">
+                                <span>{{ h.status }}</span>
+                                {% if h.is_common %}
+                                    <span class="badge badge-teal" style="font-size: 0.65rem;">Master Issue Action</span>
+                                {% endif %}
+                            </div>
+                            {% if h.remarks %}
+                                <p class="small text-muted mb-1 mt-1">{{ h.remarks }}</p>
+                            {% endif %}
+                            <div class="timeline-time">{{ h.date }}{% if h.updated_by %} &bull; {{ h.updated_by }}{% endif %}</div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted small mb-0">No timeline updates recorded yet.</p>
+                    {% endfor %}
+                </div>
             </div>
 
         </div>
 
+        <!-- Right Column: AI Intelligence & Duplicate Detection -->
+        <div class="col-lg-5 reveal-right">
 
-        <div class="col-lg-5">
-
-            <div class="card border-0 shadow-sm mb-4">
-
-                <div class="card-body">
-
-                    <h5 class="fw-bold">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        AI Intelligence
-                    </h5>
-
-
-                    <div class="row g-3 mt-1">
-
-                        <div class="col-6">
-
-                            <small class="text-muted">
-                                AI Category
-                            </small>
-
-                            <div class="fw-bold">
-                                {{ complaint.ai_category or '—' }}
-                            </div>
-
-                            <small>
-                                {{ complaint.ai_category_confidence or 0 }}% confidence
-                            </small>
-
-                        </div>
-
-
-                        <div class="col-6">
-
-                            <small class="text-muted">
-                                AI Priority
-                            </small>
-
-                            <div class="fw-bold">
-                                {{ complaint.ai_priority or '—' }}
-                            </div>
-
-                            <small>
-                                {{ complaint.ai_priority_confidence or 0 }}% confidence
-                            </small>
-
-                        </div>
-
-
-                        <div class="col-12">
-
-                            <small class="text-muted">
-                                Predicted resolution time
-                            </small>
-
-                            <div class="display-6 fw-bold">
-                                {{ complaint.ai_resolution_days or '—' }}
-
-                                <span class="fs-6">
-                                    days
-                                </span>
-                            </div>
-
-                        </div>
-
-                    </div>
-
+            <!-- AI Intelligence Card -->
+            <div class="ai-intelligence-card">
+                <div class="detail-card-title border-0 pb-0 mb-3">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI Engine Analysis</span>
                 </div>
 
+                <p class="small text-muted mb-4">Machine learning predictions generated at submission time.</p>
+
+                <!-- Predicted Category -->
+                <div class="ai-stat-box">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small>Predicted Category</small>
+                        <span class="badge text-bg-light">{{ complaint.ai_category_confidence or 0 }}% match</span>
+                    </div>
+                    <div class="ai-value">{{ complaint.ai_category or complaint.category }}</div>
+                    <div class="progress-mini">
+                        <div class="progress-mini-bar" style="width: {{ complaint.ai_category_confidence or 50 }}%;"></div>
+                    </div>
+                </div>
+
+                <!-- Predicted Priority -->
+                <div class="ai-stat-box">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small>Predicted Priority</small>
+                        <span class="badge text-bg-light">{{ complaint.ai_priority_confidence or 0 }}% match</span>
+                    </div>
+                    <div class="ai-value">{{ complaint.ai_priority or complaint.priority }}</div>
+                    <div class="progress-mini">
+                        <div class="progress-mini-bar" style="width: {{ complaint.ai_priority_confidence or 50 }}%;"></div>
+                    </div>
+                </div>
+
+                <!-- Predicted Resolution Days -->
+                <div class="ai-stat-box mb-0">
+                    <small>Estimated Resolution Turnaround</small>
+                    <div class="d-flex align-items-baseline gap-2">
+                        <span class="ai-value" style="font-size: 2rem;">{{ complaint.ai_resolution_days or '—' }}</span>
+                        <span class="text-muted fw-bold">days</span>
+                    </div>
+                    <small class="text-muted">Calculated via historical maintenance turnaround regression.</small>
+                </div>
             </div>
 
-
+            <!-- Duplicate Alert Banner (if applicable) -->
             {% if duplicate %}
-
-            <div class="alert alert-warning">
-
-                <strong>
-                    Possible duplicate detected
-                </strong>
-
-                <br>
-
-                Similar to complaint #{{ duplicate.id }}
-
-                with {{ complaint.ai_duplicate_similarity }}% similarity.
-
-                Status: {{ duplicate.status }}.
-
-            </div>
-
+                <div class="alert alert-warning border shadow-sm p-3 rounded-4 mb-4">
+                    <div class="d-flex gap-2 align-items-start">
+                        <i class="fa-solid fa-triangle-exclamation text-warning mt-1 fs-5"></i>
+                        <div>
+                            <strong class="d-block mb-1">Possible Duplicate Report Detected</strong>
+                            <p class="small mb-2">
+                                Matches Complaint <strong>#{{ duplicate.id }}</strong> with {{ complaint.ai_duplicate_similarity }}% similarity.
+                            </p>
+                            <span class="badge text-bg-secondary">Status: {{ duplicate.status }}</span>
+                        </div>
+                    </div>
+                </div>
             {% endif %}
 
-
+            <!-- Admin Remarks (if applicable) -->
             {% if complaint.remarks %}
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <h5 class="fw-bold">
-                        Admin Remarks
-                    </h5>
-
-                    <p class="mb-0">
-                        {{ complaint.remarks }}
-                    </p>
-
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>Administrator Remarks</span>
+                    </div>
+                    <p class="mb-0 text-muted">{{ complaint.remarks }}</p>
                 </div>
-
-            </div>
-
             {% endif %}
 
         </div>
@@ -277,8 +239,8 @@
     </div>
 
 </div>
-
 {% endblock %}
-{% block extra_js %}
+
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/jagan/view_complaint.js') }}"></script>
 {% endblock %}

@@ -1,22 +1,204 @@
-/* AI Analytics Dashboard Styles - Owned by K. Charankumar */
-.analytics-metric-card {
-    border: none;
-    border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+/* ==========================================================================
+   IntelliHostel — AI Analytics & Decision Support Styles (Modern SaaS)
+   ========================================================================== */
+
+.analytics-page {
+    padding-top: 1rem;
+    padding-bottom: 3.5rem;
 }
 
-.chart-card {
-    border: none;
-    border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
-    padding: 10px;
+.analytics-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.75rem 2rem;
+    border-radius: var(--radius-2xl);
+    background: radial-gradient(circle at top left, rgba(255, 107, 74, 0.1) 0%, #ffffff 70%);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
 }
 
-.chart-card h5 {
-    font-size: 14px;
+.analytics-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.analytics-icon-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-xl);
+    background: var(--gradient-primary);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+    box-shadow: 0 8px 20px rgba(255, 107, 74, 0.25);
+    flex-shrink: 0;
+}
+
+.analytics-title-wrap h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    color: var(--text-heading);
+}
+
+.analytics-title-wrap p {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* 3 Insight Metric Cards */
+.insight-card {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    padding: 1.75rem 1.5rem;
+    box-shadow: var(--shadow-xs);
+    transition: all var(--transition-fast);
+    height: 100%;
+}
+
+.insight-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-border);
+}
+
+.insight-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.insight-lbl {
+    font-size: 0.82rem;
     font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 16px;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
+
+.insight-val {
+    font-family: var(--font-heading);
+    font-size: 2.35rem;
+    font-weight: 800;
+    color: var(--text-heading);
+    line-height: 1.1;
+    margin-bottom: 0.35rem;
+}
+
+.insight-unit {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #475569;
+    margin-left: 0.2rem;
+}
+
+.insight-sub {
+    font-size: 0.84rem;
+    color: #475569;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Chart Canvas Card */
+.chart-card {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-card);
+    height: 100%;
+}
+
+.chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.chart-card-title {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-card-title i {
+    color: var(--primary);
+}
+
+/* Dark Theme Overrides for AI Analytics */
+[data-theme="dark"] .analytics-header {
+    background: radial-gradient(circle at top left, rgba(255, 107, 74, 0.15) 0%, #111827 70%) !important;
+    border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .analytics-title-wrap h1 {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .analytics-title-wrap p {
+    color: #cbd5e1 !important;
+    font-weight: 500;
+}
+
+[data-theme="dark"] .analytics-header .btn-outline-secondary {
+    background: var(--bg-surface) !important;
+    color: var(--text-heading) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .analytics-header .btn-outline-secondary:hover {
+    background: var(--primary-light) !important;
+    color: var(--primary) !important;
+    border-color: var(--primary-border) !important;
+}
+
+[data-theme="dark"] .insight-card {
+    background: var(--bg-surface) !important;
+    border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .insight-val {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .insight-unit {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .insight-sub {
+    color: #cbd5e1 !important;
+    font-weight: 500;
+}
+
+[data-theme="dark"] .insight-lbl {
+    color: #94a3b8 !important;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .chart-card {
+    background: var(--bg-surface) !important;
+    border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .chart-card-title {
+    color: #f8fafc !important;
+}
+

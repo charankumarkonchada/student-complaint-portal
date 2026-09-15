@@ -138,7 +138,7 @@ Open your browser and navigate to:
 
 1. **Home Page:** Access `/`
 2. **Student Registration:** Access `/register`
-   - Test Student IDs: `O210894`, `N210894`, `R210894`, `S210894`
+   - Test Student IDs: `OXXXXXX`, `NXXXXXX`, `RXXXXXX`, `SXXXXXX`
    - College Email: must match `<id>@rguktong.ac.in`
 3. **Student Login:** Access `/login`
 4. **Student Dashboard:** Access `/dashboard`

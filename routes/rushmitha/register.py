@@ -24,7 +24,7 @@ def register():
             return redirect(url_for("register"))
 
         if not is_valid_id(id_no):
-            flash("Invalid ID Number. Must start with O, N, R, or S followed by 6 digits (e.g., O210894, N210894, R210894, S210894).", "danger")
+            flash("Invalid ID Number. Must start with O, N, R, or S followed by 6 digits (e.g., OXXXXXX, NXXXXXX, RXXXXXX, SXXXXXX).", "danger")
             return redirect(url_for("register"))
 
         if not is_college_email(email):

@@ -1,375 +1,197 @@
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/charan/update_status.css') }}">
-{% endblock %}
 {% extends "base.html" %}
 
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
-{% endblock %}
-
-{% block title %}
-Update Complaint #{{ complaint.id }}
-{% endblock %}
+{% block title %}Update Complaint #{{ complaint.id }} - Admin Portal{% endblock %}
 
 {% block favicon %}
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-manage-complaints.svg') }}">
 {% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/charan/update_status.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="update-page">
 
+    <!-- Header Banner -->
     <div class="update-header">
-
         <div class="update-heading">
-
             <div class="update-heading-icon">
-
                 <i class="fa-solid fa-clipboard-check"></i>
-
             </div>
-
             <div>
-
-                <h1>
-                    Update Complaint
-                </h1>
-
-                <p>
-                    Review the complaint and update its current status
-                </p>
-
+                <h1>Update Complaint #{{ complaint.id }}</h1>
+                <p>Review complaint evidence, assign campus staff, and transition ticket status</p>
             </div>
-
         </div>
 
         <a href="{{ url_for('manage_complaints') }}" class="update-back">
-
             <i class="fa-solid fa-arrow-left"></i>
-
-            Back to Manage Complaints
-
+            <span>Back to All Complaints</span>
         </a>
-
     </div>
 
-    <div class="update-layout">
+    <div class="row g-4">
 
-        <div class="complaint-summary">
+        <!-- Left Column: Complaint Details & Timeline -->
+        <div class="col-lg-7">
 
-            <div class="summary-header">
-
-                <div class="summary-header-content">
-
-                    <div class="summary-header-icon">
-
-                        <i class="fa-solid fa-circle-info"></i>
-
-                    </div>
-
-                    <h3>
-                        Complaint Information
-                    </h3>
-
+            <div class="update-card">
+                <div class="update-card-title">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Ticket Overview</span>
                 </div>
 
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge text-bg-light">#{{ complaint.id }}</span>
+                    <span class="badge text-bg-light">{{ complaint.category }}</span>
+                    {% if complaint.priority == 'High' %}
+                        <span class="badge badge-priority-high">High Priority</span>
+                    {% elif complaint.priority == 'Medium' %}
+                        <span class="badge badge-priority-medium">Medium Priority</span>
+                    {% else %}
+                        <span class="badge badge-priority-low">Low Priority</span>
+                    {% endif %}
+                </div>
+
+                <h4 class="fw-bold text-dark mb-3">{{ complaint.title }}</h4>
+
+                <div class="p-3 bg-light rounded-3 mb-4">
+                    <div class="small text-muted fw-bold mb-1 text-uppercase">Student Description:</div>
+                    <div class="text-secondary" style="white-space: pre-line;">{{ complaint.description }}</div>
+                </div>
+
+                <div class="row g-3 small">
+                    <div class="col-sm-6">
+                        <span class="text-muted">Current Status:</span>
+                        <strong class="d-block">{{ complaint.status }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted">Assigned Technician:</span>
+                        <strong class="d-block">{{ complaint.assigned_to or 'Unassigned' }}</strong>
+                    </div>
+                    {% if complaint.ai_category %}
+                    <div class="col-sm-6">
+                        <span class="text-muted">AI Predicted Category:</span>
+                        <strong class="d-block">{{ complaint.ai_category }} ({{ complaint.ai_category_confidence or 0 }}%)</strong>
+                    </div>
+                    {% endif %}
+                    {% if complaint.ai_resolution_days %}
+                    <div class="col-sm-6">
+                        <span class="text-muted">AI Estimated Days:</span>
+                        <strong class="d-block">{{ complaint.ai_resolution_days }} days</strong>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if complaint.image %}
+                    <div class="mt-4 pt-3 border-top">
+                        <span class="small text-muted fw-bold d-block mb-2 text-uppercase">Photo Evidence:</span>
+                        <img src="{{ complaint.image }}" alt="Evidence" class="img-fluid rounded border" style="max-height: 280px; object-fit: contain;">
+                        <div class="mt-2">
+                            <a href="{{ complaint.image }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open Original Image
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
 
-            <div class="summary-body">
-
-                <div class="complaint-id-box">
-
-                    <span class="id-label">
-                        Complaint ID
-                    </span>
-
-                    <span class="id-value">
-                        #{{ complaint.id }}
-                    </span>
-
+            <!-- Status Transition History -->
+            <div class="update-card">
+                <div class="update-card-title">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Status History Audit Log</span>
                 </div>
 
-                <div class="summary-item">
-
-                    <div class="summary-item-icon">
-
-                        <i class="fa-solid fa-layer-group"></i>
-
-                    </div>
-
-                    <div>
-
-                        <span class="summary-item-label">
-                            Category
-                        </span>
-
-                        <span class="summary-item-value">
-                            {{ complaint.category }}
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="summary-item">
-
-                    <div class="summary-item-icon">
-
-                        <i class="fa-solid fa-heading"></i>
-
-                    </div>
-
-                    <div>
-
-                        <span class="summary-item-label">
-                            Complaint Title
-                        </span>
-
-                        <span class="summary-item-value">
-                            {{ complaint.title }}
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="current-status-box">
-
-                    <span class="current-status-label">
-                        Current Status
-                    </span>
-
-                    {% if complaint.status == "Pending" %}
-
-                    <span class="status-display status-pending">
-
-                        <span class="status-dot"></span>
-
-                        Pending
-
-                    </span>
-
-                    {% elif complaint.status == "In Progress" %}
-
-                    <span class="status-display status-progress">
-
-                        <span class="status-dot"></span>
-
-                        In Progress
-
-                    </span>
-
+                <div class="list-group list-group-flush">
+                    {% for h in history %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-light">
+                            <div>
+                                <span class="badge {% if h.status == 'Resolved' %}badge-resolved{% elif h.status == 'In Progress' %}badge-progress{% else %}badge-pending{% endif %} me-2">
+                                    {{ h.status }}
+                                </span>
+                                <span class="small text-dark">Status transitioned to {{ h.status }}</span>
+                            </div>
+                            <small class="text-muted">{{ h.date }}</small>
+                        </div>
                     {% else %}
-
-                    <span class="status-display status-resolved">
-
-                        <span class="status-dot"></span>
-
-                        Resolved
-
-                    </span>
-
-                    {% endif %}
-
-                    <div class="status-progress-line">
-
-                        <div class="status-step
-                            {% if complaint.status in ['Pending', 'In Progress', 'Resolved'] %}
-                            completed
-                            {% endif %}">
-
-                            <div class="status-step-circle">
-
-                                <i class="fa-solid fa-clock"></i>
-
-                            </div>
-
-                            <span class="status-step-label">
-                                Pending
-                            </span>
-
-                        </div>
-
-                        <div class="status-step
-                            {% if complaint.status in ['In Progress', 'Resolved'] %}
-                            completed
-                            {% endif %}">
-
-                            <div class="status-step-circle">
-
-                                <i class="fa-solid fa-spinner"></i>
-
-                            </div>
-
-                            <span class="status-step-label">
-                                Progress
-                            </span>
-
-                        </div>
-
-                        <div class="status-step
-                            {% if complaint.status == 'Resolved' %}
-                            completed
-                            {% endif %}">
-
-                            <div class="status-step-circle">
-
-                                <i class="fa-solid fa-check"></i>
-
-                            </div>
-
-                            <span class="status-step-label">
-                                Resolved
-                            </span>
-
-                        </div>
-
-                    </div>
-
+                        <p class="text-muted small mb-0">No history transitions recorded yet.</p>
+                    {% endfor %}
                 </div>
-
             </div>
 
         </div>
 
-        <div class="update-form-card">
+        <!-- Right Column: Admin Action Form -->
+        <div class="col-lg-5">
 
-            <div class="form-card-header">
-
-                <div class="form-header-icon">
-
-                    <i class="fa-solid fa-pen-to-square"></i>
-
+            <div class="action-form-card">
+                <div class="update-card-title border-0 pb-0 mb-3">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Update Complaint Status</span>
                 </div>
-
-                <div>
-
-                    <h3>
-                        Update Complaint Details
-                    </h3>
-
-                    <p>
-                        Modify status, staff assignment and remarks
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="update-form-body">
+                <p class="small text-muted mb-4">Changes made here trigger immediate student notifications and activity logs.</p>
 
                 <form method="POST" id="updateComplaintForm">
-
-                    <div class="form-group">
-
-                        <label class="form-label-modern" for="status">
-
-                            <i class="fa-solid fa-chart-simple"></i>
-
-                            Complaint Status
-
+                    <!-- Status -->
+                    <div class="mb-3">
+                        <label class="form-label" for="status">
+                            Ticket Status <span class="text-danger">*</span>
                         </label>
-
-                        <div class="status-select-wrapper">
-
-                            <i class="fa-solid fa-circle-check status-select-icon"></i>
-
-                            <select class="form-control-modern status-select" name="status" id="status" required>
-
-                                <option value="Pending" {% if complaint.status=="Pending" %} selected {% endif %}>
-                                    Pending
+                        <select class="form-select" id="status" name="status" required>
+                            {% for s in ['Pending', 'In Progress', 'Resolved'] %}
+                                <option value="{{ s }}" {% if complaint.status == s %}selected{% endif %}>
+                                    {{ s }}
                                 </option>
-
-                                <option value="In Progress" {% if complaint.status=="In Progress" %} selected {% endif
-                                    %}>
-                                    In Progress
-                                </option>
-
-                                <option value="Resolved" {% if complaint.status=="Resolved" %} selected {% endif %}>
-                                    Resolved
-                                </option>
-
-                            </select>
-
-                        </div>
-
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">Setting to Resolved finalizes the repair.</small>
                     </div>
 
-                    <div class="form-group">
-
-                        <label class="form-label-modern" for="assigned_to">
-
-                            <i class="fa-solid fa-user-gear"></i>
-
-                            Assign Staff
-
+                    <!-- Assigned Staff -->
+                    <div class="mb-3">
+                        <label class="form-label" for="assigned_to">
+                            Assigned Staff / Technician
                         </label>
-
-                        <div class="staff-wrapper">
-
-                            <i class="fa-solid fa-user-gear staff-icon"></i>
-
-                            <input type="text" name="assigned_to" id="assigned_to"
-                                class="form-control-modern staff-input" value="{{ complaint.assigned_to }}"
-                                placeholder="Enter staff name">
-
-                        </div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label class="form-label-modern" for="remarks">
-
-                            <i class="fa-solid fa-comment-dots"></i>
-
-                            Remarks
-
-                        </label>
-
-                        <div class="remarks-wrapper">
-
-                            <i class="fa-solid fa-comment-dots remarks-icon"></i>
-
-                            <textarea name="remarks" id="remarks" class="form-control-modern remarks-textarea" rows="5"
-                                maxlength="500"
-                                placeholder="Enter remarks or update notes...">{{ complaint.remarks }}</textarea>
-
-                        </div>
-
-                        <div class="character-count">
-
-                            <span id="characterCount">
-                                0 / 500
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">
+                                <i class="fa-solid fa-user-gear text-muted"></i>
                             </span>
-
+                            <input
+                                type="text"
+                                class="form-control border-start-0 ps-0"
+                                id="assigned_to"
+                                name="assigned_to"
+                                value="{{ complaint.assigned_to or '' }}"
+                                placeholder="e.g. Electrician Mohan, Plumber Ramesh">
                         </div>
-
+                        <small class="text-muted">Name of caretaker or staff responsible.</small>
                     </div>
 
-                    <button type="submit" class="update-submit" id="updateSubmit">
+                    <!-- Remarks -->
+                    <div class="mb-3">
+                        <label class="form-label" for="remarks">
+                            Official Remarks & Student Notes
+                        </label>
+                        <textarea
+                            class="form-control"
+                            id="remarks"
+                            name="remarks"
+                            rows="4"
+                            maxlength="500"
+                            placeholder="Add internal notes or student advice (e.g. Technician will visit between 3-5 PM)...">{{ complaint.remarks or '' }}</textarea>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted">Visible to student upon status update.</small>
+                            <span class="small text-muted" id="characterCount">0 / 500</span>
+                        </div>
+                    </div>
 
+                    <button type="submit" class="update-btn-submit" id="updateSubmit">
                         <i class="fa-solid fa-floppy-disk"></i>
-
-                        Update Complaint
-
+                        <span>Apply Status Update</span>
                     </button>
-
                 </form>
-
-                <div class="update-note">
-
-                    <i class="fa-solid fa-circle-info"></i>
-
-                    <span>
-
-                        Updating the complaint status will allow
-                        the student to track the latest progress
-                        from their complaint history.
-
-                    </span>
-
-                </div>
-
             </div>
 
         </div>
@@ -380,9 +202,5 @@ Update Complaint #{{ complaint.id }}
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
-{% endblock %}
-
-{% block extra_js %}
 <script src="{{ url_for('static', filename='js/charan/update_status.js') }}"></script>
 {% endblock %}

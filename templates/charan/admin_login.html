@@ -1,138 +1,89 @@
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/charan/admin_login.css') }}">
-{% endblock %}
 {% extends "base.html" %}
 
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-{% endblock %}
-
-{% block title %}
-Admin Login
-{% endblock %}
+{% block title %}Administrator Login - Hostel Complaint Portal{% endblock %}
 
 {% block favicon %}
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-admin-login.svg') }}">
 {% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/charan/admin_login.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="admin-login-page">
-
     <div class="admin-login-card">
 
         <div class="admin-login-header">
-
             <div class="admin-login-icon">
-
-                <i class="fa-solid fa-user-shield"></i>
-
-            </div>
-
-            <h1>
-                Admin Login
-            </h1>
-
-            <p>
-                Sign in to access the Hostel Portal
-                administration control center.
-            </p>
-
-            <div class="admin-login-badge">
-
                 <i class="fa-solid fa-shield-halved"></i>
-
-                Authorized Personnel Only
-
             </div>
-
+            <h1>Admin Portal</h1>
+            <p>Sign in to access hostel management, technician assignment, and analytics</p>
+            <div class="admin-login-badge">
+                <i class="fa-solid fa-lock"></i>
+                <span>Authorized Personnel Only</span>
+            </div>
         </div>
 
         <div class="admin-login-body">
-
             <form method="POST" id="adminLoginForm">
-
                 <div class="admin-form-group">
-
-                    <label for="username" class="admin-form-label">
-                        Username
-                    </label>
-
+                    <label for="username" class="admin-form-label">Administrator Username</label>
                     <div class="admin-input-wrapper">
-
-                        <i class="fa-solid fa-user admin-input-icon"></i>
-
-                        <input type="text" name="username" id="username" class="admin-input"
-                            placeholder="Enter admin username" autocomplete="username" required>
-
+                        <i class="fa-solid fa-user-shield admin-input-icon"></i>
+                        <input
+                            type="text"
+                            name="username"
+                            id="username"
+                            class="admin-input"
+                            placeholder="Enter admin username"
+                            autocomplete="username"
+                            required>
                     </div>
-
                 </div>
 
                 <div class="admin-form-group">
-
-                    <label for="password" class="admin-form-label">
-                        Password
-                    </label>
-
+                    <label for="password" class="admin-form-label">Password</label>
                     <div class="admin-input-wrapper">
-
                         <i class="fa-solid fa-lock admin-input-icon"></i>
-
-                        <input type="password" name="password" id="password" class="admin-input"
-                            placeholder="Enter admin password" autocomplete="current-password" required>
-
-                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Show password">
-
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            class="admin-input"
+                            placeholder="Enter admin password"
+                            autocomplete="current-password"
+                            required>
+                        <button type="button" class="password-toggle" id="passwordToggle" data-target="password" aria-controls="password" aria-label="Show password" aria-pressed="false" title="Show password">
                             <i class="fa-solid fa-eye"></i>
-
                         </button>
-
                     </div>
-
                 </div>
 
                 <button type="submit" class="admin-login-btn" id="loginButton">
-
                     <i class="fa-solid fa-right-to-bracket"></i>
-
-                    Login to Admin Portal
-
+                    <span>Access Admin Control Center</span>
                 </button>
-
             </form>
 
-            <div class="security-note">
-
-                <i class="fa-solid fa-lock"></i>
-
-                Secure administrator authentication
-
+            <div class="admin-footer-links">
+                <a href="{{ url_for('login') }}" class="student-portal-link">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Are you a student? Switch to Student Login</span>
+                </a>
             </div>
 
-        </div>
-
-        <div class="admin-login-footer">
-
-            <span>
-
-                <i class="fa-solid fa-circle-info"></i>
-
-                If you are a student, please use the
-                Student Login portal.
-
-            </span>
-
+            <div class="admin-security-note">
+                <i class="fa-solid fa-shield-check"></i>
+                <span>Protected by Session Security & Rate Limits</span>
+            </div>
         </div>
 
     </div>
-
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
-{% endblock %}
-
-{% block extra_js %}
 <script src="{{ url_for('static', filename='js/charan/admin_login.js') }}"></script>
 {% endblock %}

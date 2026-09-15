@@ -1,10 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Activity Stream - IntelliHostel{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/vennela/activity.css') }}">
 {% endblock %}
-{% extends "base.html" %}{% block title %}Activity{% endblock %}
-{% block favicon %}<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-notifications.svg') }}">{% endblock %}
+
 {% block content %}
-<div class="container py-4"><h2 class="fw-bold">My Activity</h2><p class="text-muted">Recent complaint events and status changes.</p><div class="card border-0 shadow-sm"><div class="card-body"><div class="list-group list-group-flush">{% for h in history %}<div class="list-group-item d-flex justify-content-between"><div><strong>{{ h.status }}</strong> — {{ h.title }}</div><small class="text-muted">{{ h.date }}</small></div>{% else %}<p class="text-muted">No activity yet.</p>{% endfor %}</div></div></div></div>{% endblock %}
+<div class="activity-page">
+    <!-- Topbar Header -->
+    <div class="activity-topbar reveal-up">
+        <div class="activity-heading">
+            <div class="activity-heading-icon">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <div>
+                <h1>Recent Activity</h1>
+                <p>Real-time audit log of ticket transitions, admin assignments, and hostel resolutions</p>
+            </div>
+        </div>
+
+        <div class="activity-topbar-actions">
+            <a href="{{ url_for('complaints') }}" class="btn-history-link">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Complaint History</span>
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn-back-link">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Metrics -->
+    <div class="activity-metrics-grid reveal-up reveal-delay-1">
+        <div class="activity-metric-card">
+            <div class="metric-icon-box total">
+                <i class="fa-solid fa-timeline"></i>
+            </div>
+            <div>
+                <span class="metric-num">{{ history | length }}</span>
+                <span class="metric-title">Lifecycle Events Logged</span>
+            </div>
+        </div>
+
+        <div class="activity-metric-card">
+            <div class="metric-icon-box active">
+                <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+            <div>
+                <span class="metric-num">{{ complaints | length }}</span>
+                <span class="metric-title">Tracked Complaints</span>
+            </div>
+        </div>
+
+        <div class="activity-metric-card">
+            <div class="metric-icon-box speed">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+                <span class="metric-num">Live</span>
+                <span class="metric-title">Automated Audit Stream</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Activity Stream Container -->
+    <div class="activity-layout reveal-up reveal-delay-2">
+        <main class="activity-feed-section">
+            <div class="section-title-wrap">
+                <h3><i class="fa-solid fa-stream"></i> Audit Log Timeline</h3>
+                <span class="feed-count-pill">{{ history | length }} events</span>
+            </div>
+
+            {% if history %}
+            <div class="activity-timeline">
+                {% for h in history %}
+                <div class="activity-item">
+                    <!-- Status Track Dot -->
+                    <div class="timeline-marker">
+                        <div class="marker-dot 
+                            {% if h.status == 'Resolved' %}dot-resolved
+                            {% elif h.status == 'In Progress' %}dot-progress
+                            {% elif h.status == 'Rejected' %}dot-rejected
+                            {% else %}dot-pending{% endif %}">
+                            {% if h.status == 'Resolved' %}
+                                <i class="fa-solid fa-check"></i>
+                            {% elif h.status == 'In Progress' %}
+                                <i class="fa-solid fa-wrench"></i>
+                            {% elif h.status == 'Rejected' %}
+                                <i class="fa-solid fa-ban"></i>
+                            {% else %}
+                                <i class="fa-solid fa-hourglass-start"></i>
+                            {% endif %}
+                        </div>
+                        <div class="marker-line"></div>
+                    </div>
+
+                    <!-- Event Content Card -->
+                    <div class="timeline-content-card">
+                        <div class="timeline-card-header">
+                            <div class="ticket-ref-box">
+                                <span class="badge-status 
+                                    {% if h.status == 'Resolved' %}badge-resolved
+                                    {% elif h.status == 'In Progress' %}badge-progress
+                                    {% elif h.status == 'Rejected' %}badge-rejected
+                                    {% else %}badge-pending{% endif %}">
+                                    {{ h.status }}
+                                </span>
+                                <a href="{{ url_for('view_complaint', id=h.complaint_id) }}" class="ticket-link">
+                                    #{{ h.complaint_id }} &bull; {{ h.title }}
+                                </a>
+                            </div>
+                            <span class="timeline-timestamp">
+                                <i class="fa-regular fa-clock"></i> {{ h.date }}
+                            </span>
+                        </div>
+
+                        {% if h.remarks %}
+                        <div class="timeline-remarks">
+                            <i class="fa-solid fa-quote-left quote-icon"></i>
+                            <p>{{ h.remarks }}</p>
+                        </div>
+                        {% else %}
+                        <p class="timeline-default-text">Ticket status updated to <strong>{{ h.status }}</strong>.</p>
+                        {% endif %}
+
+                        <div class="timeline-card-footer">
+                            <span class="actor-tag">
+                                <i class="fa-solid fa-user-shield"></i>
+                                <span>Recorded by: {{ h.updated_by or 'Hostel Administration' }}</span>
+                            </span>
+                            <a href="{{ url_for('view_complaint', id=h.complaint_id) }}" class="view-ticket-btn">
+                                <span>View Details</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Empty state -->
+            <div class="activity-empty-card">
+                <div class="empty-icon-wrap">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <h4>No Recent Activity</h4>
+                <p>When you lodge a complaint or administrators change complaint statuses, chronological updates will be recorded here.</p>
+                <a href="{{ url_for('add_complaint') }}" class="btn-create-empty">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Raise a Complaint</span>
+                </a>
+            </div>
+            {% endif %}
+        </main>
+
+        <!-- Sidebar: Active Complaints Snapshot -->
+        <aside class="activity-sidebar">
+            <div class="sidebar-box">
+                <div class="sidebar-box-header">
+                    <h4><i class="fa-solid fa-fire"></i> Recent Complaints</h4>
+                    <a href="{{ url_for('complaints') }}" class="sidebar-see-all">View all</a>
+                </div>
+
+                {% if complaints %}
+                <div class="sidebar-complaint-list">
+                    {% for c in complaints[:5] %}
+                    <a href="{{ url_for('view_complaint', id=c.id) }}" class="sidebar-complaint-item">
+                        <div class="complaint-item-top">
+                            <span class="c-id">#{{ c.id }}</span>
+                            <span class="badge-status-sm 
+                                {% if c.status == 'Resolved' %}badge-resolved
+                                {% elif c.status == 'In Progress' %}badge-progress
+                                {% elif c.status == 'Rejected' %}badge-rejected
+                                {% else %}badge-pending{% endif %}">
+                                {{ c.status }}
+                            </span>
+                        </div>
+                        <h5 class="c-title">{{ c.title }}</h5>
+                        <div class="c-meta">
+                            <span><i class="fa-regular fa-folder"></i> {{ c.category }}</span>
+                            <span><i class="fa-regular fa-clock"></i> {{ (c.created_at|string)[:10] if c.created_at else '' }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="sidebar-empty">No complaints raised yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Help / Escalation card -->
+            <div class="sidebar-box help-box">
+                <div class="help-box-icon">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h4>Need Immediate Help?</h4>
+                <p>For urgent room water or electricity emergencies, contact the hostel warden directly.</p>
+                <a href="{{ url_for('home') }}#contact" class="help-link">Campus Contacts &rarr;</a>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/vennela/activity.js') }}"></script>

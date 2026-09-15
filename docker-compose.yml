@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: intellihostel_web
+    restart: unless-stopped
+    ports:
+      - "${PORT:-5000}:5000"
+    env_file:
+      - .env
+    volumes:
+      - uploads_data:/app/static/uploads
+      - sqlite_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - intellihostel_net
+
+  # Optional local PostgreSQL database service for self-hosted container deployments
+  db:
+    image: postgres:16-alpine
+    container_name: intellihostel_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: intellihostel
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_secure_pass_2026}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - intellihostel_net
+
+volumes:
+  uploads_data:
+    driver: local
+  sqlite_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  intellihostel_net:
+    driver: bridge

@@ -1,24 +1,303 @@
-/* View Complaint Details Styles - Owned by B. Jagan */
-.complaint-detail-card {
-    border: none;
-    border-radius: 16px;
+/* ==========================================================================
+   IntelliHostel — View Complaint Details Styles (Modern SaaS)
+   ========================================================================== */
+
+.view-complaint-page {
+    padding-top: 1rem;
+    padding-bottom: 3.5rem;
+}
+
+.view-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.75rem 2rem;
+    border-radius: var(--radius-2xl);
+    background: radial-gradient(circle at top left, rgba(255, 107, 74, 0.1) 0%, #ffffff 70%);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
+}
+
+.view-header-title {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-bottom: 0.35rem;
+    color: var(--text-heading);
+}
+
+.view-meta-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    font-size: 0.84rem;
+    color: var(--text-muted);
+}
+
+/* Detail Cards */
+.detail-card {
     background: #ffffff;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
 }
-.timeline-item {
-    position: relative;
-    padding-left: 28px;
-    margin-bottom: 18px;
+
+.detail-card-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-light);
 }
-.timeline-item::before {
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 6px;
-    bottom: -18px;
-    width: 2px;
+
+.detail-card-title i {
+    color: var(--primary);
+}
+
+.complaint-full-desc {
+    font-size: 0.98rem;
+    line-height: 1.75;
+    color: var(--text-body);
+    white-space: pre-line;
+    margin-bottom: 1.75rem;
+}
+
+.meta-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    background: var(--bg-surface-subtle);
+    padding: 1.25rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+}
+
+.meta-stat-item small {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.25rem;
+}
+
+.meta-stat-item .val {
+    font-weight: 700;
+    color: var(--text-heading);
+    font-size: 0.95rem;
+}
+
+/* Attached Image Frame */
+.attachment-frame {
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.attachment-frame img {
+    max-height: 380px;
+    border-radius: var(--radius-md);
+    object-fit: contain;
+    box-shadow: var(--shadow-sm);
+}
+
+/* AI Card Styles */
+.ai-intelligence-card {
+    background: radial-gradient(circle at top right, rgba(255, 107, 74, 0.12) 0%, rgba(255, 143, 107, 0.04) 40%, #ffffff 80%);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.ai-stat-box {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1.15rem;
+    margin-bottom: 1rem;
+}
+
+.ai-stat-box small {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+}
+
+.ai-stat-box .ai-value {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-heading);
+}
+
+.progress-mini {
+    height: 6px;
+    border-radius: var(--radius-full);
     background: #e2e8f0;
+    margin-top: 0.5rem;
+    overflow: hidden;
 }
-.timeline-item:last-child::before {
-    display: none;
+
+.progress-mini-bar {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+}
+
+/* Timeline Styles */
+.timeline-list {
+    position: relative;
+    padding-left: 1.75rem;
+}
+
+.timeline-list::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.timeline-entry {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-entry:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -1.75rem;
+    top: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.timeline-title {
+    font-family: var(--font-heading);
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 0.15rem;
+}
+
+.timeline-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Dark Mode Overrides for View Complaint Details
+   ========================================================================== */
+
+[data-theme="dark"] .view-header {
+    background: radial-gradient(circle at top left, rgba(255, 107, 74, 0.15) 0%, var(--bg-surface) 70%) !important;
+    border-color: var(--border-light) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+[data-theme="dark"] .view-header-title {
+    color: var(--text-heading) !important;
+}
+
+[data-theme="dark"] .view-meta-bar {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .detail-card {
+    background: var(--bg-surface) !important;
+    border-color: var(--border-light) !important;
+    box-shadow: var(--shadow-card) !important;
+}
+
+[data-theme="dark"] .detail-card-title {
+    color: var(--text-heading) !important;
+    border-bottom-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .complaint-full-desc {
+    color: var(--text-body) !important;
+}
+
+[data-theme="dark"] .meta-stats-grid {
+    background: var(--bg-surface-subtle) !important;
+    border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .meta-stat-item small {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .meta-stat-item .val {
+    color: var(--text-heading) !important;
+}
+
+[data-theme="dark"] .attachment-frame {
+    background: var(--bg-surface-subtle) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .ai-intelligence-card {
+    background: radial-gradient(circle at top right, rgba(255, 107, 74, 0.15) 0%, rgba(255, 143, 107, 0.05) 40%, var(--bg-surface) 80%) !important;
+    border-color: var(--primary-border) !important;
+    box-shadow: var(--shadow-card) !important;
+}
+
+[data-theme="dark"] .ai-stat-box {
+    background: var(--bg-surface-subtle) !important;
+    border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .ai-stat-box small {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .ai-stat-box .ai-value {
+    color: var(--text-heading) !important;
+}
+
+[data-theme="dark"] .progress-mini {
+    background: var(--bg-input) !important;
+}
+
+[data-theme="dark"] .timeline-dot {
+    background: var(--bg-surface) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.25) !important;
+}
+
+[data-theme="dark"] .timeline-title {
+    color: var(--text-heading) !important;
+}
+
+[data-theme="dark"] .timeline-time {
+    color: var(--text-muted) !important;
 }

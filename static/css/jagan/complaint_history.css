@@ -1,17 +1,165 @@
-/* Complaint History Styles - Owned by B. Jagan */
-.history-filter-bar {
-    background: #ffffff;
-    padding: 18px;
-    border-radius: 14px;
-    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+/* ==========================================================================
+   IntelliHostel — Complaint History Styles (Modern SaaS)
+   ========================================================================== */
+
+.history-page {
+    padding-top: 1rem;
+    padding-bottom: 3.5rem;
 }
-.complaint-card {
-    border: none;
-    border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
-    transition: transform 0.2s ease;
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.75rem 2rem;
+    border-radius: var(--radius-2xl);
+    background: radial-gradient(circle at top left, rgba(255, 107, 74, 0.1) 0%, #ffffff 70%);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
 }
-.complaint-card:hover {
+
+.history-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.history-icon-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-xl);
+    background: var(--gradient-primary);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+    box-shadow: 0 8px 20px rgba(255, 107, 74, 0.25);
+    flex-shrink: 0;
+}
+
+.history-title-wrap h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    color: var(--text-heading);
+}
+
+.history-title-wrap p {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* Filter Card */
+.history-filter-card {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-xs);
+    margin-bottom: 2rem;
+}
+
+/* Complaint Card */
+.history-complaint-card {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem 1.75rem;
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-fast);
+    margin-bottom: 1.25rem;
+}
+
+.history-complaint-card:hover {
     transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--primary-border);
 }
+
+.card-top-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.85rem;
+}
+
+.card-id-tag {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--text-heading);
+}
+
+.card-badges-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.card-complaint-title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 0.65rem;
+}
+
+.card-complaint-desc {
+    color: var(--text-muted);
+    font-size: 0.94rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+.card-bottom-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light);
+    flex-wrap: wrap;
+}
+
+.ai-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-light);
+    border: 1px solid var(--primary-border);
+    padding: 0.3rem 0.85rem;
+    border-radius: var(--radius-full);
+}
+
+.card-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] .history-header {
+    background: radial-gradient(circle at top left, rgba(255, 107, 74, 0.15) 0%, #111827 70%) !important;
+    border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .history-title-wrap h1 {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .history-title-wrap p {
+    color: #cbd5e1 !important;
+    font-weight: 500;
+}
+

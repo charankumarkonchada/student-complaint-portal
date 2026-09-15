@@ -1,622 +1,379 @@
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/jagan/home.css') }}">
-{% endblock %}
 {% extends "base.html" %}
 
-{% block title %}
-Smart Hostel Complaint & Maintenance Portal
-{% endblock %}
+{% block title %}Smart Hostel Complaint & Maintenance Portal{% endblock %}
 
 {% block favicon %}
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-home.svg') }}">
 {% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jagan/home.css') }}">
 {% endblock %}
 
 {% block content %}
-
 <div class="home-page">
 
+    <!-- 1. Hero Section with Peach Ambient Glow -->
     <section class="hero-section">
+        <div class="hero-shape hero-shape-1"></div>
+        <div class="hero-shape hero-shape-2"></div>
 
         <div class="hero-content">
-
-            <div class="hero-badge">
-
+            <div class="hero-badge reveal-down">
                 <i class="fa-solid fa-sparkles"></i>
-
-                SMART HOSTEL MANAGEMENT SYSTEM
-
+                <span>Smart Hostel Management System</span>
             </div>
 
-            <h1 class="hero-title">
-
-                Smart Hostel
-
-                <br>
-
-                <span class="gradient-text">
-                    Complaint & Maintenance Portal
-                </span>
-
+            <h1 class="hero-title reveal-up reveal-delay-1">
+                Student Complaints,<br>
+                <span class="gradient-text">Handled Smarter.</span>
             </h1>
 
-            <p class="hero-description">
-
-                A centralized digital platform to raise,
-                track and manage hostel complaints efficiently.
-                Connect students and administrators through
-                one intelligent portal.
-
+            <p class="hero-description reveal-up reveal-delay-2">
+                A centralized, intelligent digital platform for RGUKT Ongole students to submit, track, and resolve hostel complaints with real-time AI triage and administrative transparency.
             </p>
 
-            <div class="hero-buttons">
-
-                <a href="{{ url_for('login') }}" class="hero-btn hero-btn-primary">
-
-                    <i class="fa-solid fa-user-graduate"></i>
-
-                    Student Portal
-
+            <div class="hero-buttons reveal-up reveal-delay-3">
+                <a href="{{ url_for('add_complaint') if session.get('student_id') else url_for('login') }}" class="hero-btn hero-btn-primary">
+                    <i class="fa-solid fa-plus-circle"></i>
+                    <span>Raise a Complaint</span>
                 </a>
 
-                <a href="{{ url_for('admin_login') }}" class="hero-btn hero-btn-secondary">
-
-                    <i class="fa-solid fa-shield-halved"></i>
-
-                    Admin Portal
-
+                <a href="{{ url_for('login') if not session.get('student_id') else url_for('dashboard') }}" class="hero-btn hero-btn-secondary">
+                    <i class="fa-solid fa-compass"></i>
+                    <span>{% if session.get('student_id') %}Go to Dashboard{% else %}Explore Portal / Login{% endif %}</span>
                 </a>
-
             </div>
 
+            <!-- Floating UI Preview Card -->
+            <div class="hero-mockup-card reveal-scale reveal-delay-4">
+                <div class="mockup-icon">
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                </div>
+                <div class="mockup-info">
+                    <div class="mockup-title">Room Fan Not Working — Electrical</div>
+                    <div class="mockup-sub">AI Estimated Resolution: 1.5 Days · Priority: High</div>
+                </div>
+                <span class="mockup-badge">
+                    <i class="fa-solid fa-circle-check me-1"></i> Live Triage
+                </span>
+            </div>
         </div>
-
     </section>
 
+    <!-- 2. Statistics Section -->
     <section class="stats-section">
-
         <div class="row g-3">
-
             <div class="col-6 col-md-3">
-
-                <div class="stat-card">
-
+                <div class="stat-card reveal-up reveal-delay-1">
                     <div class="stat-icon">
-
-                        <i class="fa-solid fa-users"></i>
-
+                        <i class="fa-solid fa-clock"></i>
                     </div>
-
-                    <span class="stat-number">
-                        24/7
-                    </span>
-
-                    <span class="stat-label">
-                        Portal Access
-                    </span>
-
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Online Accessibility</span>
                 </div>
-
             </div>
-
             <div class="col-6 col-md-3">
-
-                <div class="stat-card">
-
+                <div class="stat-card reveal-up reveal-delay-2">
                     <div class="stat-icon">
-
                         <i class="fa-solid fa-bolt"></i>
-
                     </div>
-
-                    <span class="stat-number">
-                        Fast
-                    </span>
-
-                    <span class="stat-label">
-                        Complaint Processing
-                    </span>
-
+                    <span class="stat-number">Fast</span>
+                    <span class="stat-label">AI Complaint Triage</span>
                 </div>
-
             </div>
-
             <div class="col-6 col-md-3">
-
-                <div class="stat-card">
-
+                <div class="stat-card reveal-up reveal-delay-3">
                     <div class="stat-icon">
-
                         <i class="fa-solid fa-chart-line"></i>
-
                     </div>
-
-                    <span class="stat-number">
-                        Live
-                    </span>
-
-                    <span class="stat-label">
-                        Status Tracking
-                    </span>
-
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Status Transparency</span>
                 </div>
-
             </div>
-
             <div class="col-6 col-md-3">
-
-                <div class="stat-card">
-
+                <div class="stat-card reveal-up reveal-delay-4">
                     <div class="stat-icon">
-
                         <i class="fa-solid fa-shield-halved"></i>
-
                     </div>
-
-                    <span class="stat-number">
-                        Secure
-                    </span>
-
-                    <span class="stat-label">
-                        User Access
-                    </span>
-
+                    <span class="stat-number">Secure</span>
+                    <span class="stat-label">Campus Verified Access</span>
                 </div>
-
             </div>
-
         </div>
-
     </section>
 
-    <div class="section-header">
-
-        <span class="section-label">
-            Get Started
-        </span>
-
-        <h2 class="section-title">
-            Choose Your Portal
-        </h2>
-
+    <!-- 3. Choose Your Portal Section -->
+    <div class="section-header reveal-up" id="portals">
+        <span class="section-label">Role-Based Access</span>
+        <h2 class="section-title">Choose Your Portal</h2>
         <p class="section-description">
-
-            Select the portal based on your role
-            and access the features designed for you.
-
+            Tailored interfaces designed specifically for students and administrative staff.
         </p>
-
     </div>
 
-    <section>
-
+    <section class="mb-5">
         <div class="row justify-content-center g-4">
-
+            <!-- Student Portal Card -->
             <div class="col-lg-5 col-md-6">
-
-                <div class="portal-card student-card text-center">
-
-                    <div class="portal-icon student-icon">
-
+                <div class="portal-card reveal-left reveal-delay-1">
+                    <div class="portal-icon">
                         <i class="fa-solid fa-user-graduate"></i>
-
                     </div>
-
-                    <h3>
-                        Student Portal
-                    </h3>
-
+                    <h3>Student Portal</h3>
                     <p>
-
-                        Register your account, raise hostel
-                        complaints, upload supporting images
-                        and track complaint status.
-
+                        Register with your university roll number, submit hostel maintenance requests, attach photos, and receive instant status updates and alerts.
                     </p>
-
                     <div class="portal-buttons">
-
-                        <a href="{{ url_for('login') }}" class="portal-btn student-login">
-
-                            <i class="fa-solid fa-right-to-bracket"></i>
-
-                            Student Login
-
-                        </a>
-
-                        <a href="{{ url_for('register') }}" class="portal-btn student-register">
-
-                            <i class="fa-solid fa-user-plus"></i>
-
-                            Create Student Account
-
-                        </a>
-
+                        {% if session.get('student_id') %}
+                            <a href="{{ url_for('dashboard') }}" class="portal-btn student-login">
+                                <i class="fa-solid fa-gauge-high"></i>
+                                Open Student Dashboard
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="portal-btn student-login">
+                                <i class="fa-solid fa-right-to-bracket"></i>
+                                Student Login
+                            </a>
+                            <a href="{{ url_for('register') }}" class="portal-btn student-register">
+                                <i class="fa-solid fa-user-plus"></i>
+                                Create Student Account
+                            </a>
+                        {% endif %}
                     </div>
-
                 </div>
-
             </div>
 
+            <!-- Administrator Portal Card -->
             <div class="col-lg-5 col-md-6">
-
-                <div class="portal-card admin-card text-center">
-
+                <div class="portal-card reveal-right reveal-delay-2">
                     <div class="portal-icon admin-icon">
-
-                        <i class="fa-solid fa-user-shield"></i>
-
+                        <i class="fa-solid fa-shield-halved"></i>
                     </div>
-
-                    <h3>
-                        Administrator Portal
-                    </h3>
-
+                    <h3>Administrator Portal</h3>
                     <p>
-
-                        Manage complaints, assign staff,
-                        update complaint status and monitor
-                        hostel maintenance analytics.
-
+                        Administrative control center for hostel wardens and caretakers. Review incoming issues, assign technicians, update progress, and export reports.
                     </p>
-
                     <div class="portal-buttons">
-
-                        <a href="{{ url_for('admin_login') }}" class="portal-btn admin-login">
-
-                            <i class="fa-solid fa-shield-halved"></i>
-
-                            Administrator Login
-
-                        </a>
-
+                        {% if session.get('admin') %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="portal-btn admin-login">
+                                <i class="fa-solid fa-chart-line"></i>
+                                Open Admin Dashboard
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('admin_login') }}" class="portal-btn admin-login">
+                                <i class="fa-solid fa-user-shield"></i>
+                                Administrator Sign In
+                            </a>
+                        {% endif %}
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
 
-    <div class="section-header">
-
-        <span class="section-label">
-            Powerful Features
-        </span>
-
-        <h2 class="section-title">
-            Everything You Need
-        </h2>
-
+    <!-- 4. Feature Section -->
+    <div class="section-header reveal-up" id="features">
+        <span class="section-label">Smart Capabilities</span>
+        <h2 class="section-title">Everything You Need</h2>
         <p class="section-description">
-
-            Designed to make hostel complaint management
-            faster, easier and more transparent.
-
+            Engineered to streamline campus hostel living with transparency and automated intelligence.
         </p>
-
     </div>
 
-    <section>
-
+    <section class="mb-5">
         <div class="row g-3">
-
             <div class="col-6 col-md-4 col-lg-3">
-
-                <div class="feature-card">
-
+                <div class="feature-card reveal-up reveal-delay-1">
                     <div class="feature-icon icon-orange">
-
-                        <i class="fa-solid fa-circle-exclamation"></i>
-
+                        <i class="fa-solid fa-file-circle-plus"></i>
                     </div>
-
-                    <h6>
-                        Raise Complaints
-                    </h6>
-
-                    <p>
-                        Submit hostel issues quickly.
-                    </p>
-
+                    <h6>Easy Submission</h6>
+                    <p>File hostel issues with category tags and description in seconds.</p>
                 </div>
-
             </div>
-
             <div class="col-6 col-md-4 col-lg-3">
-
-                <div class="feature-card">
-
+                <div class="feature-card reveal-up reveal-delay-2">
                     <div class="feature-icon icon-green">
-
-                        <i class="fa-solid fa-image"></i>
-
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
                     </div>
-
-                    <h6>
-                        Upload Images
-                    </h6>
-
-                    <p>
-                        Attach images as complaint evidence.
-                    </p>
-
+                    <h6>AI Analysis</h6>
+                    <p>Automated category prediction and priority assignment on submission.</p>
                 </div>
-
             </div>
-
             <div class="col-6 col-md-4 col-lg-3">
-
-                <div class="feature-card">
-
+                <div class="feature-card reveal-up reveal-delay-3">
                     <div class="feature-icon icon-blue">
-
                         <i class="fa-solid fa-clock-rotate-left"></i>
-
                     </div>
-
-                    <h6>
-                        Complaint History
-                    </h6>
-
-                    <p>
-                        View previously submitted complaints.
-                    </p>
-
+                    <h6>Live Timeline</h6>
+                    <p>Track complaints from submission through review to final resolution.</p>
                 </div>
-
             </div>
-
             <div class="col-6 col-md-4 col-lg-3">
-
-                <div class="feature-card">
-
+                <div class="feature-card reveal-up reveal-delay-4">
                     <div class="feature-icon icon-purple">
-
-                        <i class="fa-solid fa-magnifying-glass"></i>
-
+                        <i class="fa-solid fa-copy"></i>
                     </div>
-
-                    <h6>
-                        Search & Filter
-                    </h6>
-
-                    <p>
-                        Find complaints easily.
-                    </p>
-
+                    <h6>Duplicate Detection</h6>
+                    <p>Cosine similarity detects duplicate reports in the same hostel wing.</p>
                 </div>
-
             </div>
-
             <div class="col-6 col-md-4 col-lg-3">
-
-                <div class="feature-card">
-
+                <div class="feature-card reveal-up reveal-delay-5">
                     <div class="feature-icon icon-red">
-
-                        <i class="fa-solid fa-bell"></i>
-
+                        <i class="fa-solid fa-image"></i>
                     </div>
-
-                    <h6>
-                        Notifications
-                    </h6>
-
-                    <p>
-                        Stay informed about complaint updates.
-                    </p>
-
+                    <h6>Image Evidence</h6>
+                    <p>Attach photo evidence directly for clear maintenance diagnosis.</p>
                 </div>
-
             </div>
-
             <div class="col-6 col-md-4 col-lg-3">
-
-                <div class="feature-card">
-
-                    <div class="feature-icon icon-blue">
-
-                        <i class="fa-solid fa-user-check"></i>
-
-                    </div>
-
-                    <h6>
-                        Staff Assignment
-                    </h6>
-
-                    <p>
-                        Administrators can assign maintenance staff.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="col-6 col-md-4 col-lg-3">
-
-                <div class="feature-card">
-
+                <div class="feature-card reveal-up reveal-delay-6">
                     <div class="feature-icon icon-cyan">
-
-                        <i class="fa-solid fa-chart-column"></i>
-
+                        <i class="fa-solid fa-bell"></i>
                     </div>
-
-                    <h6>
-                        Analytics
-                    </h6>
-
-                    <p>
-                        Monitor complaint trends and categories.
-                    </p>
-
+                    <h6>Real-Time Alerts</h6>
+                    <p>Instant student notification whenever admin updates complaint status.</p>
                 </div>
-
             </div>
-
             <div class="col-6 col-md-4 col-lg-3">
-
-                <div class="feature-card">
-
+                <div class="feature-card reveal-up reveal-delay-7">
+                    <div class="feature-icon icon-blue">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h6>AI Analytics</h6>
+                    <p>Visual dashboards providing maintenance workload and category trends.</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="feature-card reveal-up reveal-delay-8">
                     <div class="feature-icon icon-green">
-
-                        <i class="fa-solid fa-user-lock"></i>
-
+                        <i class="fa-solid fa-file-export"></i>
                     </div>
-
-                    <h6>
-                        Secure Access
-                    </h6>
-
-                    <p>
-                        Separate student and administrator access.
-                    </p>
-
+                    <h6>Report Exports</h6>
+                    <p>Instant PDF and Excel report downloads for official campus records.</p>
                 </div>
-
             </div>
-
         </div>
-
     </section>
 
-    <section class="steps-section">
-
-        <div class="text-center mb-4">
-
-            <span class="section-label">
-                Simple Process
-            </span>
-
-            <h2 class="section-title mb-2">
-                How It Works
-            </h2>
-
-        </div>
-
-        <div class="row g-4">
-
-            <div class="col-md-3">
-
-                <div class="step">
-
-                    <div class="step-number">
-                        1
-                    </div>
-
-                    <h6>
-                        Register
-                    </h6>
-
-                    <p>
-                        Create your student account.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <div class="step">
-
-                    <div class="step-number">
-                        2
-                    </div>
-
-                    <h6>
-                        Raise Complaint
-                    </h6>
-
-                    <p>
-                        Describe the hostel issue.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <div class="step">
-
-                    <div class="step-number">
-                        3
-                    </div>
-
-                    <h6>
-                        Track Status
-                    </h6>
-
-                    <p>
-                        Monitor your complaint progress.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <div class="step">
-
-                    <div class="step-number">
-                        4
-                    </div>
-
-                    <h6>
-                        Get Resolution
-                    </h6>
-
-                    <p>
-                        Receive updates when the issue is resolved.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <section class="cta-section">
-
-        <div class="cta-content">
-
-            <h3>
-                Ready to Manage Hostel Complaints?
-            </h3>
-
-            <p>
-
-                Access the portal and experience
-                smarter complaint management.
-
+    <!-- 5. 4-Step Workflow Section -->
+    <section class="steps-section" id="workflow">
+        <div class="section-header reveal-up">
+            <span class="section-label">Seamless Flow</span>
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-description">
+                From issue identification to resolved repairs in 4 transparent stages.
             </p>
-
-            <a href="{{ url_for('register') }}" class="cta-btn">
-
-                <i class="fa-solid fa-rocket"></i>
-
-                Get Started
-
-            </a>
-
         </div>
 
+        <div class="row g-4 steps-row">
+            <div class="col-md-3">
+                <div class="step-card reveal-up reveal-delay-1">
+                    <div class="step-circle">1</div>
+                    <h6>Submit Complaint</h6>
+                    <p>Select issue type, provide details, and attach optional photo evidence.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step-card reveal-up reveal-delay-2">
+                    <div class="step-circle">2</div>
+                    <h6>AI Analysis</h6>
+                    <p>Machine learning estimates turnaround days and checks for duplicate reports.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step-card reveal-up reveal-delay-3">
+                    <div class="step-circle">3</div>
+                    <h6>Admin Review</h6>
+                    <p>Hostel caretakers review the ticket and assign appropriate campus technicians.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step-card reveal-up reveal-delay-4">
+                    <div class="step-circle">4</div>
+                    <h6>Resolution</h6>
+                    <p>Maintenance completed, verified, and logged in your complaint history.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. About & Contact Section -->
+    <section class="info-banner-card reveal-up" id="about">
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-7 reveal-left reveal-delay-1">
+                <span class="section-label">Campus Welfare</span>
+                <h3 class="fw-bold mb-3">About IntelliHostel</h3>
+                <p class="about-desc mb-4">
+                    IntelliHostel is the official digital hostel maintenance and grievance resolution system developed for <strong>{{ college_name if college_name else 'RGUKT Ongole' }}</strong>. It bridges the gap between campus residents and maintenance personnel, eliminating paper registers and long delays.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <div class="about-check-item">
+                        <i class="fa-solid fa-circle-check text-success"></i>
+                        <span>Zero Paperwork</span>
+                    </div>
+                    <div class="about-check-item">
+                        <i class="fa-solid fa-circle-check text-success"></i>
+                        <span>Guaranteed Tracking</span>
+                    </div>
+                    <div class="about-check-item">
+                        <i class="fa-solid fa-circle-check text-success"></i>
+                        <span>Campus Secure</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 reveal-right reveal-delay-2" id="contact">
+                <div class="helpdesk-glass-card">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="helpdesk-icon-box">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <div>
+                            <h5 class="helpdesk-title">Hostel Helpdesk</h5>
+                            <p class="helpdesk-sub">Contact administrative support for urgent room emergencies.</p>
+                        </div>
+                    </div>
+                    <div class="helpdesk-item">
+                        <div class="helpdesk-item-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <span class="helpdesk-item-text">hostelhelpdesk@rguktong.ac.in</span>
+                    </div>
+                    <div class="helpdesk-item">
+                        <div class="helpdesk-item-icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <span class="helpdesk-item-text">Hostel Office, RGUKT Ongole Campus</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Call To Action Section -->
+    <section class="cta-section reveal-scale">
+        <div class="cta-content">
+            <h3>Ready to Experience Smarter Complaint Management?</h3>
+            <p>Sign in with your RGUKT student ID to raise your first hostel request.</p>
+            {% if session.get('student_id') %}
+                <a href="{{ url_for('add_complaint') }}" class="cta-btn">
+                    <i class="fa-solid fa-plus-circle"></i>
+                    Raise a Complaint Now
+                </a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="cta-btn">
+                    <i class="fa-solid fa-rocket"></i>
+                    Create Student Account
+                </a>
+            {% endif %}
+        </div>
     </section>
 
 </div>
-
 {% endblock %}
 
-{% block extra_js %}
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/jagan/home.js') }}"></script>
 {% endblock %}

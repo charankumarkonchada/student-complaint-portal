@@ -1,136 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Internal Server Error | IntelliHostel{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/vennela/error_500.css') }}">
 {% endblock %}
-{% extends "base.html" %}
-
-
-{% block title %}
-500 - Internal Server Error
-{% endblock %}
-
 
 {% block content %}
 <div class="server-error-page">
-
-
     <div class="server-error-card">
+        <!-- Ambient radial glow -->
+        <div class="server-glow-orb"></div>
 
-
-        <div class="server-icon-wrapper">
-
-            <i class="fa-solid fa-triangle-exclamation"></i>
-
+        <div class="server-status-pill">
+            <span class="status-indicator-dot"></span>
+            <span>HTTP 500 &bull; Internal Server Error</span>
         </div>
 
-        <div class="server-error-tag">
+        <div class="server-display-num">500</div>
 
-            <i class="fa-solid fa-server"></i>
+        <h1 class="server-title">Something went wrong on our end</h1>
 
-            SERVER ERROR
-
-        </div>
-
-        <h1 class="server-error-number">
-
-            500
-
-        </h1>
-
-        <h2 class="server-error-title">
-
-            Something Went Wrong
-
-        </h2>
-
-        <p class="server-error-description">
-
-            Something unexpected happened while processing
-            your request.
-
-            <br>
-
-            Our server couldn't complete the operation.
-            Please try again in a moment.
-
+        <p class="server-description">
+            The server encountered an unexpected error while processing your request. Our automated monitoring has logged this incident. Please try refreshing or return to the main dashboard.
         </p>
 
-        <div class="server-status">
-
-            <span class="status-dot"></span>
-
-            Temporary Server Issue
-
-        </div>
-
-        <div class="server-error-actions">
-
-
-            <a href="{{ url_for('home') }}" class="server-error-btn server-home-btn">
-
-                <i class="fa-solid fa-house"></i>
-
-                Go to Home
-
-            </a>
-
-
-
-            <button onclick="history.back()" class="server-error-btn server-back-btn">
-
-                <i class="fa-solid fa-arrow-left"></i>
-
-                Go Back
-
+        <div class="server-actions">
+            <button onclick="window.location.reload()" class="btn-server-primary">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Reload Page</span>
             </button>
-
-
-        </div>
-
-
-        <div class="server-divider">
-
-            <span>
-                Quick Help
-            </span>
-
-        </div>
-
-        <div class="server-help">
-
-
-            <div class="server-help-item">
-
-                <i class="fa-solid fa-rotate"></i>
-
-                Try Again
-
-            </div>
-
-
-            <div class="server-help-item">
-
+            <a href="{{ url_for('home') }}" class="btn-server-secondary">
                 <i class="fa-solid fa-house"></i>
-
-                Return Home
-
-            </div>
-
-
-            <div class="server-help-item">
-
-                <i class="fa-solid fa-clock"></i>
-
-                Try Later
-
-            </div>
-
-
+                <span>Return to Home</span>
+            </a>
+            {% if session.get('student_id') %}
+            <a href="{{ url_for('dashboard') }}" class="btn-server-secondary">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Student Dashboard</span>
+            </a>
+            {% elif session.get('admin_id') %}
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-server-secondary">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Admin Console</span>
+            </a>
+            {% endif %}
         </div>
 
-
+        <div class="server-quick-links">
+            <span class="quick-links-title">Troubleshooting Options</span>
+            <div class="quick-chips">
+                <button onclick="window.location.reload()" class="chip-item">
+                    <i class="fa-solid fa-arrows-rotate"></i> Retry Request
+                </button>
+                <a href="{{ url_for('home') }}#contact" class="chip-item">
+                    <i class="fa-solid fa-headset"></i> Contact Tech Support
+                </a>
+                <button onclick="history.back()" class="chip-item">
+                    <i class="fa-solid fa-arrow-left"></i> Previous Page
+                </button>
+            </div>
+        </div>
     </div>
-
 </div>
-
-
 {% endblock %}

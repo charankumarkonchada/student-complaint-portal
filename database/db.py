@@ -1,4 +1,5 @@
 import os
+import logging
 from contextlib import contextmanager
 
 try:
@@ -8,6 +9,8 @@ except ImportError:
     psycopg2 = None
 
 import config
+
+logger = logging.getLogger(__name__)
 
 
 class Row(dict):
@@ -47,10 +50,24 @@ class CursorAdapter:
     def lastrowid(self):
         return getattr(self.cursor, 'lastrowid', None)
 
+    @property
+    def rowcount(self):
+        return getattr(self.cursor, 'rowcount', -1)
+
 
 class ConnectionAdapter:
     def __init__(self, conn):
         self.conn = conn
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            self.rollback()
+        else:
+            self.commit()
+        self.close()
 
     def execute(self, sql, params=()):
         cur = self.conn.cursor()
@@ -68,26 +85,29 @@ class ConnectionAdapter:
 
 
 def get_db_connection():
-    if config.DATABASE_URL:
-        if not psycopg2:
-            raise RuntimeError(
-                'psycopg2-binary is required for PostgreSQL.'
+    if config.DATABASE_URL and psycopg2:
+        try:
+            conn = psycopg2.connect(
+                config.DATABASE_URL,
+                sslmode=config.DB_SSLMODE,
+                cursor_factory=RealDictCursor
             )
-
-        conn = psycopg2.connect(
-            config.DATABASE_URL,
-            sslmode=config.DB_SSLMODE,
-            cursor_factory=RealDictCursor
-        )
-
-        conn.autocommit = False
-
-        return ConnectionAdapter(conn)
+            conn.autocommit = False
+            return ConnectionAdapter(conn)
+        except Exception as e:
+            logger.warning("PostgreSQL connection failed (%s). Falling back to SQLite.", e)
 
     import sqlite3
 
-    conn = sqlite3.connect(config.DATABASE)
+    # Connect with 30s lock timeout to prevent database locks under concurrent workers
+    conn = sqlite3.connect(config.DATABASE, timeout=30.0)
     conn.row_factory = sqlite3.Row
     conn.execute('PRAGMA foreign_keys = ON')
+
+    try:
+        conn.execute('PRAGMA journal_mode = WAL')
+        conn.execute('PRAGMA synchronous = NORMAL')
+    except Exception:
+        pass
 
     return conn

@@ -17,6 +17,7 @@ def verify_reset_otp():
         otp = request.form.get("otp", "").strip()
 
         if not otp.isdigit() or len(otp) != 6:
+            session["last_invalid_otp"] = otp
             flash("Enter a valid 6-digit OTP.", "danger")
             return redirect(url_for("verify_reset_otp"))
 
@@ -34,11 +35,13 @@ def verify_reset_otp():
 
         if not row:
             conn.close()
+            session.pop("last_invalid_otp", None)
             flash("OTP not found. Request a new OTP.", "danger")
             return redirect(url_for("forgot_password"))
 
         if row["attempts"] >= config.OTP_MAX_ATTEMPTS:
             conn.close()
+            session.pop("last_invalid_otp", None)
             flash("Too many incorrect attempts. Request a new OTP.", "danger")
             return redirect(url_for("forgot_password"))
 
@@ -51,6 +54,7 @@ def verify_reset_otp():
 
         if not valid_time:
             conn.close()
+            session.pop("last_invalid_otp", None)
             flash("OTP has expired. Request a new OTP.", "danger")
             return redirect(url_for("forgot_password"))
 
@@ -65,6 +69,7 @@ def verify_reset_otp():
             )
             conn.commit()
             conn.close()
+            session["last_invalid_otp"] = otp
             flash("Incorrect OTP. Please try again.", "danger")
             return redirect(url_for("verify_reset_otp"))
 
@@ -75,10 +80,13 @@ def verify_reset_otp():
         conn.commit()
         conn.close()
 
+        session.pop("last_invalid_otp", None)
         session["reset_verified"] = True
         return redirect(url_for("reset_password"))
 
+    invalid_otp = session.pop("last_invalid_otp", "")
     return render_template(
         "deepthi/verify_reset_otp.html",
-        email=session.get("reset_email")
+        email=session.get("reset_email"),
+        otp=invalid_otp
     )

@@ -1,102 +1,150 @@
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/charankumar/analytics.css') }}">
-{% endblock %}
 {% extends "base.html" %}
-{% block title %}AI Analytics{% endblock %}
+
+{% block title %}AI Analytics & Decision Support - IntelliHostel{% endblock %}
+
 {% block favicon %}
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-analytics.svg') }}">
 {% endblock %}
+
 {% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/charankumar/analytics.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold">AI Analytics & Decision Support</h2>
-            <p class="text-muted">Understand demand, priority and predicted workload.</p>
-        </div>
-        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">Dashboard</a>
-    </div>
+<div class="analytics-page">
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="text-muted">Average predicted resolution</div>
-                    <div class="display-6 fw-bold">{{ avg_resolution }} days</div>
-                </div>
+    <!-- Header Banner -->
+    <div class="analytics-header reveal-up">
+        <div class="analytics-title-wrap">
+            <div class="analytics-icon-circle">
+                <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <div>
+                <h1>AI Analytics & Decision Support</h1>
+                <p>Real-time machine learning telemetry on workload, categories, resolution velocity, and duplicate trends</p>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="text-muted">Possible duplicate complaints</div>
-                    <div class="display-6 fw-bold">{{ duplicate_count }}</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="text-muted">Open high-priority AI predictions</div>
-                    <div class="display-6 fw-bold">{{ high }}</div>
-                </div>
-            </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-1"></i>
+                <span>Operations Dashboard</span>
+            </a>
         </div>
     </div>
 
-    <div class="row g-4">
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h5>Monthly Complaint Volume</h5>
-                    <canvas id="monthly"></canvas>
+    <!-- 3 Insight Metric Summary Cards -->
+    <div class="row g-3 mb-4 reveal-up reveal-delay-1">
+        <!-- Average Resolution Days -->
+        <div class="col-md-4">
+            <div class="insight-card">
+                <div class="insight-card-top">
+                    <span class="insight-lbl">Predicted Turnaround</span>
+                    <i class="fa-solid fa-clock-rotate-left fs-5 text-primary"></i>
                 </div>
+                <div class="insight-val">{{ avg_resolution }} <span class="insight-unit">days</span></div>
+                <div class="insight-sub">Average regression model estimate across active tickets</div>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h5>Complaint Categories</h5>
-                    <canvas id="categories"></canvas>
+
+        <!-- Possible Duplicate Reports -->
+        <div class="col-md-4">
+            <div class="insight-card">
+                <div class="insight-card-top">
+                    <span class="insight-lbl">Duplicate Reports</span>
+                    <i class="fa-solid fa-copy fs-5 text-warning"></i>
                 </div>
+                <div class="insight-val">{{ duplicate_count }}</div>
+                <div class="insight-sub">Tickets identified via TF-IDF cosine similarity (&ge; 72%)</div>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h5>Status Distribution</h5>
-                    <canvas id="status"></canvas>
+
+        <!-- Open High-Priority AI Predictions -->
+        <div class="col-md-4">
+            <div class="insight-card">
+                <div class="insight-card-top">
+                    <span class="insight-lbl">High-Priority Tickets</span>
+                    <i class="fa-solid fa-triangle-exclamation fs-5 text-danger"></i>
                 </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h5>AI Predicted Categories</h5>
-                    <canvas id="aiCategories"></canvas>
-                </div>
+                <div class="insight-val text-danger">{{ high }}</div>
+                <div class="insight-sub">Urgent student safety & maintenance items needing action</div>
             </div>
         </div>
     </div>
+
+    <!-- 4 Chart Visualizations Grid -->
+    <div class="row g-4 reveal-up reveal-delay-2">
+        <!-- Monthly Complaint Volume -->
+        <div class="col-lg-6">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h5 class="chart-card-title">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Monthly Complaint Volume</span>
+                    </h5>
+                    <span class="badge text-bg-light">Historical Trend</span>
+                </div>
+                <canvas id="monthlyChart" height="240"></canvas>
+            </div>
+        </div>
+
+        <!-- Complaint Categories -->
+        <div class="col-lg-6">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h5 class="chart-card-title">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>Reported Categories</span>
+                    </h5>
+                    <span class="badge text-bg-light">Student Selection</span>
+                </div>
+                <canvas id="categoriesChart" height="240"></canvas>
+            </div>
+        </div>
+
+        <!-- Status Distribution -->
+        <div class="col-lg-6">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h5 class="chart-card-title">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Ticket Status Breakdown</span>
+                    </h5>
+                    <span class="badge text-bg-light">Workflow State</span>
+                </div>
+                <div style="max-height: 260px;" class="d-flex justify-content-center">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Predicted Categories -->
+        <div class="col-lg-6">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h5 class="chart-card-title">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>AI Predicted Classification</span>
+                    </h5>
+                    <span class="badge text-bg-light">ML Model Triage</span>
+                </div>
+                <canvas id="aiCategoriesChart" height="240"></canvas>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charankumar/charts.js') }}"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    initChart('monthly', 'line', {{ months|tojson }}, {{ totals|tojson }});
-    initChart('categories', 'bar', {{ categories|tojson }}, {{ category_count|tojson }});
-    initChart('status', 'doughnut', ['Pending', 'In Progress', 'Resolved'], [{{ pending }}, {{ progress }}, {{ resolved }}]);
-    initChart('aiCategories', 'bar', {{ ai_categories|tojson }}, {{ ai_category_count|tojson }});
+    initChart('monthlyChart', 'line', {{ months|tojson }}, {{ totals|tojson }}, 'Monthly Total');
+    initChart('categoriesChart', 'bar', {{ categories|tojson }}, {{ category_count|tojson }}, 'Reported');
+    initChart('statusChart', 'doughnut', ['Pending', 'In Progress', 'Resolved'], [{{ pending }}, {{ progress }}, {{ resolved }}], 'Status');
+    initChart('aiCategoriesChart', 'bar', {{ ai_categories|tojson }}, {{ ai_category_count|tojson }}, 'AI Predicted');
 });
 </script>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/charankumar/analytics.js') }}"></script>
 {% endblock %}

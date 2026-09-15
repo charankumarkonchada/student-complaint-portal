@@ -5,6 +5,7 @@ from services.auth_service import admin_required
 admin_dashboard_bp = Blueprint("admin_dashboard", __name__)
 
 @admin_dashboard_bp.route("/admin_dashboard")
+@admin_dashboard_bp.route("/admin/dashboard")
 def admin_dashboard():
     if not admin_required():
         return redirect(url_for("admin_login"))
@@ -21,7 +22,9 @@ def admin_dashboard():
         ).fetchone()[0],
         "duplicates": conn.execute(
             "SELECT COUNT(*) FROM complaints WHERE ai_duplicate_id IS NOT NULL"
-        ).fetchone()[0]
+        ).fetchone()[0],
+        "common_issues_total": conn.execute("SELECT COUNT(*) FROM common_issues").fetchone()[0],
+        "common_issues_active": conn.execute("SELECT COUNT(*) FROM common_issues WHERE status!='Resolved'").fetchone()[0]
     }
 
     recent = conn.execute(
@@ -34,10 +37,23 @@ def admin_dashboard():
         """
     ).fetchall()
 
+    top_common_issues = conn.execute(
+        """
+        SELECT ci.*, COUNT(c.id) AS affected_count
+        FROM common_issues ci
+        LEFT JOIN complaints c ON c.common_issue_id = ci.id
+        WHERE ci.status != 'Resolved'
+        GROUP BY ci.id
+        ORDER BY affected_count DESC, ci.created_at DESC
+        LIMIT 4
+        """
+    ).fetchall()
+
     conn.close()
 
     return render_template(
         "charankumar/admin_dashboard.html",
         **stats,
-        recent=recent
+        recent=recent,
+        top_common_issues=top_common_issues
     )

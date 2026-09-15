@@ -2,29 +2,7 @@
  * Admin Login JavaScript Module - Owned by R. Charan Kumar
  */
 document.addEventListener("DOMContentLoaded", function () {
-    const passwordInput = document.getElementById("password");
-    const toggleButton = document.getElementById("passwordToggle");
-
-    if (toggleButton && passwordInput) {
-        toggleButton.addEventListener("click", function () {
-            const icon = toggleButton.querySelector("i");
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                if (icon) {
-                    icon.classList.remove("fa-eye");
-                    icon.classList.add("fa-eye-slash");
-                }
-                toggleButton.setAttribute("aria-label", "Hide password");
-            } else {
-                passwordInput.type = "password";
-                if (icon) {
-                    icon.classList.remove("fa-eye-slash");
-                    icon.classList.add("fa-eye");
-                }
-                toggleButton.setAttribute("aria-label", "Show password");
-            }
-        });
-    }
+    // Password Visibility Toggle is handled globally by script.js with data-target & accessibility support
 
     const adminLoginForm = document.getElementById("adminLoginForm");
     const loginButton = document.getElementById("loginButton");

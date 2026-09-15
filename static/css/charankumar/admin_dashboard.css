@@ -1,35 +1,169 @@
-/* Admin Dashboard Styles - Owned by K. Charankumar */
+/* ==========================================================================
+   IntelliHostel — Admin Dashboard Styles (Modern SaaS Control Center)
+   ========================================================================== */
+
+.admin-dash-page {
+    padding-top: 1rem;
+    padding-bottom: 3.5rem;
+}
+
+.admin-header-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.75rem 2rem;
+    border-radius: var(--radius-2xl);
+    background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.05) 0%, #ffffff 70%);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
+}
+
+.admin-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.admin-icon-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-xl);
+    background: #0f172a;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+    flex-shrink: 0;
+}
+
+.admin-title-wrap h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    color: var(--text-heading);
+}
+
+.admin-title-wrap p {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* 6 KPI Cards Grid */
+.admin-kpi-grid {
+    margin-bottom: 2rem;
+}
+
 .admin-kpi-card {
-    border: none;
-    border-radius: 16px;
     background: #ffffff;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    padding: 1.35rem 1.25rem;
+    box-shadow: var(--shadow-xs);
+    transition: all var(--transition-fast);
+    height: 100%;
 }
 
 .admin-kpi-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-color);
 }
 
-.admin-action-btn {
-    border-radius: 12px;
+.kpi-icon-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.kpi-icon-row i {
+    font-size: 1.25rem;
+}
+
+.admin-kpi-card .kpi-num {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-heading);
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+}
+
+.admin-kpi-card .kpi-lbl {
+    font-size: 0.8rem;
     font-weight: 600;
-    letter-spacing: 0.2px;
-    transition: all 0.2s ease;
-}
-
-.admin-recent-table th {
-    font-size: 11px;
+    color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #64748b;
-    font-weight: 700;
-    border-bottom: 2px solid #f1f5f9;
+    letter-spacing: 0.04em;
 }
 
-.admin-recent-table td {
-    font-size: 13px;
-    color: #334155;
-    vertical-align: middle;
+/* Quick Action Command Tiles */
+.admin-actions-row {
+    margin-bottom: 2rem;
+}
+
+.action-tile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-lg);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-xs);
+    width: 100%;
+    border: 1px solid transparent;
+}
+
+.action-tile-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-tile-primary {
+    background: var(--gradient-primary);
+    color: #ffffff !important;
+    box-shadow: var(--shadow-primary-btn);
+}
+
+.btn-tile-primary:hover {
+    box-shadow: var(--shadow-primary-hover);
+}
+
+.btn-tile-analytics {
+    background: #0f172a;
+    color: #ffffff !important;
+}
+
+.btn-tile-analytics:hover {
+    background: #1e293b;
+}
+
+.btn-tile-pdf {
+    background: #ffffff;
+    color: #be123c !important;
+    border-color: #fecdd3;
+}
+
+.btn-tile-pdf:hover {
+    background: #fff1f2;
+}
+
+.btn-tile-excel {
+    background: #ffffff;
+    color: #047857 !important;
+    border-color: #a7f3d0;
+}
+
+.btn-tile-excel:hover {
+    background: #ecfdf5;
 }

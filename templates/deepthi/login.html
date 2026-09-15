@@ -1,131 +1,78 @@
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/deepthi/login.css') }}">
-{% endblock %}
 {% extends "base.html" %}
 
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-{% endblock %}
-
-{% block title %}
-Student Login
-{% endblock %}
+{% block title %}Student Login - Hostel Complaint Portal{% endblock %}
 
 {% block favicon %}
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-login.svg') }}">
 {% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/deepthi/login.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="login-page">
-
     <div class="login-wrapper">
 
+        <!-- Left Brand Identity Panel -->
         <div class="login-brand">
-
             <div class="brand-icon">
                 <i class="fa-solid fa-user-graduate"></i>
             </div>
-
-            <h1>
-                Smart Hostel Portal
-            </h1>
-
-            <p>
-                Access your RGUKT Ongole student account to
-                raise, track and manage hostel complaints easily.
-            </p>
+            <h1>Smart Hostel Portal</h1>
+            <p>Access your RGUKT student account to raise, track, and manage hostel complaints effortlessly.</p>
 
             <div class="brand-features">
-
                 <div class="brand-feature">
                     <i class="fa-solid fa-circle-exclamation"></i>
-                    <span>
-                        Raise Complaints
-                    </span>
+                    <span>Raise & Track Complaints</span>
                 </div>
-
                 <div class="brand-feature">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                    <span>
-                        Track Complaints
-                    </span>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Automated AI Triage</span>
                 </div>
-
                 <div class="brand-feature">
                     <i class="fa-solid fa-bell"></i>
-                    <span>
-                        Get Notifications
-                    </span>
+                    <span>Live Resolution Alerts</span>
                 </div>
-
             </div>
-
         </div>
 
+        <!-- Right Login Form Panel -->
         <div class="login-form-panel">
-
             <div class="login-heading">
-
-                <h2>
-                    Student Login
-                </h2>
-
-                <p>
-                    Sign in using your RGUKT Ongole ID
-                </p>
-
+                <h2>Student Login</h2>
+                <p>Sign in using your RGUKT roll number and password</p>
             </div>
 
-            <form method="POST"
-                  id="studentLoginForm"
-                  onsubmit="return validateLogin()">
-
+            <form method="POST" id="studentLoginForm" novalidate>
                 <div class="login-form-group">
-
-                    <label class="login-label" for="id_no">
-                        ID No.
-                    </label>
-
+                    <label class="login-label" for="id_no">University ID Number</label>
                     <div class="login-input-wrapper">
-
                         <i class="fa-solid fa-id-card login-input-icon"></i>
-
                         <input
                             class="login-input"
                             type="text"
                             name="id_no"
                             id="id_no"
-                            placeholder="Example: OXXXXXX, NXXXXXX, RXXXXXX, SXXXXXX"
+                            placeholder="e.g. OXXXXXX, NXXXXXX, RXXXXXX, SXXXXXX"
                             maxlength="7"
                             minlength="7"
                             pattern="[ONRSonrs][0-9]{6}"
-                            title="ID No. must start with O, N, R, or S followed by exactly 6 digits"
                             autocomplete="username"
                             required>
-
                     </div>
-
-                    <div class="id-help">
-                        Enter ID in the format O, N, R, or S + 6 digits.
-                        Example: O210894, N210894
-                    </div>
-
-                    <div class="id-error" id="idError">
-                        Invalid ID. Must start with O, N, R, or S followed by 6 digits.
-                    </div>
-
+                    <div class="id-help">Format: O, N, R, or S followed by 6 digits.</div>
+                    <div class="id-error" id="idError">ID must start with O, N, R, or S followed by 6 digits.</div>
                 </div>
 
                 <div class="login-form-group">
-
-                    <label class="login-label" for="password">
-                        Password
-                    </label>
-
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="login-label mb-0" for="password">Password</label>
+                        <a href="{{ url_for('forgot_password') }}" class="register-link small">Forgot Password?</a>
+                    </div>
                     <div class="login-input-wrapper">
-
                         <i class="fa-solid fa-lock login-input-icon"></i>
-
                         <input
                             class="login-input"
                             type="password"
@@ -134,80 +81,33 @@ Student Login
                             placeholder="Enter your password"
                             autocomplete="current-password"
                             required>
-
-                        <button
-                            type="button"
-                            class="password-toggle"
-                            id="passwordToggle"
-                            aria-label="Show password">
-
-                            <i class="fa-solid fa-eye"
-                               id="passwordIcon"></i>
-
+                        <button type="button" class="password-toggle" id="passwordToggle" data-target="password" aria-controls="password" aria-label="Show password" aria-pressed="false" title="Show password">
+                            <i class="fa-solid fa-eye" id="passwordIcon"></i>
                         </button>
-
                     </div>
-
                 </div>
 
-                <div style="text-align:right; margin:-6px 0 18px;">
-
-                    <a href="{{ url_for('forgot_password') }}"
-                       class="register-link">
-                        Forgot Password?
-                    </a>
-
-                </div>
-
-                <button
-                    type="submit"
-                    class="login-button"
-                    id="loginButton">
-
+                <button type="submit" class="login-button" id="loginButton">
                     <i class="fa-solid fa-right-to-bracket"></i>
-
-                    Login to Portal
-
+                    <span>Sign In to Portal</span>
                 </button>
-
             </form>
 
             <div class="register-section">
-
-                <p>
-
-                    Don't have an account?
-
-                    <a href="{{ url_for('register') }}"
-                       class="register-link">
-
-                        Create Student Account
-
-                    </a>
-
-                </p>
-
+                <span>Don't have an account? </span>
+                <a href="{{ url_for('register') }}" class="register-link">Create Student Account</a>
             </div>
 
             <div class="security-note">
-
                 <i class="fa-solid fa-shield-halved"></i>
-
-                Secure RGUKT Ongole student authentication
-
+                <span>Official RGUKT Hostel Authentication</span>
             </div>
-
         </div>
 
     </div>
-
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
-{% endblock %}
-
-{% block extra_js %}
 <script src="{{ url_for('static', filename='js/deepthi/login.js') }}"></script>
 {% endblock %}

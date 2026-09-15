@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Common Issue #{{ issue.id }} - IntelliHostel Admin{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/charan/manage_complaints.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="manage-page">
+    <!-- Header Banner -->
+    <div class="manage-header">
+        <div class="manage-heading">
+            <div class="manage-heading-icon" style="background: linear-gradient(135deg, #0f766e, #0d9488);">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="badge common-issue-badge-count">Master Issue #{{ issue.id }}</span>
+                    <span class="badge text-bg-light border"><i class="fa-solid fa-building me-1"></i> {{ issue.hostel }}</span>
+                    <span class="badge bg-secondary-subtle text-secondary">{{ issue.category }}</span>
+                </div>
+                <h1>{{ issue.title }}</h1>
+                <p>Single administrative control point managing <strong>{{ issue.affected_count }}</strong> associated student complaint(s)</p>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ url_for('common_issues.list_common_issues') }}" class="manage-back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>All Common Issues</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main 2-Column Operations Layout -->
+    <div class="row g-4">
+        <!-- Left Column: Single Action Update & Master Details -->
+        <div class="col-lg-5">
+            <!-- Master Single-Action Update Form Card -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4 common-issue-card">
+                <div class="card-header bg-transparent border-bottom p-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-arrows-rotate fs-5 text-teal"></i>
+                            <h5 class="fw-bold mb-0 text-dark">Single-Action Master Update</h5>
+                        </div>
+                        <span class="badge badge-teal">
+                            Syncs {{ issue.affected_count }} student(s)
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('common_issues.update_common_issue', id=issue.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Update Master Status</label>
+                            <select class="form-select form-select-lg" name="status" style="font-size: 1rem; font-weight: 700;">
+                                <option value="Pending" {% if issue.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="In Progress" {% if issue.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                <option value="Resolved" {% if issue.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Assigned Staff / Contractor</label>
+                            <input type="text" class="form-control" name="assigned_to"
+                                   value="{{ issue.assigned_to or '' }}" placeholder="e.g. Ramesh Plumbing Team">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Administrative Remarks</label>
+                            <textarea class="form-control" name="remarks" rows="4"
+                                      placeholder="e.g. Water pipeline repair completed in Hostel Block A. Tested and fully operational.">{{ issue.admin_remarks or '' }}</textarea>
+                            <small class="text-muted d-block mt-1">
+                                This remark will be instantly broadcast and visible to all {{ issue.affected_count }} affected students.
+                            </small>
+                        </div>
+
+                        <button type="submit" class="btn w-100 py-3 text-white fw-bold shadow-sm"
+                                style="background: linear-gradient(135deg, #ff5733, #ff7847); border: none; border-radius: 14px; font-size: 1rem;">
+                            <i class="fa-solid fa-arrows-rotate me-2"></i> Update Once & Propagate to All ({{ issue.affected_count }})
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Master Issue Metadata Card -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-dark mb-3">
+                        <i class="fa-solid fa-circle-info me-2 text-primary"></i> Incident Information
+                    </h6>
+                    {% if issue.description %}
+                        <p class="small text-muted mb-3">{{ issue.description }}</p>
+                    {% endif %}
+
+                    <div class="d-flex flex-column gap-2 small">
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-muted">Hostel Location:</span>
+                            <span class="fw-bold text-dark">{{ issue.hostel }}</span>
+                        </div>
+                        {% if issue.location_details %}
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-muted">Wing/Details:</span>
+                            <span class="fw-bold text-dark">{{ issue.location_details }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-muted">Priority:</span>
+                            <span class="badge text-bg-warning">{{ issue.priority }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-muted">Created Date:</span>
+                            <span class="text-dark">{{ issue.created_at }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Last Synchronized:</span>
+                            <span class="text-dark">{{ issue.updated_at }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Master Audit History -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-dark mb-3">
+                        <i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i> Master Audit History
+                    </h6>
+                    <div class="timeline-list">
+                        {% for h in issue.history %}
+                        <div class="timeline-entry mb-3 border-start ps-3 border-primary" style="border-width: 3px !important;">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge text-bg-light border fw-bold">{{ h.status }}</span>
+                                <small class="text-muted">{{ h.date }}</small>
+                            </div>
+                            {% if h.remarks %}
+                                <p class="small text-muted mb-1 mt-1">{{ h.remarks }}</p>
+                            {% endif %}
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">By {{ h.updated_by }}</small>
+                        </div>
+                        {% else %}
+                        <p class="small text-muted mb-0">No audit history entries recorded yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Associated Student Complaints -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-transparent border-bottom p-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h5 class="fw-bold mb-1 text-dark">
+                                <i class="fa-solid fa-users me-2 text-primary"></i> Associated Student Complaints
+                            </h5>
+                            <p class="small text-muted mb-0">
+                                All {{ complaints|length }} complaints below are synchronized with this master issue.
+                            </p>
+                        </div>
+                        <span class="badge badge-teal" style="font-size: 0.85rem; padding: 6px 14px;">
+                            {{ complaints|length }} Synced
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 70px;">ID</th>
+                                    <th>Student Details</th>
+                                    <th>Room</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Filed At</th>
+                                    <th style="text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in complaints %}
+                                <tr>
+                                    <td>
+                                        <span class="fw-bold text-muted">#{{ c.id }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark">{{ c.student_name }}</div>
+                                        <small class="text-muted">{{ c.student_id_no }} &bull; {{ c.student_phone }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge text-bg-light border">Room {{ c.student_room_no }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="text-truncate" style="max-width: 180px;" title="{{ c.title }}">
+                                            {{ c.title }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if c.status == 'Pending' %}
+                                            <span class="badge badge-pending">Pending</span>
+                                        {% elif c.status == 'In Progress' %}
+                                            <span class="badge badge-progress">In Progress</span>
+                                        {% else %}
+                                            <span class="badge badge-resolved">Resolved</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ (c.created_at|string)[:10] if c.created_at else '' }}</small>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <form method="POST" action="{{ url_for('common_issues.unlink_complaint', id=issue.id, complaint_id=c.id) }}"
+                                              class="d-inline" onsubmit="return confirm('Unlink complaint #{{ c.id }} from this common issue?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Unlink Complaint">
+                                                <i class="fa-solid fa-unlink"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        No student complaints associated with this master issue yet.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Link Additional Complaints in the Same Hostel/Category -->
+            {% if unlinked_candidates %}
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-dark mb-2">
+                        <i class="fa-solid fa-link me-2 text-primary"></i> Link Unassociated Complaints in {{ issue.hostel }}
+                    </h6>
+                    <p class="small text-muted mb-3">
+                        The following student complaints in <strong>{{ issue.hostel }}</strong> (Category: {{ issue.category }}) are currently unlinked. You can attach them to this common issue with one click:
+                    </p>
+
+                    <form method="POST" action="{{ url_for('common_issues.link_complaint', id=issue.id) }}" class="row g-2 align-items-center">
+                        <div class="col-md-9">
+                            <select class="form-select" name="complaint_id" required>
+                                <option value="">Select an unlinked complaint...</option>
+                                {% for u in unlinked_candidates %}
+                                <option value="{{ u.id }}">
+                                    #{{ u.id }} - {{ u.title }} ({{ u.name }}, Room {{ u.room_no }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-outline-primary w-100 fw-bold">
+                                <i class="fa-solid fa-plus me-1"></i> Link to Issue
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

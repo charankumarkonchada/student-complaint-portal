@@ -10,9 +10,10 @@ def analytics():
     if not admin_required():
         return redirect(url_for("admin_login"))
 
+    from database.db import ConnectionAdapter
     conn = get_db_connection()
 
-    if config.DATABASE_URL:
+    if isinstance(conn, ConnectionAdapter):
         month_expr = "TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM')"
     else:
         month_expr = "strftime('%Y-%m', created_at)"

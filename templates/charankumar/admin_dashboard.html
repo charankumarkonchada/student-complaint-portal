@@ -1,84 +1,227 @@
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/charankumar/admin_dashboard.css') }}">
-{% endblock %}
 {% extends "base.html" %}
-{% block title %}Admin Dashboard{% endblock %}
+
+{% block title %}Admin Dashboard - IntelliHostel Control Center{% endblock %}
+
 {% block favicon %}
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-admin-dashboard.svg') }}">
 {% endblock %}
+
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/charankumar/admin_dashboard.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold">IntelliHostel Admin Dashboard</h2>
-            <p class="text-muted">AI-assisted complaint operations and decision support.</p>
+<div class="admin-dash-page">
+
+    <!-- Admin Header Banner -->
+    <div class="admin-header-banner reveal-up">
+        <div class="admin-title-wrap">
+            <div class="admin-icon-circle">
+                <i class="fa-solid fa-gauge-high"></i>
+            </div>
+            <div>
+                <h1>IntelliHostel Operations Center</h1>
+                <p>AI-assisted complaint monitoring, triage overview, and campus maintenance decision support</p>
+            </div>
         </div>
-        <a class="btn btn-outline-danger" href="{{ url_for('admin_logout') }}">Logout</a>
+
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge text-bg-light px-3 py-2">
+                <i class="fa-solid fa-circle text-success me-1"></i> System Active
+            </span>
+            <a class="btn btn-sm btn-outline-danger" href="{{ url_for('admin_logout') }}">
+                <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Logout
+            </a>
+        </div>
     </div>
 
-    <div class="row g-3 mb-4">
-        {% for label,value,icon in [('Total',total,'fa-list'),('Pending',pending,'fa-clock'),('In Progress',progress,'fa-spinner'),('Resolved',resolved,'fa-check'),('High-risk open',high_ai,'fa-triangle-exclamation'),('Possible duplicates',duplicates,'fa-copy')] %}
-        <div class="col-6 col-lg-2">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <i class="fa-solid {{ icon }} text-primary"></i>
-                    <div class="text-muted small mt-2">{{ label }}</div>
-                    <div class="fs-3 fw-bold">{{ value }}</div>
+    <!-- 6 KPI Metric Cards Grid -->
+    <div class="admin-kpi-grid">
+        <div class="row g-3">
+            <!-- Total -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="admin-kpi-card reveal-up reveal-delay-1">
+                    <div class="kpi-icon-row">
+                        <span class="kpi-lbl">Total</span>
+                        <i class="fa-solid fa-list text-primary"></i>
+                    </div>
+                    <div class="kpi-num">{{ total }}</div>
+                    <small class="text-muted">All tickets</small>
+                </div>
+            </div>
+
+            <!-- Pending -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="admin-kpi-card reveal-up reveal-delay-2">
+                    <div class="kpi-icon-row">
+                        <span class="kpi-lbl">Pending</span>
+                        <i class="fa-solid fa-clock text-warning"></i>
+                    </div>
+                    <div class="kpi-num">{{ pending }}</div>
+                    <small class="text-muted">Awaiting triage</small>
+                </div>
+            </div>
+
+            <!-- In Progress -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="admin-kpi-card reveal-up reveal-delay-3">
+                    <div class="kpi-icon-row">
+                        <span class="kpi-lbl">In Progress</span>
+                        <i class="fa-solid fa-spinner text-info"></i>
+                    </div>
+                    <div class="kpi-num">{{ progress }}</div>
+                    <small class="text-muted">Assigned staff</small>
+                </div>
+            </div>
+
+            <!-- Resolved -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="admin-kpi-card reveal-up reveal-delay-4">
+                    <div class="kpi-icon-row">
+                        <span class="kpi-lbl">Resolved</span>
+                        <i class="fa-solid fa-circle-check text-success"></i>
+                    </div>
+                    <div class="kpi-num">{{ resolved }}</div>
+                    <small class="text-muted">Closed issues</small>
+                </div>
+            </div>
+
+            <!-- High Risk Open -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="admin-kpi-card reveal-up reveal-delay-5">
+                    <div class="kpi-icon-row">
+                        <span class="kpi-lbl">High Priority</span>
+                        <i class="fa-solid fa-triangle-exclamation text-danger"></i>
+                    </div>
+                    <div class="kpi-num text-danger">{{ high_ai }}</div>
+                    <small class="text-muted">Unresolved urgent</small>
+                </div>
+            </div>
+
+            <!-- Duplicates -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="admin-kpi-card reveal-up reveal-delay-6">
+                    <div class="kpi-icon-row">
+                        <span class="kpi-lbl">Duplicates</span>
+                        <i class="fa-solid fa-copy text-secondary"></i>
+                    </div>
+                    <div class="kpi-num">{{ duplicates }}</div>
+                    <small class="text-muted">AI detected</small>
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100 py-3" href="{{ url_for('manage_complaints') }}">Manage Complaints</a>
+    <!-- Quick Action Command Tiles -->
+    <div class="admin-actions-row reveal-up reveal-delay-2">
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <a class="action-tile-btn btn-tile-primary" href="{{ url_for('manage_complaints') }}">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Manage Complaints</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a class="action-tile-btn btn-tile-analytics" href="{{ url_for('analytics') }}">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>AI Analytics & Triage</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a class="action-tile-btn btn-tile-pdf" href="{{ url_for('export_pdf') }}">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Export PDF Report</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a class="action-tile-btn btn-tile-excel" href="{{ url_for('export_excel') }}">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span>Export Excel Sheet</span>
+                </a>
+            </div>
         </div>
-        <div class="col-md-3">
-            <a class="btn btn-success w-100 py-3" href="{{ url_for('analytics') }}">AI Analytics</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-outline-danger w-100 py-3" href="{{ url_for('export_pdf') }}">Export PDF</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-outline-success w-100 py-3" href="{{ url_for('export_excel') }}">Export Excel</a>
+
+        <div class="mt-3">
+            <a class="action-tile-btn w-100 d-flex align-items-center justify-content-between p-3 common-issue-banner-btn"
+               href="{{ url_for('common_issues.list_common_issues') }}">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center common-issue-icon-box" style="width: 40px; height: 40px;">
+                        <i class="fa-solid fa-users-gear fs-5"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold common-issue-banner-title">Shared / Common Hostel Issues Control</div>
+                        <small class="common-issue-banner-sub">Single-action propagation for hostel-wide maintenance issues</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge common-issue-badge-count">
+                        {{ common_issues_active or 0 }} Active Issues
+                    </span>
+                    <i class="fa-solid fa-arrow-right common-issue-arrow"></i>
+                </div>
+            </a>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <h5 class="fw-bold">Recent Complaints</h5>
+    <!-- Active Common Issues Spotlight (if any) -->
+    {% if top_common_issues %}
+    <div class="card border-0 shadow-sm rounded-4 mb-4 reveal-up reveal-delay-3 common-issue-spotlight-card" style="border: 1px solid #ccfbf1 !important;">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-bullhorn fs-5 text-teal"></i>
+                    <h5 class="fw-bold mb-0 text-dark">Active Master Issues Requiring Single Action</h5>
+                </div>
+                <a href="{{ url_for('common_issues.list_common_issues') }}" class="btn btn-sm common-issue-manage-link">
+                    Manage All Issues <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+
             <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Student</th>
-                            <th>Complaint</th>
-                            <th>Priority</th>
-                            <th>AI prediction</th>
+                            <th>Issue Title</th>
+                            <th>Hostel</th>
+                            <th>Category</th>
                             <th>Status</th>
-                            <th></th>
+                            <th>Affected Students</th>
+                            <th style="text-align: right;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for c in recent %}
+                        {% for issue in top_common_issues %}
                         <tr>
-                            <td>#{{ c.id }}</td>
-                            <td>{{ c.name }}</td>
-                            <td>{{ c.title }}</td>
-                            <td>{{ c.priority }}</td>
-                            <td>{{ c.ai_category or '—' }} · {{ c.ai_resolution_days or '—' }}d</td>
-                            <td>{{ c.status }}</td>
-                            <td><a class="btn btn-sm btn-outline-primary" href="{{ url_for('update_status', id=c.id) }}">Open</a></td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="7" class="text-muted">No complaints yet.</td>
+                            <td>
+                                <strong class="text-dark">{{ issue.title }}</strong>
+                                {% if issue.admin_remarks %}
+                                <small class="text-muted d-block text-truncate" style="max-width: 300px;">
+                                    {{ issue.admin_remarks }}
+                                </small>
+                                {% endif %}
+                            </td>
+                            <td><span class="badge text-bg-light border">{{ issue.hostel }}</span></td>
+                            <td><span class="badge bg-secondary-subtle text-secondary">{{ issue.category }}</span></td>
+                            <td>
+                                {% if issue.status == 'Pending' %}
+                                    <span class="badge badge-pending">Pending</span>
+                                {% elif issue.status == 'In Progress' %}
+                                    <span class="badge badge-progress">In Progress</span>
+                                {% else %}
+                                    <span class="badge badge-resolved">Resolved</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge badge-teal" style="font-size: 0.85rem;">
+                                    <i class="fa-solid fa-users me-1"></i> {{ issue.affected_count }} students
+                                </span>
+                            </td>
+                            <td style="text-align: right;">
+                                <a href="{{ url_for('common_issues.view_common_issue', id=issue.id) }}"
+                                   class="btn btn-sm btn-outline-primary fw-bold" style="border-radius: 8px;">
+                                    <i class="fa-solid fa-pen-to-square me-1"></i> Update Once
+                                </a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -86,9 +229,92 @@
             </div>
         </div>
     </div>
+    {% endif %}
+
+    <!-- Recent Complaints Table Card -->
+    <div class="card border-0 shadow-sm reveal-up reveal-delay-3">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Incoming & Active Complaints</h5>
+                <a href="{{ url_for('manage_complaints') }}" class="btn btn-sm btn-outline-primary">
+                    <span>View All Tickets</span>
+                    <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">ID</th>
+                            <th>Student</th>
+                            <th>Complaint Title</th>
+                            <th>Priority</th>
+                            <th>AI Prediction</th>
+                            <th>Status</th>
+                            <th style="width: 100px; text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in recent %}
+                        <tr>
+                            <td>
+                                <span class="fw-bold">#{{ c.id }}</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">{{ c.name }}</div>
+                                <small class="text-muted">{{ c.id_no }}</small>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-dark">{{ c.title }}</div>
+                                <small class="text-muted">{{ c.category }}</small>
+                            </td>
+                            <td>
+                                {% if c.priority == 'High' %}
+                                    <span class="badge badge-priority-high">High</span>
+                                {% elif c.priority == 'Medium' %}
+                                    <span class="badge badge-priority-medium">Medium</span>
+                                {% else %}
+                                    <span class="badge badge-priority-low">Low</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge text-bg-light">
+                                    <i class="fa-solid fa-wand-magic-sparkles me-1 text-primary"></i>
+                                    {{ c.ai_category or '—' }} · {{ c.ai_resolution_days or '—' }}d
+                                </span>
+                            </td>
+                            <td>
+                                {% if c.status == 'Pending' %}
+                                    <span class="badge badge-pending">Pending</span>
+                                {% elif c.status == 'In Progress' %}
+                                    <span class="badge badge-progress">In Progress</span>
+                                {% else %}
+                                    <span class="badge badge-resolved">Resolved</span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: right;">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('update_status', id=c.id) }}">
+                                    <span>Review</span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                No complaints registered in the system yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 
-{% block extra_js %}
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/charankumar/admin_dashboard.js') }}"></script>
 {% endblock %}

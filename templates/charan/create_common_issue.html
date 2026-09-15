@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Create Master Common Issue - IntelliHostel Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 800px;">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <a href="{{ url_for('common_issues.list_common_issues') }}" class="btn btn-outline-secondary btn-sm mb-2">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Master Issues
+            </a>
+            <h2 class="fw-bold text-dark mb-0">Create Master Common Issue</h2>
+            <p class="text-muted small mb-0">Establish a master incident to group and update recurring hostel complaints with a single action.</p>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            <form method="POST" action="{{ url_for('common_issues.create_new_common_issue') }}">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold small">Issue Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="title" placeholder="e.g. Water Supply Outage in Hostel Block A" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Priority</label>
+                        <select class="form-select" name="priority">
+                            <option value="High">High</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small">Hostel Location <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="hostel" placeholder="e.g. Hostel Block A" required>
+                        <small class="text-muted" style="font-size: 0.75rem;">Strictly bounds matching student complaints to this hostel location.</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small">Category <span class="text-danger">*</span></label>
+                        <select class="form-select" name="category" required>
+                            <option value="Plumbing">Plumbing</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Carpentry">Carpentry</option>
+                            <option value="Internet / Wi-Fi">Internet / Wi-Fi</option>
+                            <option value="Cleanliness">Cleanliness</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold small">Specific Location Details</label>
+                        <input type="text" class="form-control" name="location_details" placeholder="e.g. All Wings / 2nd and 3rd Floors">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold small">Description</label>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Explain the root problem and context..."></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small">Assigned Maintenance Staff</label>
+                        <input type="text" class="form-control" name="assigned_to" placeholder="e.g. Campus Plumbing Supervisor">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small">Initial Remarks</label>
+                        <input type="text" class="form-control" name="admin_remarks" placeholder="e.g. Maintenance crew dispatched">
+                    </div>
+
+                    <div class="col-12 pt-3 border-top d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('common_issues.list_common_issues') }}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #ff5733, #ff7847); border: none; font-weight: 700;">
+                            <i class="fa-solid fa-plus me-1"></i> Create Master Issue
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

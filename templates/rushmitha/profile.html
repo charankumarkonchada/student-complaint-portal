@@ -1,374 +1,239 @@
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/rushmitha/profile.css') }}">
-{% endblock %}
 {% extends "base.html" %}
 
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
-{% endblock %}
+{% block title %}Student Profile - IntelliHostel{% endblock %}
 
-{% block title %}
-Student Profile
-{% endblock %}
-
-{% block favicon %}
-<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-profile.svg') }}">
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rushmitha/profile.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="profile-page">
-
+    <!-- Topbar Breadcrumb & Navigation -->
     <div class="profile-topbar">
-
         <div class="profile-heading">
-
             <div class="profile-heading-icon">
-
-                <i class="fa-solid fa-user"></i>
-
+                <i class="fa-solid fa-user-gear"></i>
             </div>
-
             <div>
-
-                <h1>
-                    Student Profile
-                </h1>
-
-                <p>
-                    Manage your personal and hostel information
-                </p>
-
+                <h1>Student Profile</h1>
+                <p>Manage your identity, room details, and security preferences</p>
             </div>
-
         </div>
-
-        <a href="{{ url_for('dashboard') }}" class="profile-back">
-
+        <a href="{{ url_for('dashboard') }}" class="profile-back-btn">
             <i class="fa-solid fa-arrow-left"></i>
-
-            Back to Dashboard
-
+            <span>Back to Dashboard</span>
         </a>
-
     </div>
 
     <div class="profile-layout">
-
-        <div class="profile-side-card">
-
-            <div class="profile-avatar">
-
-                <i class="fa-solid fa-user-graduate"></i>
-
-                <span class="avatar-status"></span>
-
+        <!-- Left Sidebar / Summary Card -->
+        <aside class="profile-side-card">
+            <div class="profile-avatar-wrap">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <span class="avatar-status-dot" title="Active Account"></span>
             </div>
 
-            <div>
-
-                <h2>
-                    {{ student.name }}
-                </h2>
-
-                <p class="profile-roll">
-
-                    {{ student.id_no }}
-
-                </p>
-
-                <span class="student-badge">
-
-                    <i class="fa-solid fa-user-check"></i>
-
-                    Active Student
-
-                </span>
-
+            <div class="profile-identity">
+                <h2 class="student-name">{{ student.name }}</h2>
+                <div class="student-id-tag">
+                    <i class="fa-solid fa-id-badge"></i>
+                    <span>{{ student.id_no }}</span>
+                </div>
+                <div class="student-status-badge">
+                    <span class="status-pulse"></span>
+                    <span>Verified Student</span>
+                </div>
             </div>
 
-            <div class="side-info">
-
-                <div class="side-info-item">
-
-                    <div class="side-info-icon">
-
+            <div class="profile-meta-list">
+                <div class="meta-item">
+                    <div class="meta-icon">
                         <i class="fa-solid fa-envelope"></i>
-
                     </div>
-
-                    <span>
-                        {{ student.email }}
-                    </span>
-
+                    <div class="meta-content">
+                        <span class="meta-label">Campus Email</span>
+                        <span class="meta-value">{{ student.email }}</span>
+                    </div>
                 </div>
 
-                <div class="side-info-item">
-
-                    <div class="side-info-icon">
-
+                <div class="meta-item">
+                    <div class="meta-icon">
                         <i class="fa-solid fa-phone"></i>
-
                     </div>
-
-                    <span>
-                        {{ student.phone }}
-                    </span>
-
+                    <div class="meta-content">
+                        <span class="meta-label">Contact Number</span>
+                        <span class="meta-value">{{ student.phone }}</span>
+                    </div>
                 </div>
 
-                <div class="side-info-item">
-
-                    <div class="side-info-icon">
-
-                        <i class="fa-solid fa-building"></i>
-
+                <div class="meta-item">
+                    <div class="meta-icon">
+                        <i class="fa-solid fa-hotel"></i>
                     </div>
-
-                    <span>
-                        {{ student.hostel }}
-                    </span>
-
+                    <div class="meta-content">
+                        <span class="meta-label">Hostel Residence</span>
+                        <span class="meta-value">{{ student.hostel }}</span>
+                    </div>
                 </div>
 
-                <div class="side-info-item">
-
-                    <div class="side-info-icon">
-
-                        <i class="fa-solid fa-door-open"></i>
-
+                <div class="meta-item">
+                    <div class="meta-icon">
+                        <i class="fa-solid fa-door-closed"></i>
                     </div>
-
-                    <span>
-                        Room {{ student.room_no }}
-                    </span>
-
+                    <div class="meta-content">
+                        <span class="meta-label">Room Assignment</span>
+                        <span class="meta-value">Room {{ student.room_no }}</span>
+                    </div>
                 </div>
-
             </div>
 
-        </div>
+            <div class="side-card-footer">
+                <a href="{{ url_for('change_password') }}" class="side-security-link">
+                    <i class="fa-solid fa-shield-keyhole"></i>
+                    <span>Security Settings</span>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </a>
+            </div>
+        </aside>
 
-        <div class="profile-main-card">
-
+        <!-- Right Main Form Card -->
+        <main class="profile-main-card">
             <div class="profile-card-header">
-
-                <div class="profile-card-title">
-
-                    <i class="fa-solid fa-pen-to-square"></i>
-
-                    <h3>
-                        Personal Information
-                    </h3>
-
+                <div class="header-title-box">
+                    <div class="header-icon-pill">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                    <div>
+                        <h3>Personal & Hostel Details</h3>
+                        <p>Keep your contact and accommodation information up to date</p>
+                    </div>
                 </div>
-
-                <span class="edit-badge">
-
-                    <i class="fa-solid fa-lock-open"></i>
-
-                    Editable
-
+                <span class="edit-pill">
+                    <i class="fa-solid fa-pen-nib"></i> Editable Fields
                 </span>
-
             </div>
 
-            <div class="profile-form">
-
-                <form method="POST" id="profileForm">
-
+            <div class="profile-card-body">
+                <form method="POST" id="profileForm" class="profile-form">
                     <div class="profile-form-grid">
-
-                        <div class="profile-field">
-
-                            <label class="profile-label" for="name">
-
-                                <i class="fa-solid fa-user"></i>
-
-                                Full Name
-
+                        <!-- Full Name -->
+                        <div class="form-group-item">
+                            <label class="form-item-label" for="name">
+                                <i class="fa-regular fa-user"></i>
+                                <span>Full Name <span class="required">*</span></span>
                             </label>
-
-                            <div class="profile-input-wrapper">
-
-                                <i class="fa-solid fa-user profile-input-icon"></i>
-
-                                <input type="text" class="profile-input" name="name" id="name"
+                            <div class="input-container">
+                                <i class="fa-solid fa-signature input-leading-icon"></i>
+                                <input type="text" class="custom-input" name="name" id="name"
                                     value="{{ student.name }}" placeholder="Enter full name" required>
-
                             </div>
-
+                            <small class="field-hint">Official name as per college registry</small>
                         </div>
 
-                        <div class="profile-field">
-
-                            <label class="profile-label" for="id_no">
-
-                                <i class="fa-solid fa-id-card"></i>
-
-                                Student ID
-
+                        <!-- Student ID (Readonly) -->
+                        <div class="form-group-item">
+                            <label class="form-item-label" for="id_no">
+                                <i class="fa-regular fa-id-card"></i>
+                                <span>Student ID Number</span>
                             </label>
-
-                            <div class="profile-input-wrapper">
-
-                                <i class="fa-solid fa-id-card profile-input-icon"></i>
-
-                                <input type="text" class="profile-input readonly-input" id="id_no"
+                            <div class="input-container">
+                                <i class="fa-solid fa-id-card input-leading-icon"></i>
+                                <input type="text" class="custom-input readonly-input" id="id_no"
                                     value="{{ student.id_no }}" readonly>
-
-                                <span class="readonly-badge">
-
-                                    <i class="fa-solid fa-lock"></i>
-
-                                    Fixed
-
+                                <span class="locked-badge" title="Student ID cannot be modified">
+                                    <i class="fa-solid fa-lock"></i> Fixed
                                 </span>
-
                             </div>
-
+                            <small class="field-hint">Non-editable college identifier</small>
                         </div>
 
-                        <div class="profile-field">
-
-                            <label class="profile-label" for="email">
-
-                                <i class="fa-solid fa-envelope"></i>
-
-                                Email Address
-
+                        <!-- Email Address -->
+                        <div class="form-group-item">
+                            <label class="form-item-label" for="email">
+                                <i class="fa-regular fa-envelope"></i>
+                                <span>College Email <span class="required">*</span></span>
                             </label>
-
-                            <div class="profile-input-wrapper">
-
-                                <i class="fa-solid fa-envelope profile-input-icon"></i>
-
-                                <input type="email" class="profile-input" name="email" id="email"
-                                    value="{{ student.email }}" placeholder="Enter email address" required>
-
+                            <div class="input-container">
+                                <i class="fa-solid fa-at input-leading-icon"></i>
+                                <input type="email" class="custom-input" name="email" id="email"
+                                    value="{{ student.email }}" placeholder="Enter RGUKT email address" required>
                             </div>
-
+                            <small class="field-hint">Must end with @rguktong.ac.in</small>
                         </div>
 
-                        <div class="profile-field">
-
-                            <label class="profile-label" for="phone">
-
+                        <!-- Phone Number -->
+                        <div class="form-group-item">
+                            <label class="form-item-label" for="phone">
                                 <i class="fa-solid fa-phone"></i>
-
-                                Phone Number
-
+                                <span>Phone Number <span class="required">*</span></span>
                             </label>
-
-                            <div class="profile-input-wrapper">
-
-                                <i class="fa-solid fa-phone profile-input-icon"></i>
-
-                                <input type="text" class="profile-input" name="phone" id="phone"
-                                    value="{{ student.phone }}" placeholder="Enter phone number" required>
-
+                            <div class="input-container">
+                                <i class="fa-solid fa-phone-volume input-leading-icon"></i>
+                                <input type="text" class="custom-input" name="phone" id="phone"
+                                    value="{{ student.phone }}" placeholder="10-digit mobile number" required>
                             </div>
-
+                            <small class="field-hint">Used by hostel staff for emergency contact</small>
                         </div>
 
-                        <div class="profile-field">
-
-                            <label class="profile-label" for="hostel">
-
-                                <i class="fa-solid fa-building"></i>
-
-                                Hostel Name
-
+                        <!-- Hostel Block -->
+                        <div class="form-group-item">
+                            <label class="form-item-label" for="hostel">
+                                <i class="fa-regular fa-building"></i>
+                                <span>Hostel Block <span class="required">*</span></span>
                             </label>
-
-                            <div class="profile-input-wrapper">
-
-                                <i class="fa-solid fa-building profile-input-icon"></i>
-
-                                <input type="text" class="profile-input" name="hostel" id="hostel"
-                                    value="{{ student.hostel }}" placeholder="Enter hostel name" required>
-
+                            <div class="input-container">
+                                <i class="fa-solid fa-building input-leading-icon"></i>
+                                <input type="text" class="custom-input" name="hostel" id="hostel"
+                                    value="{{ student.hostel }}" placeholder="e.g. Block A / Kaveri Bhavan" required>
                             </div>
-
+                            <small class="field-hint">Assigned hostel building or hall</small>
                         </div>
 
-                        <div class="profile-field">
-
-                            <label class="profile-label" for="room_no">
-
+                        <!-- Room Number -->
+                        <div class="form-group-item">
+                            <label class="form-item-label" for="room_no">
                                 <i class="fa-solid fa-door-open"></i>
-
-                                Room Number
-
+                                <span>Room Number <span class="required">*</span></span>
                             </label>
-
-                            <div class="profile-input-wrapper">
-
-                                <i class="fa-solid fa-door-open profile-input-icon"></i>
-
-                                <input type="text" class="profile-input" name="room_no" id="room_no"
-                                    value="{{ student.room_no }}" placeholder="Enter room number" required>
-
+                            <div class="input-container">
+                                <i class="fa-solid fa-hashtag input-leading-icon"></i>
+                                <input type="text" class="custom-input" name="room_no" id="room_no"
+                                    value="{{ student.room_no }}" placeholder="e.g. 204" required>
                             </div>
-
+                            <small class="field-hint">Current room allocation number</small>
                         </div>
-
                     </div>
 
-                    <button type="submit" class="update-profile-btn" id="updateProfileBtn">
-
-                        <i class="fa-solid fa-floppy-disk"></i>
-
-                        Update Profile
-
-                    </button>
-
+                    <div class="form-actions-bar">
+                        <button type="submit" class="btn-save-profile" id="updateProfileBtn">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Save Profile Changes</span>
+                        </button>
+                    </div>
                 </form>
 
-                <div class="security-card">
-
-                    <div class="security-content">
-
-                        <div class="security-icon">
-
+                <!-- Embedded Security Card -->
+                <div class="security-callout-card">
+                    <div class="security-callout-left">
+                        <div class="security-callout-icon">
                             <i class="fa-solid fa-shield-halved"></i>
-
                         </div>
-
-                        <div>
-
-                            <h4>
-                                Account Security
-                            </h4>
-
-                            <p>
-                                Keep your password updated for better security.
-                            </p>
-
+                        <div class="security-callout-text">
+                            <h4>Account Password & Security</h4>
+                            <p>Protect your account by using a strong, unique password and updating it regularly.</p>
                         </div>
-
                     </div>
-
-                    <a href="{{ url_for('change_password') }}" class="change-password-btn">
-
+                    <a href="{{ url_for('change_password') }}" class="btn-security-action">
                         <i class="fa-solid fa-key"></i>
-
-                        Change Password
-
+                        <span>Change Password</span>
                     </a>
-
                 </div>
-
             </div>
-
-        </div>
-
+        </main>
     </div>
-
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 {% endblock %}
 
 {% block extra_js %}
