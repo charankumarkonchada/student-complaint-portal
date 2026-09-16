@@ -61,7 +61,7 @@
                         <div class="flex-grow-1">
                             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
                                 <span class="badge common-issue-badge-count" style="padding: 6px 12px; font-size: 0.75rem;">
-                                    <i class="fa-solid fa-link me-1"></i> Common Issue #{{ common_issue.id }}
+                                    <i class="fa-solid fa-link me-1"></i> Common Issue {{ common_issue.issue_code or ('#' ~ common_issue.id) }}
                                 </span>
                                 <span class="badge text-bg-light border px-3 py-1">
                                     <i class="fa-solid fa-user-group me-1 text-primary"></i> <strong>{{ common_issue.affected_count }}</strong> Affected Students in {{ common_issue.hostel }}

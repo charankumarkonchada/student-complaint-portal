@@ -387,8 +387,18 @@ class TestIntelliHostelE2EWorkflows(unittest.TestCase):
     # PART 9 & 10: NOTIFICATIONS READ STATUS & ACTIVITY
     # =========================================================================
     def test_10_notifications_and_read_isolation(self):
-        """Test that per-student read status is completely isolated for broadcast notifications."""
-        # Student 10 checks notifications
+        """Test that per-student read status is completely isolated and Mark All as Read works after single read."""
+        from database.queries import unread_count
+        from flask import session as flask_sess
+
+        conn = get_db_connection()
+        # Seed individual notification for Student 10 and Student 11
+        conn.execute("INSERT INTO notifications (student_id, message, is_read) VALUES (?, ?, 0)", (10, "Individual update for Student 10"))
+        conn.execute("INSERT INTO notifications (student_id, message, is_read) VALUES (?, ?, 0)", (11, "Individual update for Student 11"))
+        conn.commit()
+        conn.close()
+
+        # Student 10 checks notifications (has both individual and broadcast)
         with self.client.session_transaction() as sess:
             sess["student_id"] = 10
             sess["student_name"] = "Hostel B Student 10"
@@ -396,22 +406,54 @@ class TestIntelliHostelE2EWorkflows(unittest.TestCase):
         res = self.client.get("/notifications")
         self.assertEqual(res.status_code, 200)
         self.assertIn(b"Water Supply Interruption", res.data)
+        self.assertIn(b"Individual update for Student 10", res.data)
 
-        # Student 10 marks all notifications as read
+        # Verify initial unread count for Student 10 is at least 2
+        with self.app.test_request_context("/"):
+            flask_sess["student_id"] = 10
+            initial_count_10 = unread_count()
+            self.assertGreaterEqual(initial_count_10, 2)
+
+        # Student 10 marks ONE single common issue notification as read first
+        # Fetch the broadcast notification id
+        conn = get_db_connection()
+        cin = conn.execute("SELECT id FROM common_issue_notifications LIMIT 1").fetchone()
+        cin_id = cin["id"]
+        conn.close()
+
+        res = self.client.post(f"/notification/read/{cin_id}", data={"notif_type": "common"}, follow_redirects=True)
+        self.assertEqual(res.status_code, 200)
+
+        # Verify unread count decreased by 1
+        with self.app.test_request_context("/"):
+            flask_sess["student_id"] = 10
+            self.assertEqual(unread_count(), initial_count_10 - 1)
+
+        # Now Student 10 marks ALL remaining notifications as read
         res = self.client.post("/notifications/read_all", follow_redirects=True)
         self.assertEqual(res.status_code, 200)
 
         # Verify Student 10 now has 0 unread notifications
-        from database.queries import unread_count
-        from flask import session as flask_sess
         with self.app.test_request_context("/"):
             flask_sess["student_id"] = 10
             self.assertEqual(unread_count(), 0)
 
-        # Verify Student 11 STILL has unread notification (not affected by Student 10)
+        # Verify Student 11 STILL has unread notifications (not affected by Student 10's actions)
         with self.app.test_request_context("/"):
             flask_sess["student_id"] = 11
             self.assertGreater(unread_count(), 0)
+
+        # Student 11 logs in and uses Mark All as Read
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 11
+            sess["student_name"] = "Hostel B Student 11"
+
+        res = self.client.post("/notifications/read_all", follow_redirects=True)
+        self.assertEqual(res.status_code, 200)
+
+        with self.app.test_request_context("/"):
+            flask_sess["student_id"] = 11
+            self.assertEqual(unread_count(), 0)
 
     # =========================================================================
     # PART 16: SCALABILITY BENCHMARK

@@ -267,6 +267,120 @@ document.addEventListener("DOMContentLoaded", function () {
             el.classList.add("reveal-visible");
         });
     }
+
+    // 8. Global Logout Confirmation System (Accessible, Prevents Accidental Logouts, Preserves Backend Routes)
+    (function initLogoutConfirmationModal() {
+        let pendingLogoutUrl = null;
+        let modalInstance = null;
+
+        function getModalElements() {
+            const modalEl = document.getElementById("logoutConfirmModal");
+            if (!modalEl) return null;
+
+            if (!modalInstance && window.bootstrap && window.bootstrap.Modal) {
+                modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl, {
+                    backdrop: true,
+                    keyboard: true
+                });
+            }
+            return {
+                modalEl: modalEl,
+                instance: modalInstance,
+                confirmBtn: modalEl.querySelector("#logoutConfirmBtn"),
+                cancelBtn: modalEl.querySelector("#logoutCancelBtn")
+            };
+        }
+
+        // Delegated click handler on any logout link/button
+        document.addEventListener("click", function (e) {
+            const trigger = e.target.closest(
+                ".nav-btn-logout, a[href$='/logout'], a[href$='/admin_logout'], a[href*='/logout'], a[href*='/admin_logout'], [data-logout-trigger]"
+            );
+            if (!trigger) return;
+
+            // Do not intercept if click is already inside the logout confirmation modal!
+            if (trigger.closest("#logoutConfirmModal")) return;
+
+            const modalContext = getModalElements();
+            if (!modalContext || !modalContext.modalEl) {
+                // If modal is not present in DOM, allow default link navigation
+                return;
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Extract intended destination URL (e.g. /logout or /admin_logout)
+            pendingLogoutUrl = trigger.getAttribute("href") || (trigger.dataset && trigger.dataset.logoutUrl) || "/logout";
+
+            // Update modal confirm button destination and reset state
+            if (modalContext.confirmBtn) {
+                modalContext.confirmBtn.setAttribute("href", pendingLogoutUrl);
+                modalContext.confirmBtn.classList.remove("disabled");
+                modalContext.confirmBtn.removeAttribute("aria-disabled");
+                modalContext.confirmBtn.removeAttribute("data-logging-out");
+                const span = modalContext.confirmBtn.querySelector("span");
+                if (span) span.textContent = "Logout";
+            }
+
+            // Show modal safely
+            if (modalContext.instance) {
+                modalContext.instance.show();
+            } else if (window.bootstrap && window.bootstrap.Modal) {
+                modalInstance = new bootstrap.Modal(modalContext.modalEl, { backdrop: true, keyboard: true });
+                modalInstance.show();
+            }
+        });
+
+        // Handle confirmed logout button click inside modal
+        document.addEventListener("click", function (e) {
+            const confirmBtn = e.target.closest("#logoutConfirmBtn");
+            if (!confirmBtn) return;
+
+            // Prevent double submission
+            if (confirmBtn.classList.contains("disabled") || confirmBtn.getAttribute("data-logging-out") === "true") {
+                e.preventDefault();
+                return;
+            }
+
+            confirmBtn.classList.add("disabled");
+            confirmBtn.setAttribute("aria-disabled", "true");
+            confirmBtn.setAttribute("data-logging-out", "true");
+            const span = confirmBtn.querySelector("span");
+            if (span) {
+                span.textContent = "Logging out...";
+            }
+
+            // Ensure redirection to the target backend route if default action doesn't follow
+            const target = confirmBtn.getAttribute("href") || pendingLogoutUrl;
+            if (target && target !== "#") {
+                window.location.href = target;
+            }
+        });
+
+        // Modal lifecycle: Focus management and cleanup
+        const modalEl = document.getElementById("logoutConfirmModal");
+        if (modalEl) {
+            modalEl.addEventListener("shown.bs.modal", function () {
+                const cancelBtn = modalEl.querySelector("#logoutCancelBtn");
+                if (cancelBtn) {
+                    cancelBtn.focus();
+                }
+            });
+
+            modalEl.addEventListener("hidden.bs.modal", function () {
+                pendingLogoutUrl = null;
+                const confirmBtn = modalEl.querySelector("#logoutConfirmBtn");
+                if (confirmBtn) {
+                    confirmBtn.classList.remove("disabled");
+                    confirmBtn.removeAttribute("aria-disabled");
+                    confirmBtn.removeAttribute("data-logging-out");
+                    const span = confirmBtn.querySelector("span");
+                    if (span) span.textContent = "Logout";
+                }
+            });
+        }
+    })();
 });
 
 // Keyframe for ripple

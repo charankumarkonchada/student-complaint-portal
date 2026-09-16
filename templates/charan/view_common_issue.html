@@ -16,7 +16,10 @@
             </div>
             <div>
                 <div class="d-flex align-items-center gap-2 mb-1">
-                    <span class="badge common-issue-badge-count">Master Issue #{{ issue.id }}</span>
+                    <span class="badge common-issue-badge-count">Master Issue {{ issue.issue_code or ('#' ~ issue.id) }}</span>
+                    {% if issue.issue_code %}
+                    <span class="badge bg-secondary-subtle text-secondary" style="font-family: monospace;">#{{ issue.id }}</span>
+                    {% endif %}
                     <span class="badge text-bg-light border"><i class="fa-solid fa-building me-1"></i> {{ issue.hostel }}</span>
                     <span class="badge bg-secondary-subtle text-secondary">{{ issue.category }}</span>
                 </div>

@@ -41,14 +41,14 @@
     width: 64px;
     height: 64px;
     border-radius: var(--radius-xl);
-    background: #0f172a;
+    background: #172033;
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.75rem;
     margin: 0 auto 1.5rem;
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+    box-shadow: 0 10px 25px rgba(23, 32, 51, 0.2);
 }
 
 .admin-login-header h1 {
@@ -116,34 +116,34 @@
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
     font-size: 0.95rem;
-    color: var(--input-light-text, #0f172a);
+    color: var(--input-light-text, #172033);
     background-color: var(--input-light-bg, #ffffff);
-    -webkit-text-fill-color: var(--input-light-text, #0f172a);
+    -webkit-text-fill-color: var(--input-light-text, #172033);
     transition: all var(--transition-fast);
 }
 
 .admin-input:focus {
     outline: none;
-    border-color: #0f172a;
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
-    color: var(--input-light-text, #0f172a);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+    color: var(--input-light-text, #172033);
     background-color: var(--input-light-bg, #ffffff);
-    -webkit-text-fill-color: var(--input-light-text, #0f172a);
+    -webkit-text-fill-color: var(--input-light-text, #172033);
 }
 
 .admin-input::placeholder {
-    color: var(--input-light-placeholder, #64748b);
-    -webkit-text-fill-color: var(--input-light-placeholder, #64748b);
+    color: var(--input-light-placeholder, #94a3b8);
+    -webkit-text-fill-color: var(--input-light-placeholder, #94a3b8);
     opacity: 0.8;
 }
 
 .admin-input-wrapper:focus-within .admin-input-icon {
-    color: #0f172a;
+    color: var(--primary);
 }
 
 .admin-login-btn {
     width: 100%;
-    background: #0f172a;
+    background: var(--gradient-primary);
     color: #ffffff;
     border: none;
     padding: 0.8rem 1.5rem;
@@ -155,15 +155,15 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.35);
+    box-shadow: var(--shadow-primary-btn);
     transition: all var(--transition-fast);
     margin-top: 1.75rem;
 }
 
 .admin-login-btn:hover {
-    background: #1e293b;
+    background: linear-gradient(135deg, #f4512a 0%, #ea5836 100%);
     transform: translateY(-1px);
-    box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.45);
+    box-shadow: var(--shadow-primary-hover);
 }
 
 .admin-footer-links {

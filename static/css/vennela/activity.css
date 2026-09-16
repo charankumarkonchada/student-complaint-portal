@@ -19,7 +19,7 @@
     padding: 24px 32px;
     border-radius: 24px;
     background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
 
@@ -45,7 +45,7 @@
 
 .activity-heading h1 {
     margin: 0 0 4px;
-    color: #0f172a;
+    color: var(--text-heading);
     font-size: 24px;
     font-weight: 800;
     letter-spacing: -0.5px;
@@ -53,7 +53,7 @@
 
 .activity-heading p {
     margin: 0;
-    color: #64748b;
+    color: var(--text-secondary);
     font-size: 13.5px;
     font-weight: 500;
 }
@@ -268,7 +268,7 @@
     flex: 1;
     min-width: 0;
     background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
     border-radius: 20px;
     padding: 20px 24px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
@@ -308,27 +308,27 @@
 }
 
 .badge-resolved {
-    background: #ecfdf5;
-    color: #047857;
+    background: #dcfce7;
+    color: #166534;
 }
 
 .badge-progress {
-    background: #eff6ff;
+    background: #dbeafe;
     color: #1d4ed8;
 }
 
 .badge-rejected {
-    background: #fef2f2;
-    color: #b91c1c;
+    background: #fee2e2;
+    color: #991b1b;
 }
 
 .badge-pending {
-    background: #fffbeb;
-    color: #b45309;
+    background: #fef3c7;
+    color: #92400e;
 }
 
 .ticket-link {
-    color: #0f172a;
+    color: var(--text-heading);
     text-decoration: none;
     font-size: 14px;
     font-weight: 700;

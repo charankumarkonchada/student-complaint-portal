@@ -21,15 +21,27 @@
         </div>
 
         <div class="topbar-actions">
-            {% set unread_list = notifications | selectattr('is_read', 'equalto', 0) | list %}
-            {% if unread_list | length > 0 %}
-            <form method="post" action="{{ url_for('notifications_read_all') }}" class="inline-form">
-                <button type="submit" class="btn-mark-all-read">
-                    <i class="fa-solid fa-check-double"></i>
-                    <span>Mark All as Read</span>
-                </button>
-            </form>
+            {% if view != 'archived' %}
+                {% if unread_total and unread_total > 0 %}
+                <form method="post" action="{{ url_for('notifications_read_all') }}" class="inline-form">
+                    <input type="hidden" name="view" value="{{ view }}">
+                    <button type="submit" class="btn-mark-all-read">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>Mark All as Read</span>
+                    </button>
+                </form>
+                {% endif %}
+
+                {% if active_read_total and active_read_total > 0 %}
+                <form method="post" action="{{ url_for('notifications_archive_all') }}" class="inline-form">
+                    <button type="submit" class="btn-archive-all-read" title="Move all read notifications to history archive">
+                        <i class="fa-solid fa-box-archive"></i>
+                        <span>Archive All Read</span>
+                    </button>
+                </form>
+                {% endif %}
             {% endif %}
+
             <a href="{{ url_for('dashboard') }}" class="btn-back-dash">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>Dashboard</span>
@@ -37,15 +49,35 @@
         </div>
     </div>
 
+    <!-- Lifecycle Tab Switcher -->
+    <div class="notifications-tabs-bar reveal-up reveal-delay-1">
+        <div class="notifications-tabs-group">
+            <a href="{{ url_for('notifications', view='active') }}" class="notif-tab-item {% if view != 'archived' %}active{% endif %}">
+                <i class="fa-solid fa-inbox"></i>
+                <span>Active Inbox</span>
+                <span class="tab-counter {% if unread_total and unread_total > 0 %}counter-unread{% endif %}">{{ active_total }}</span>
+            </a>
+            <a href="{{ url_for('notifications', view='archived') }}" class="notif-tab-item {% if view == 'archived' %}active{% endif %}">
+                <i class="fa-solid fa-box-archive"></i>
+                <span>Notification History</span>
+                <span class="tab-counter">{{ archived_total }}</span>
+            </a>
+        </div>
+        <div class="tab-archive-policy text-muted small d-none d-lg-flex align-items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Read notifications auto-archive after 7 days for audit history</span>
+        </div>
+    </div>
+
     <!-- Quick Stats Bar -->
-    <div class="notifications-stats-row reveal-up reveal-delay-1">
+    <div class="notifications-stats-row reveal-up reveal-delay-2">
         <div class="stat-pill-card">
             <div class="stat-pill-icon total">
                 <i class="fa-solid fa-inbox"></i>
             </div>
             <div>
-                <span class="stat-pill-num">{{ notifications | length }}</span>
-                <span class="stat-pill-label">Total Notifications</span>
+                <span class="stat-pill-num">{{ active_total }}</span>
+                <span class="stat-pill-label">Active Inbox</span>
             </div>
         </div>
 
@@ -54,18 +86,18 @@
                 <i class="fa-solid fa-envelope-open-text"></i>
             </div>
             <div>
-                <span class="stat-pill-num">{{ unread_list | length }}</span>
+                <span class="stat-pill-num">{{ unread_total }}</span>
                 <span class="stat-pill-label">Unread Updates</span>
             </div>
         </div>
 
         <div class="stat-pill-card">
-            <div class="stat-pill-icon read">
-                <i class="fa-solid fa-circle-check"></i>
+            <div class="stat-pill-icon history">
+                <i class="fa-solid fa-box-archive"></i>
             </div>
             <div>
-                <span class="stat-pill-num">{{ (notifications | length) - (unread_list | length) }}</span>
-                <span class="stat-pill-label">Acknowledged</span>
+                <span class="stat-pill-num">{{ archived_total }}</span>
+                <span class="stat-pill-label">Archived in History</span>
             </div>
         </div>
     </div>
@@ -75,9 +107,11 @@
         {% if notifications %}
             <div class="notifications-feed">
                 {% for n in notifications %}
-                <div class="notification-item reveal-up {% if not n.is_read %}unread{% endif %}">
-                    <div class="notification-status-icon {% if not n.is_read %}icon-unread{% else %}icon-read{% endif %}">
-                        {% if 'resolved' in n.message | lower %}
+                <div class="notification-item reveal-up {% if not n.is_read %}unread{% endif %} {% if n.is_archived %}item-archived{% endif %}">
+                    <div class="notification-status-icon {% if n.is_archived %}icon-archived{% elif not n.is_read %}icon-unread{% else %}icon-read{% endif %}">
+                        {% if n.is_archived %}
+                            <i class="fa-solid fa-box-archive"></i>
+                        {% elif 'resolved' in n.message | lower %}
                             <i class="fa-solid fa-circle-check"></i>
                         {% elif 'in progress' in n.message | lower or 'assigned' in n.message | lower %}
                             <i class="fa-solid fa-screwdriver-wrench"></i>
@@ -91,7 +125,9 @@
                     <div class="notification-body">
                         <div class="notification-header-row">
                             <div class="notification-category-pill">
-                                {% if 'resolved' in n.message | lower %}
+                                {% if n.is_archived %}
+                                    <span class="status-chip history"><i class="fa-solid fa-box-archive me-1"></i>Archived</span>
+                                {% elif 'resolved' in n.message | lower %}
                                     <span class="status-chip success">Resolved</span>
                                 {% elif 'in progress' in n.message | lower %}
                                     <span class="status-chip progress">In Progress</span>
@@ -101,7 +137,7 @@
                                     <span class="status-chip neutral">System Alert</span>
                                 {% endif %}
 
-                                {% if not n.is_read %}
+                                {% if not n.is_read and not n.is_archived %}
                                     <span class="new-dot-badge">New</span>
                                 {% endif %}
                             </div>
@@ -115,17 +151,46 @@
                         <p class="notification-message">{{ n.message }}</p>
 
                         <div class="notification-footer">
-                            {% if not n.is_read %}
-                            <form method="post" action="{{ url_for('notification_read', id=n.id) }}" class="inline-form">
-                                <button type="submit" class="btn-read-single">
-                                    <i class="fa-solid fa-check"></i>
-                                    <span>Mark as Read</span>
-                                </button>
-                            </form>
+                            {% if view == 'archived' or n.is_archived %}
+                                <!-- Restore to Active Inbox Action -->
+                                <form method="post" action="{{ url_for('notification_unarchive', id=n.id) }}" class="inline-form">
+                                    <input type="hidden" name="notif_type" value="{{ n.notif_type }}">
+                                    <button type="submit" class="btn-restore-single" title="Restore back to active inbox">
+                                        <i class="fa-solid fa-arrow-rotate-left"></i>
+                                        <span>Restore to Inbox</span>
+                                    </button>
+                                </form>
+                                <span class="badge-history-note text-muted small">
+                                    <i class="fa-solid fa-shield-check me-1"></i>Retained for audit
+                                </span>
                             {% else %}
-                            <span class="badge-read-confirmed">
-                                <i class="fa-solid fa-check-double"></i> Read
-                            </span>
+                                <!-- Active Inbox Actions -->
+                                <div class="d-flex align-items-center gap-2">
+                                    {% if not n.is_read %}
+                                    <form method="post" action="{{ url_for('notification_read', id=n.id) }}" class="inline-form">
+                                        <input type="hidden" name="notif_type" value="{{ n.notif_type }}">
+                                        <input type="hidden" name="view" value="active">
+                                        <button type="submit" class="btn-read-single">
+                                            <i class="fa-solid fa-check"></i>
+                                            <span>Mark as Read</span>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="badge-read-confirmed">
+                                        <i class="fa-solid fa-check-double"></i> Read
+                                    </span>
+                                    {% endif %}
+
+                                    <!-- Archive Single Action -->
+                                    <form method="post" action="{{ url_for('notification_archive', id=n.id) }}" class="inline-form">
+                                        <input type="hidden" name="notif_type" value="{{ n.notif_type }}">
+                                        <input type="hidden" name="view" value="active">
+                                        <button type="submit" class="btn-archive-single" title="Move to notification history">
+                                            <i class="fa-solid fa-box-archive"></i>
+                                            <span>Archive</span>
+                                        </button>
+                                    </form>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
@@ -135,16 +200,35 @@
         {% else %}
             <!-- Empty State -->
             <div class="notifications-empty">
-                <div class="empty-icon-wrap">
-                    <i class="fa-regular fa-bell"></i>
-                    <span class="empty-sparkle"><i class="fa-solid fa-sparkles"></i></span>
-                </div>
-                <h3>All Caught Up!</h3>
-                <p>You don't have any notifications or pending alerts. When the administration updates your complaints, updates will appear here in real-time.</p>
-                <a href="{{ url_for('dashboard') }}" class="btn-empty-action">
-                    <i class="fa-solid fa-house"></i>
-                    <span>Back to Dashboard</span>
-                </a>
+                {% if view == 'archived' %}
+                    <div class="empty-icon-wrap history-icon">
+                        <i class="fa-solid fa-box-archive"></i>
+                    </div>
+                    <h3>No Archived Notifications</h3>
+                    <p>Your notification history is empty. Acknowledged notifications you manually archive or that age past 7 days will be safely stored here for your records.</p>
+                    <a href="{{ url_for('notifications', view='active') }}" class="btn-empty-action">
+                        <i class="fa-solid fa-inbox"></i>
+                        <span>Go to Active Inbox</span>
+                    </a>
+                {% else %}
+                    <div class="empty-icon-wrap">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="empty-sparkle"><i class="fa-solid fa-sparkles"></i></span>
+                    </div>
+                    <h3>All Caught Up!</h3>
+                    <p>You don't have any active notifications or pending alerts in your inbox. When updates occur, they'll appear here. Older updates are safely preserved in your History.</p>
+                    <div class="d-flex align-items-center justify-content-center gap-3 mt-3 flex-wrap">
+                        {% if archived_total and archived_total > 0 %}
+                        <a href="{{ url_for('notifications', view='archived') }}" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3">
+                            <i class="fa-solid fa-box-archive me-1"></i> View History ({{ archived_total }})
+                        </a>
+                        {% endif %}
+                        <a href="{{ url_for('dashboard') }}" class="btn-empty-action m-0">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Back to Dashboard</span>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
     </div>

@@ -43,7 +43,29 @@ def update_status(id):
             )
 
         conn.commit()
+
+        # Fetch student details for email dispatch
+        student = conn.execute(
+            "SELECT name, email FROM students WHERE id=?",
+            (complaint["student_id"],)
+        ).fetchone()
         conn.close()
+
+        # Resilient Email Notification: failure never breaks application or transaction
+        if student and student["email"]:
+            try:
+                from services.email_service import send_complaint_status_email
+                send_complaint_status_email(
+                    student_name=student["name"],
+                    student_email=student["email"],
+                    complaint_id=id,
+                    complaint_title=complaint["title"],
+                    new_status=status,
+                    remarks=remarks,
+                    assigned_to=assigned
+                )
+            except Exception:
+                pass
 
         flash("Complaint Updated Successfully.", "success")
         return redirect(url_for("manage_complaints"))

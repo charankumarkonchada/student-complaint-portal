@@ -31,13 +31,13 @@
     width: 54px;
     height: 54px;
     border-radius: var(--radius-xl);
-    background: #0f172a;
+    background: #172033;
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.45rem;
-    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+    box-shadow: 0 8px 20px rgba(23, 32, 51, 0.25);
     flex-shrink: 0;
 }
 
@@ -140,12 +140,12 @@
 }
 
 .btn-tile-analytics {
-    background: #0f172a;
+    background: #172033;
     color: #ffffff !important;
 }
 
 .btn-tile-analytics:hover {
-    background: #1e293b;
+    background: #0f172a;
 }
 
 .btn-tile-pdf {

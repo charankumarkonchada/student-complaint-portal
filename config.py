@@ -32,6 +32,7 @@ SMTP_USERNAME = os.environ.get('SMTP_USERNAME','')
 SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD','')
 MAIL_FROM = os.environ.get('MAIL_FROM','') or SMTP_USERNAME
 SMTP_USE_TLS = os.environ.get('SMTP_USE_TLS','1').lower() in {'1','true','yes','on'}
+EMAIL_NOTIFICATIONS_ENABLED = os.environ.get('EMAIL_NOTIFICATIONS_ENABLED', '1').lower() in {'1', 'true', 'yes', 'on'}
 APP_BASE_URL = os.environ.get('APP_BASE_URL','http://127.0.0.1:5000').rstrip('/')
 SUPABASE_URL = os.environ.get('SUPABASE_URL','').rstrip('/')
 SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY','')

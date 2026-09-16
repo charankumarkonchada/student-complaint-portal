@@ -33,6 +33,7 @@ def create_postgresql_tables(conn):
         """
         CREATE TABLE IF NOT EXISTS common_issues (
             id BIGSERIAL PRIMARY KEY,
+            issue_code TEXT,
             title TEXT NOT NULL,
             category TEXT NOT NULL,
             hostel TEXT NOT NULL,
@@ -83,6 +84,8 @@ def create_postgresql_tables(conn):
                 ON DELETE CASCADE,
             message TEXT NOT NULL,
             is_read INTEGER DEFAULT 0,
+            is_archived INTEGER DEFAULT 0,
+            archived_at TIMESTAMP,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """,
@@ -107,6 +110,8 @@ def create_postgresql_tables(conn):
             student_id BIGINT NOT NULL
                 REFERENCES students(id)
                 ON DELETE CASCADE,
+            is_archived INTEGER DEFAULT 0,
+            archived_at TIMESTAMP,
             read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(common_issue_notification_id, student_id)
         )
@@ -190,6 +195,7 @@ def create_sqlite_tables(conn):
         """
         CREATE TABLE IF NOT EXISTS common_issues (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            issue_code TEXT,
             title TEXT NOT NULL,
             category TEXT NOT NULL,
             hostel TEXT NOT NULL,
@@ -240,6 +246,8 @@ def create_sqlite_tables(conn):
                 ON DELETE CASCADE,
             message TEXT NOT NULL,
             is_read INTEGER DEFAULT 0,
+            is_archived INTEGER DEFAULT 0,
+            archived_at TIMESTAMP,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """,
@@ -264,6 +272,8 @@ def create_sqlite_tables(conn):
             student_id INTEGER NOT NULL
                 REFERENCES students(id)
                 ON DELETE CASCADE,
+            is_archived INTEGER DEFAULT 0,
+            archived_at TIMESTAMP,
             read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(common_issue_notification_id, student_id)
         )
@@ -332,12 +342,44 @@ def migrate_sqlite(conn):
         conn.execute("ALTER TABLE complaints ADD COLUMN common_issue_id INTEGER REFERENCES common_issues(id) ON DELETE SET NULL")
         conn.commit()
 
+    ci_cursor = conn.execute("PRAGMA table_info(common_issues)")
+    ci_columns = [row[1] for row in ci_cursor.fetchall()]
+    if "issue_code" not in ci_columns:
+        try:
+            conn.execute("ALTER TABLE common_issues ADD COLUMN issue_code TEXT")
+            conn.commit()
+        except Exception:
+            pass
+
+    # Safe column migrations for notifications and notification_reads archiving
+    notif_cursor = conn.execute("PRAGMA table_info(notifications)")
+    notif_cols = [row[1] for row in notif_cursor.fetchall()]
+    if "is_archived" not in notif_cols:
+        try:
+            conn.execute("ALTER TABLE notifications ADD COLUMN is_archived INTEGER DEFAULT 0")
+            conn.execute("ALTER TABLE notifications ADD COLUMN archived_at TIMESTAMP")
+            conn.commit()
+        except Exception:
+            pass
+
+    nr_cursor = conn.execute("PRAGMA table_info(notification_reads)")
+    nr_cols = [row[1] for row in nr_cursor.fetchall()]
+    if "is_archived" not in nr_cols:
+        try:
+            conn.execute("ALTER TABLE notification_reads ADD COLUMN is_archived INTEGER DEFAULT 0")
+            conn.execute("ALTER TABLE notification_reads ADD COLUMN archived_at TIMESTAMP")
+            conn.commit()
+        except Exception:
+            pass
+
     # Create performance indexes
     indexes = [
         "CREATE INDEX IF NOT EXISTS idx_complaints_common_issue ON complaints(common_issue_id)",
         "CREATE INDEX IF NOT EXISTS idx_common_issues_status_hostel ON common_issues(status, hostel)",
         "CREATE INDEX IF NOT EXISTS idx_common_issue_notifications_issue ON common_issue_notifications(common_issue_id)",
-        "CREATE INDEX IF NOT EXISTS idx_notification_reads_lookup ON notification_reads(student_id, common_issue_notification_id)"
+        "CREATE INDEX IF NOT EXISTS idx_notification_reads_lookup ON notification_reads(student_id, common_issue_notification_id)",
+        "CREATE INDEX IF NOT EXISTS idx_notifications_student_archived ON notifications(student_id, is_archived, is_read)",
+        "CREATE INDEX IF NOT EXISTS idx_notification_reads_archived ON notification_reads(student_id, is_archived)"
     ]
     for idx in indexes:
         try:
@@ -345,6 +387,22 @@ def migrate_sqlite(conn):
         except Exception:
             pass
     conn.commit()
+
+    # Backfill missing issue_code values
+    try:
+        issues_without_code = conn.execute("SELECT id FROM common_issues WHERE issue_code IS NULL OR issue_code = ''").fetchall()
+        for iwc in issues_without_code:
+            conn.execute("UPDATE common_issues SET issue_code = ? WHERE id = ?", (f"CI-{iwc['id']:03d}", iwc["id"]))
+        conn.commit()
+    except Exception:
+        pass
+
+    # Auto-group existing duplicate complaints if any exist
+    try:
+        from services.common_issue_service import group_existing_duplicate_complaints
+        group_existing_duplicate_complaints(conn)
+    except Exception:
+        pass
 
 
 def migrate_postgresql(conn):
@@ -361,11 +419,48 @@ def migrate_postgresql(conn):
             conn.execute("ALTER TABLE complaints ADD COLUMN common_issue_id BIGINT REFERENCES common_issues(id) ON DELETE SET NULL")
             conn.commit()
 
+        ci_cur = conn.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = 'common_issues' AND column_name = 'issue_code'
+            """
+        )
+        if not ci_cur.fetchone():
+            conn.execute("ALTER TABLE common_issues ADD COLUMN issue_code TEXT")
+            conn.commit()
+
+        notif_cur = conn.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = 'notifications' AND column_name = 'is_archived'
+            """
+        )
+        if not notif_cur.fetchone():
+            conn.execute("ALTER TABLE notifications ADD COLUMN is_archived INTEGER DEFAULT 0")
+            conn.execute("ALTER TABLE notifications ADD COLUMN archived_at TIMESTAMP")
+            conn.commit()
+
+        nr_cur = conn.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = 'notification_reads' AND column_name = 'is_archived'
+            """
+        )
+        if not nr_cur.fetchone():
+            conn.execute("ALTER TABLE notification_reads ADD COLUMN is_archived INTEGER DEFAULT 0")
+            conn.execute("ALTER TABLE notification_reads ADD COLUMN archived_at TIMESTAMP")
+            conn.commit()
+
         indexes = [
             "CREATE INDEX IF NOT EXISTS idx_complaints_common_issue ON complaints(common_issue_id)",
             "CREATE INDEX IF NOT EXISTS idx_common_issues_status_hostel ON common_issues(status, hostel)",
             "CREATE INDEX IF NOT EXISTS idx_common_issue_notifications_issue ON common_issue_notifications(common_issue_id)",
-            "CREATE INDEX IF NOT EXISTS idx_notification_reads_lookup ON notification_reads(student_id, common_issue_notification_id)"
+            "CREATE INDEX IF NOT EXISTS idx_notification_reads_lookup ON notification_reads(student_id, common_issue_notification_id)",
+            "CREATE INDEX IF NOT EXISTS idx_notifications_student_archived ON notifications(student_id, is_archived, is_read)",
+            "CREATE INDEX IF NOT EXISTS idx_notification_reads_archived ON notification_reads(student_id, is_archived)"
         ]
         for idx in indexes:
             try:
@@ -373,6 +468,22 @@ def migrate_postgresql(conn):
                 conn.commit()
             except Exception:
                 conn.rollback()
+
+        # Backfill missing issue_code values
+        try:
+            issues_without_code = conn.execute("SELECT id FROM common_issues WHERE issue_code IS NULL OR issue_code = ''").fetchall()
+            for iwc in issues_without_code:
+                conn.execute("UPDATE common_issues SET issue_code = ? WHERE id = ?", (f"CI-{iwc['id']:03d}", iwc["id"]))
+            conn.commit()
+        except Exception:
+            pass
+
+        # Auto-group existing duplicate complaints if any exist
+        try:
+            from services.common_issue_service import group_existing_duplicate_complaints
+            group_existing_duplicate_complaints(conn)
+        except Exception:
+            pass
     except Exception as e:
         print("PostgreSQL migration notice:", e)
 

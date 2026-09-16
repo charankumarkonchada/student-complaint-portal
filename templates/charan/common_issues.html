@@ -170,7 +170,8 @@
                         {% for issue in issues %}
                         <tr>
                             <td>
-                                <span class="fw-bold text-teal">#{{ issue.id }}</span>
+                                <span class="fw-bold text-teal me-1">#{{ issue.id }}</span>
+                                <span class="badge bg-secondary-subtle text-secondary" style="font-family: monospace; font-size: 0.78rem;">{{ issue.issue_code or ('CI-%03d' % issue.id) }}</span>
                             </td>
                             <td>
                                 <div class="fw-bold text-dark">{{ issue.title }}</div>

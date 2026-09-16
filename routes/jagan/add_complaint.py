@@ -5,7 +5,11 @@ import config
 from database.db import get_db_connection
 from services.auth_service import student_required
 from services.storage_service import allowed_file, upload_to_cloud_storage
-from services.common_issue_service import find_matching_common_issue
+from services.common_issue_service import (
+    find_matching_common_issue,
+    process_complaint_common_issue,
+    get_common_issue_with_stats
+)
 from ml_engine import predict_complaint, find_duplicate
 
 add_complaint_bp = Blueprint("add_complaint", __name__)
@@ -47,8 +51,8 @@ def add_complaint():
         conn = get_db_connection()
         existing = conn.execute("SELECT id, title, description, status FROM complaints").fetchall()
 
-        # Fetch student's hostel for location-based grouping
-        student = conn.execute("SELECT hostel FROM students WHERE id = ?", (session["student_id"],)).fetchone()
+        # Fetch student's details for location-based grouping and notification delivery
+        student = conn.execute("SELECT name, email, hostel FROM students WHERE id = ?", (session["student_id"],)).fetchone()
         student_hostel = (student["hostel"] if student else session.get("hostel", "")).strip()
 
         ai = predict_complaint(title, description, category, priority)
@@ -56,20 +60,6 @@ def add_complaint():
 
         duplicate_id = duplicate["id"] if duplicate else None
         duplicate_similarity = duplicate["similarity"] if duplicate else None
-
-        # Check for matching active common issue in the same hostel and category
-        matched_common_issue = find_matching_common_issue(
-            category=category,
-            hostel=student_hostel,
-            title=title,
-            description=description,
-            conn=conn,
-            threshold=0.50
-        )
-        common_issue_id = matched_common_issue["id"] if matched_common_issue else None
-        initial_status = matched_common_issue["status"] if matched_common_issue else "Pending"
-        initial_assigned = matched_common_issue["assigned_to"] if matched_common_issue else None
-        initial_remarks = matched_common_issue["admin_remarks"] if matched_common_issue else None
 
         insert_sql = """
             INSERT INTO complaints(
@@ -95,10 +85,10 @@ def add_complaint():
                 description,
                 filename,
                 priority,
-                initial_status,
-                initial_assigned,
-                initial_remarks,
-                common_issue_id,
+                "Pending",
+                None,
+                None,
+                None,
                 str(ai["predicted_category"]) if ai.get("predicted_category") is not None else None,
                 float(ai["category_confidence"]) if ai.get("category_confidence") is not None else None,
                 str(ai["predicted_priority"]) if ai.get("predicted_priority") is not None else None,
@@ -114,16 +104,62 @@ def add_complaint():
         else:
             complaint_id = cur.lastrowid
 
+        # AI Grouping Engine: Detect matching active Common Issue or similar complaint
+        ci_id, auto_dup_id, auto_sim = process_complaint_common_issue(
+            complaint_id=complaint_id,
+            category=category,
+            hostel=student_hostel,
+            title=title,
+            description=description,
+            priority=priority,
+            conn=conn
+        )
+
+        initial_status = "Pending"
+        issue_stats = None
+        if ci_id:
+            issue_stats = get_common_issue_with_stats(ci_id, conn)
+            if issue_stats and issue_stats.get("status"):
+                initial_status = issue_stats["status"]
+
         conn.execute(
             "INSERT INTO complaint_history(complaint_id, status) VALUES(?,?)",
             (complaint_id, initial_status)
         )
+
+        # In-App Notification: Record submission confirmation
+        conn.execute(
+            "INSERT INTO notifications(student_id, message) VALUES(?, ?)",
+            (session["student_id"], f"Your complaint #{complaint_id} has been submitted successfully.")
+        )
+
         conn.commit()
         conn.close()
 
-        if matched_common_issue:
+        # Resilient Email Notification: Send submission confirmation
+        # Failure to send email must NEVER fail or block complaint submission
+        if student and student["email"]:
+            try:
+                from services.email_service import send_complaint_submitted_email
+                student_name = student["name"] if student["name"] else session.get("name", "Student")
+                send_complaint_submitted_email(
+                    student_name=student_name,
+                    student_email=student["email"],
+                    complaint_id=complaint_id,
+                    title=title,
+                    category=category,
+                    priority=priority,
+                    estimated_days=ai.get("resolution_days")
+                )
+            except Exception:
+                current_app.logger.exception("Failed to dispatch complaint submission confirmation email")
+
+        if ci_id and issue_stats:
+            code = issue_stats.get("issue_code") or f"CI-{ci_id:03d}"
+            aff = issue_stats.get("affected_count") or 1
+            iss_title = issue_stats.get("title") or "Hostel Issue"
             flash(
-                f"Complaint submitted and linked to ongoing hostel issue: '{matched_common_issue['title']}' (#{matched_common_issue['id']}). Single admin updates to this common issue will automatically update your ticket.",
+                f"Complaint submitted and linked to Common Issue '{iss_title}' ({code}) affecting {aff} student(s) in {student_hostel}. Administration updates will automatically update your ticket.",
                 "info"
             )
         elif duplicate:

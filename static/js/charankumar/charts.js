@@ -9,11 +9,11 @@ function getChartColors() {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     return {
         isDark: isDark,
-        textColor: isDark ? '#cbd5e1' : '#475569',
+        textColor: isDark ? '#cbd5e1' : '#172033',
         mutedTextColor: isDark ? '#94a3b8' : '#64748b',
-        gridColor: isDark ? 'rgba(51, 65, 85, 0.45)' : 'rgba(226, 232, 240, 0.7)',
+        gridColor: isDark ? 'rgba(51, 65, 85, 0.45)' : 'rgba(226, 232, 240, 0.8)',
         borderColor: isDark ? '#111827' : '#ffffff',
-        tooltipBg: isDark ? 'rgba(17, 24, 39, 0.96)' : 'rgba(15, 23, 42, 0.92)'
+        tooltipBg: isDark ? 'rgba(17, 24, 39, 0.96)' : '#172033'
     };
 }
 
@@ -29,18 +29,17 @@ function initChart(canvasId, type, labels, data, datasetLabel) {
         secondary: '#f97316',
         palette: [
             '#ff6b4a',
-            '#fb923c',
-            '#f59e0b',
-            '#10b981',
             '#3b82f6',
-            '#8b5cf6',
-            '#ec4899',
+            '#16a34a',
+            '#f59e0b',
+            '#7c3aed',
+            '#dc2626',
             '#64748b'
         ],
         statusColors: [
             '#f59e0b', // Pending (Amber)
             '#3b82f6', // In Progress (Blue)
-            '#10b981'  // Resolved (Emerald)
+            '#16a34a'  // Resolved (Green)
         ]
     };
 

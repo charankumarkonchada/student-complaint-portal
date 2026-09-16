@@ -39,19 +39,20 @@ def unread_count():
         conn = get_db_connection()
         sid = session["student_id"]
         
-        # Count unread individual notifications
+        # Count unread individual notifications (excluding archived)
         ind_row = conn.execute(
             """
             SELECT COUNT(*) AS total
             FROM notifications
             WHERE student_id=?
             AND is_read=0
+            AND (is_archived=0 OR is_archived IS NULL)
             """,
             (sid,)
         ).fetchone()
         ind_count = ind_row["total"] if ind_row else 0
 
-        # Count unread common issue notifications
+        # Count unread common issue notifications (excluding archived/read)
         common_row = conn.execute(
             """
             SELECT COUNT(DISTINCT cin.id) AS total

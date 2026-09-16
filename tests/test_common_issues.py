@@ -488,5 +488,415 @@ class TestCommonIssueScalability(unittest.TestCase):
         resp = self.client.get("/non_existent_url_12345")
         self.assertEqual(resp.status_code, 404)
 
+    # =========================================================================
+    # SCENARIO 10: Status-Aware Grouping for Recurrent Complaints After Resolution
+    # =========================================================================
+    def test_scenario_10_resolved_common_issue_not_reopened_creates_new_issue(self):
+        """
+        Exact user scenario:
+        1. Common Issue X exists with Complaint A ('No water', Room 108).
+        2. Admin resolves Common Issue X.
+        3. A student submits a NEW Complaint B ('no water', Room 108).
+        4. The system detects similarity, checks matching issue status (Resolved -> Inactive),
+           and creates a NEW Common Issue Y in 'Pending' status.
+        5. Complaint B is linked to NEW Common Issue Y (NOT old resolved Common Issue X).
+        """
+        conn = get_db_connection()
+        # Create Common Issue X in Hostel Block A
+        issue_x_id = create_common_issue(
+            title="Hostel Block A - No water",
+            category="Water",
+            hostel="Hostel Block A",
+            location_details="Room 108 and 1st floor",
+            description="No water supply in Room 108 washroom.",
+            priority="High",
+            created_by="Admin",
+            conn=conn
+        )
+        # Create Complaint A and link to Issue X
+        cur = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status, common_issue_id)
+            VALUES (1, 'Water', 'No water', 'Water problem in Room 108.', 'High', 'Pending', ?)
+            """,
+            (issue_x_id,)
+        )
+        comp_a_id = cur.lastrowid
+        conn.commit()
+
+        # Admin resolves Common Issue X via single-action master update
+        affected = update_common_issue_once(
+            common_issue_id=issue_x_id,
+            status="Resolved",
+            remarks="Replaced faulty valve on 1st floor.",
+            assigned_to="Plumber Ramesh",
+            updated_by="Hostel Administration",
+            conn=conn
+        )
+        self.assertEqual(affected, 1)
+
+        # Verify Issue X and Complaint A are both Resolved
+        issue_x = conn.execute("SELECT status FROM common_issues WHERE id = ?", (issue_x_id,)).fetchone()
+        comp_a = conn.execute("SELECT status, common_issue_id FROM complaints WHERE id = ?", (comp_a_id,)).fetchone()
+        self.assertEqual(issue_x["status"], "Resolved")
+        self.assertEqual(comp_a["status"], "Resolved")
+        self.assertEqual(comp_a["common_issue_id"], issue_x_id)
+
+        # Seed student 2001 living in Hostel Block A
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (2001, 'Charlie Student', 'O200888', 'o200888@rguktong.ac.in', '9876543288', 'Hostel Block A', 'A-108', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.commit()
+        conn.close()
+
+        # Later, student 2001 submits a new Complaint B: "no water" in Room 108
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 2001
+            sess["student_name"] = "Charlie Student"
+            sess["id_no"] = "O200888"
+            sess["hostel"] = "Hostel Block A"
+
+        resp = self.client.post(
+            "/add_complaint",
+            data={
+                "category": "Water",
+                "priority": "High",
+                "title": "no water",
+                "description": "Drinking and tap water issue in Room 108."
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp.status_code, 200)
+
+        conn = get_db_connection()
+        comp_b = conn.execute(
+            "SELECT * FROM complaints WHERE student_id = 2001 AND title = 'no water' ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        self.assertIsNotNone(comp_b)
+
+        # Crucial checks:
+        # 1. Complaint B must NOT be linked to resolved Common Issue X!
+        self.assertNotEqual(comp_b["common_issue_id"], issue_x_id, "Must NOT link new complaint to resolved common issue")
+        self.assertIsNotNone(comp_b["common_issue_id"], "Must create a new common issue for the new occurrence")
+
+        # 2. Complaint B must be linked to a brand NEW Common Issue Y
+        issue_y_id = comp_b["common_issue_id"]
+        issue_y = conn.execute("SELECT * FROM common_issues WHERE id = ?", (issue_y_id,)).fetchone()
+        self.assertIsNotNone(issue_y)
+        self.assertEqual(issue_y["status"], "Pending", "New common issue must start in Pending status")
+        self.assertEqual(comp_b["status"], "Pending", "New complaint must have status Pending, NOT Resolved")
+
+        # 3. Old Common Issue X must still be intact and resolved
+        issue_x_after = conn.execute("SELECT * FROM common_issues WHERE id = ?", (issue_x_id,)).fetchone()
+        self.assertEqual(issue_x_after["status"], "Resolved")
+        comp_a_after = conn.execute("SELECT * FROM complaints WHERE id = ?", (comp_a_id,)).fetchone()
+        self.assertEqual(comp_a_after["common_issue_id"], issue_x_id)
+
+        # 4. If a 3rd complaint arrives now for the same issue, it MUST link to active Issue Y!
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 1
+            sess["student_name"] = "Alice Student"
+            sess["id_no"] = "O200001"
+            sess["hostel"] = "Hostel Block A"
+
+        resp3 = self.client.post(
+            "/add_complaint",
+            data={
+                "category": "Water",
+                "priority": "High",
+                "title": "water problem again",
+                "description": "No water flow in Room 108."
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp3.status_code, 200)
+
+        comp_c = conn.execute(
+            "SELECT * FROM complaints WHERE student_id = 1 ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        self.assertEqual(comp_c["common_issue_id"], issue_y_id, "Subsequent complaint must link to the currently active Issue Y")
+        conn.close()
+
+    # =========================================================================
+    # SCENARIO 11: Explicit Verification of Points A, B, C, D, E & Dashboard Counts
+    # =========================================================================
+    def test_scenario_11_verification_points_a_through_e_and_dashboard_counts(self):
+        """
+        Validates the 5 explicit verification points and dashboard metrics:
+        A. Active Common Issue + similar new complaint -> joins existing active issue.
+        B. Resolved Common Issue + similar new complaint -> creates NEW issue in Pending status.
+        C. New complaint after recurrence -> joins the new active Common Issue.
+        D. Different location/problem -> does not incorrectly group.
+        E. Historical resolved Common Issue -> remains completely unchanged.
+        Counts: Verifies Common Issues list and Admin Dashboard active counts.
+        """
+        conn = get_db_connection()
+
+        # Clean slate for this scenario in isolated test database
+        conn.execute("DELETE FROM common_issue_notifications")
+        conn.execute("DELETE FROM notification_reads")
+        conn.execute("DELETE FROM common_issue_history")
+        conn.execute("DELETE FROM complaint_history")
+        conn.execute("DELETE FROM complaints")
+        conn.execute("DELETE FROM common_issues")
+
+        # Seed students in Hostel Block A and Hostel Block B
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (3001, 'Student A1', 'O300001', 'o300001@rguktong.ac.in', '9876543001', 'Hostel Block A', 'A-101', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (3002, 'Student A2', 'O300002', 'o300002@rguktong.ac.in', '9876543002', 'Hostel Block A', 'A-102', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (3003, 'Student A3', 'O300003', 'o300003@rguktong.ac.in', '9876543003', 'Hostel Block A', 'A-103', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (3004, 'Student B1', 'O300004', 'o300004@rguktong.ac.in', '9876543004', 'Hostel Block B', 'B-101', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.commit()
+
+        # Create Active Common Issue 1 in Hostel Block A
+        issue_1_id = create_common_issue(
+            title="Hostel Block A - Ceiling Fan Vibration",
+            category="Electrical",
+            hostel="Hostel Block A",
+            location_details="Hostel Block A Wing 1",
+            description="Severe ceiling fan vibration and noise.",
+            priority="Medium",
+            created_by="Admin",
+            conn=conn
+        )
+        # Associate complaint 1 to Issue 1
+        cur1 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status, common_issue_id)
+            VALUES (3001, 'Electrical', 'Ceiling fan vibrating', 'Fan in room A-101 shakes heavily.', 'Medium', 'Pending', ?)
+            """,
+            (issue_1_id,)
+        )
+        comp_1_id = cur1.lastrowid
+        conn.commit()
+        conn.close()
+
+        # ---------------------------------------------------------------------
+        # Point A: Active Common Issue + similar new complaint -> joins active issue
+        # ---------------------------------------------------------------------
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 3002
+            sess["student_name"] = "Student A2"
+            sess["id_no"] = "O300002"
+            sess["hostel"] = "Hostel Block A"
+
+        resp_a = self.client.post(
+            "/add_complaint",
+            data={
+                "category": "Electrical",
+                "priority": "Medium",
+                "title": "Ceiling fan vibrating violently",
+                "description": "Ceiling fan in room A-102 shaking and making noise."
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp_a.status_code, 200)
+
+        conn = get_db_connection()
+        comp_2 = conn.execute(
+            "SELECT * FROM complaints WHERE student_id = 3002 ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        self.assertEqual(comp_2["common_issue_id"], issue_1_id, "Point A: Must join existing active issue")
+
+        # ---------------------------------------------------------------------
+        # Resolve Common Issue 1
+        # ---------------------------------------------------------------------
+        affected = update_common_issue_once(
+            common_issue_id=issue_1_id,
+            status="Resolved",
+            remarks="All fan anchor bolts tightened.",
+            assigned_to="Electrician Team",
+            updated_by="Admin",
+            conn=conn
+        )
+        self.assertEqual(affected, 2)
+        conn.close()
+
+        # ---------------------------------------------------------------------
+        # Point B: Resolved Common Issue + similar new complaint -> creates NEW Common Issue in Pending
+        # ---------------------------------------------------------------------
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 3003
+            sess["student_name"] = "Student A3"
+            sess["id_no"] = "O300003"
+            sess["hostel"] = "Hostel Block A"
+
+        resp_b = self.client.post(
+            "/add_complaint",
+            data={
+                "category": "Electrical",
+                "priority": "Medium",
+                "title": "Ceiling fan vibrating again",
+                "description": "Ceiling fan vibration in room A-103 shaking regulator."
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp_b.status_code, 200)
+
+        conn = get_db_connection()
+        comp_3 = conn.execute(
+            "SELECT * FROM complaints WHERE student_id = 3003 ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        self.assertIsNotNone(comp_3)
+        issue_2_id = comp_3["common_issue_id"]
+
+        self.assertNotEqual(issue_2_id, issue_1_id, "Point B: Must NOT join resolved Common Issue 1")
+        self.assertIsNotNone(issue_2_id, "Point B: Must create a NEW Common Issue")
+
+        issue_2 = conn.execute("SELECT * FROM common_issues WHERE id = ?", (issue_2_id,)).fetchone()
+        self.assertEqual(issue_2["status"], "Pending", "Point B: New Common Issue must be in Pending status")
+        self.assertEqual(comp_3["status"], "Pending", "Point B: New complaint must be in Pending status")
+
+        # ---------------------------------------------------------------------
+        # Point C: New complaint after recurrence -> joins the new active Common Issue
+        # ---------------------------------------------------------------------
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 3001
+            sess["student_name"] = "Student A1"
+            sess["id_no"] = "O300001"
+            sess["hostel"] = "Hostel Block A"
+
+        resp_c = self.client.post(
+            "/add_complaint",
+            data={
+                "category": "Electrical",
+                "priority": "Medium",
+                "title": "Fan vibration still present",
+                "description": "Room A-101 ceiling fan still shaking."
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp_c.status_code, 200)
+
+        comp_4 = conn.execute(
+            "SELECT * FROM complaints WHERE student_id = 3001 ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        self.assertEqual(comp_4["common_issue_id"], issue_2_id, "Point C: Must join the new active Common Issue 2")
+
+        # ---------------------------------------------------------------------
+        # Point D: Different location / problem -> does not incorrectly group
+        # ---------------------------------------------------------------------
+        # D1: Same problem text, but DIFFERENT hostel (Hostel Block B)
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 3004
+            sess["student_name"] = "Student B1"
+            sess["id_no"] = "O300004"
+            sess["hostel"] = "Hostel Block B"
+
+        resp_d1 = self.client.post(
+            "/add_complaint",
+            data={
+                "category": "Electrical",
+                "priority": "Medium",
+                "title": "Ceiling fan vibrating",
+                "description": "Ceiling fan shaking in Hostel Block B."
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp_d1.status_code, 200)
+
+        conn = get_db_connection()
+        comp_5 = conn.execute(
+            "SELECT * FROM complaints WHERE student_id = 3004 ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        self.assertNotEqual(comp_5["common_issue_id"], issue_1_id, "Point D: Never merge across different hostels")
+        self.assertNotEqual(comp_5["common_issue_id"], issue_2_id, "Point D: Never merge across different hostels")
+
+        # D2: Same hostel (Hostel Block A), but DIFFERENT category / problem (Plumbing leak)
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 3002
+            sess["student_name"] = "Student A2"
+            sess["id_no"] = "O300002"
+            sess["hostel"] = "Hostel Block A"
+
+        resp_d2 = self.client.post(
+            "/add_complaint",
+            data={
+                "category": "Plumbing",
+                "priority": "High",
+                "title": "Washroom flush tank overflowing",
+                "description": "Continuous water overflow from flush valve in 1st floor bathroom."
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp_d2.status_code, 200)
+
+        comp_6 = conn.execute(
+            "SELECT * FROM complaints WHERE student_id = 3002 ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        self.assertNotEqual(comp_6["common_issue_id"], issue_1_id, "Point D: Different problem must not merge into fan issue")
+        self.assertNotEqual(comp_6["common_issue_id"], issue_2_id, "Point D: Different problem must not merge into fan issue")
+
+        # ---------------------------------------------------------------------
+        # Point E: Historical resolved Common Issue remains completely unchanged
+        # ---------------------------------------------------------------------
+        issue_1_final = conn.execute("SELECT * FROM common_issues WHERE id = ?", (issue_1_id,)).fetchone()
+        self.assertEqual(issue_1_final["status"], "Resolved", "Point E: Historical issue status remains Resolved")
+        self.assertEqual(issue_1_final["admin_remarks"], "All fan anchor bolts tightened.")
+        self.assertEqual(issue_1_final["assigned_to"], "Electrician Team")
+
+        issue_1_complaints = conn.execute(
+            "SELECT id FROM complaints WHERE common_issue_id = ? ORDER BY id ASC", (issue_1_id,)
+        ).fetchall()
+        issue_1_comp_ids = [r["id"] for r in issue_1_complaints]
+        self.assertEqual(issue_1_comp_ids, [comp_1_id, comp_2["id"]], "Point E: Historical issue complaints list unchanged")
+
+        # ---------------------------------------------------------------------
+        # Common Issue Counts & Admin Dashboard Verification
+        # ---------------------------------------------------------------------
+        # Verify Common Issues List route counts
+        with self.client.session_transaction() as sess:
+            sess["admin"] = config.ADMIN_USERNAME
+
+        res_ci = self.client.get("/admin/common_issues")
+        self.assertEqual(res_ci.status_code, 200)
+        # Check active and resolved labels in rendered HTML
+        self.assertIn(b"Active Issues", res_ci.data)
+        self.assertIn(b"Resolved", res_ci.data)
+
+        # Verify Admin Dashboard counts
+        res_dash = self.client.get("/admin_dashboard")
+        self.assertEqual(res_dash.status_code, 200)
+
+        # Verify exact counts from DB match logic:
+        # Total issues: issue_1 (Resolved), issue_2 (Pending) -> 2
+        # Active issues: issue_2 (Pending) -> 1
+        ci_total = conn.execute("SELECT COUNT(*) FROM common_issues").fetchone()[0]
+        ci_active = conn.execute(
+            "SELECT COUNT(*) FROM common_issues WHERE LOWER(TRIM(status)) IN ('pending', 'in progress')"
+        ).fetchone()[0]
+        self.assertEqual(ci_total, 2)
+        self.assertEqual(ci_active, 1)
+
+        conn.close()
+
+
 if __name__ == "__main__":
     unittest.main()

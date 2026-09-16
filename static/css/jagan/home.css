@@ -336,12 +336,12 @@
 }
 
 .admin-login {
-    background: #0f172a;
+    background: #172033;
     color: #ffffff !important;
 }
 
 .admin-login:hover {
-    background: #1e293b;
+    background: #0f172a;
     transform: translateY(-1px);
 }
 

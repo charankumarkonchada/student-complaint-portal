@@ -45,7 +45,7 @@
 
 .profile-heading h1 {
     margin: 0 0 4px;
-    color: var(--text-heading, #0f172a);
+    color: var(--text-heading, #172033);
     font-size: 24px;
     font-weight: 800;
     letter-spacing: -0.5px;
@@ -138,7 +138,7 @@
 
 .student-name {
     margin: 0 0 6px;
-    color: var(--text-heading, #0f172a);
+    color: var(--text-heading, #172033);
     font-size: 20px;
     font-weight: 800;
     letter-spacing: -0.3px;
@@ -312,7 +312,7 @@
 
 .header-title-box h3 {
     margin: 0 0 3px;
-    color: var(--text-heading, #0f172a);
+    color: var(--text-heading, #172033);
     font-size: 17px;
     font-weight: 800;
     letter-spacing: -0.3px;
@@ -395,8 +395,8 @@
     background: #ffffff;
     border: 1.5px solid var(--border-color, #e2e8f0);
     border-radius: var(--radius-lg, 14px);
-    color: var(--text-heading, #0f172a);
-    -webkit-text-fill-color: var(--text-heading, #0f172a);
+    color: var(--text-heading, #172033);
+    -webkit-text-fill-color: var(--text-heading, #172033);
     font-size: 14px;
     font-family: inherit;
     font-weight: 500;
@@ -412,8 +412,8 @@
     background: #ffffff;
     border-color: var(--primary, #ff5733);
     box-shadow: 0 0 0 4px var(--primary-glow, rgba(255, 87, 51, 0.12));
-    color: var(--text-heading, #0f172a);
-    -webkit-text-fill-color: var(--text-heading, #0f172a);
+    color: var(--text-heading, #172033);
+    -webkit-text-fill-color: var(--text-heading, #172033);
 }
 
 .custom-input::placeholder {

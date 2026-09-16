@@ -13,7 +13,8 @@ from services.common_issue_service import (
     update_common_issue_once,
     create_common_issue,
     associate_complaint_to_common_issue,
-    unlink_complaint_from_common_issue
+    unlink_complaint_from_common_issue,
+    is_active_status
 )
 
 common_issues_bp = Blueprint("common_issues", __name__)
@@ -41,8 +42,8 @@ def list_common_issues():
 
     # Calculate overall stats
     total_issues = len(issues)
-    active_issues = sum(1 for i in issues if i["status"] != "Resolved")
-    resolved_issues = sum(1 for i in issues if i["status"] == "Resolved")
+    active_issues = sum(1 for i in issues if is_active_status(i["status"]))
+    resolved_issues = total_issues - active_issues
     total_affected = sum(i["affected_count"] for i in issues)
 
     # Fetch unique hostels and categories for filter dropdowns

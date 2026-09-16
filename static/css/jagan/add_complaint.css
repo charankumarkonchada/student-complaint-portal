@@ -278,12 +278,12 @@
 
 /* Live AI Preview Box */
 .ai-preview-card {
-    background: radial-gradient(circle at top left, rgba(255, 107, 74, 0.08) 0%, #ffffff 80%);
-    border: 1.5px solid var(--primary-border);
+    background: #f5f3ff;
+    border: 1.5px solid #ddd6fe;
     border-radius: var(--radius-xl);
     padding: 1.25rem 1.4rem;
     margin-top: 1.25rem;
-    box-shadow: 0 4px 14px rgba(255, 107, 74, 0.08);
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.06);
     transition: all var(--transition-normal);
 }
 
@@ -294,7 +294,7 @@
     gap: 0.75rem;
     padding-bottom: 0.75rem;
     margin-bottom: 0.85rem;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid #ddd6fe;
 }
 
 .ai-preview-title {
@@ -303,12 +303,12 @@
     gap: 0.55rem;
     font-size: 0.95rem;
     font-weight: 700;
-    color: var(--primary);
+    color: #7c3aed;
 }
 
 .ai-preview-title i {
     font-size: 1.05rem;
-    color: var(--primary);
+    color: #7c3aed;
 }
 
 .ai-live-badge {
@@ -319,9 +319,9 @@
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
-    color: var(--primary);
-    background: var(--primary-light);
-    border: 1px solid var(--primary-border);
+    color: #7c3aed;
+    background: #ede9fe;
+    border: 1px solid #ddd6fe;
     padding: 0.2rem 0.65rem;
     border-radius: var(--radius-full);
 }
@@ -330,7 +330,7 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: var(--primary);
+    background: #7c3aed;
     animation: pulse-live 2s infinite ease-in-out;
 }
 
@@ -354,7 +354,7 @@
 }
 
 .ai-analyzing-msg {
-    color: var(--primary);
+    color: #7c3aed;
     font-weight: 600;
 }
 
@@ -374,7 +374,7 @@
 
 .ai-result-card {
     background: #ffffff;
-    border: 1px solid var(--border-color);
+    border: 1px solid #ddd6fe;
     border-radius: var(--radius-lg);
     padding: 0.85rem 1rem;
     display: flex;
@@ -426,9 +426,9 @@
 .ai-conf-pill {
     font-size: 0.74rem;
     font-weight: 700;
-    background: var(--primary-light);
-    color: var(--primary);
-    border: 1px solid var(--primary-border);
+    background: #ede9fe;
+    color: #7c3aed;
+    border: 1px solid #ddd6fe;
     padding: 0.15rem 0.55rem;
     border-radius: var(--radius-full);
 }

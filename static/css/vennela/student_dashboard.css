@@ -146,10 +146,10 @@
     font-size: 1.1rem;
 }
 
-.kpi-total .kpi-icon-wrap { background: #fff4f0; color: #ff6b4a; }
-.kpi-pending .kpi-icon-wrap { background: #fffbeb; color: #d97706; }
-.kpi-progress .kpi-icon-wrap { background: #eff6ff; color: #2563eb; }
-.kpi-resolved .kpi-icon-wrap { background: #ecfdf5; color: #059669; }
+.kpi-total .kpi-icon-wrap { background: #eff6ff; color: #3b82f6; }
+.kpi-pending .kpi-icon-wrap { background: #fef3c7; color: #f59e0b; }
+.kpi-progress .kpi-icon-wrap { background: #dbeafe; color: #1d4ed8; }
+.kpi-resolved .kpi-icon-wrap { background: #dcfce7; color: #16a34a; }
 
 .kpi-value {
     font-family: var(--font-heading);

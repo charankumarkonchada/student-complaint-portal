@@ -121,51 +121,43 @@ def predict_complaint(title: str, description: str, selected_category: str = "",
     }
 
 
-def find_duplicate(title: str, description: str, complaints: list[sqlite3.Row], threshold: float = 0.72) -> dict[str, Any] | None:
-    """Find the most similar existing complaint using TF-IDF cosine similarity."""
+def find_duplicate(title: str, description: str, complaints: list[Any], threshold: float = 0.55) -> dict[str, Any] | None:
+    """Find the most similar existing complaint using semantic token and TF-IDF cosine similarity."""
     if not complaints:
         return None
 
-    if not SKLEARN_AVAILABLE:
-        from services.common_issue_service import calculate_text_similarity
-        query = f"{title} {description}"
-        best_score = 0.0
-        best_row = None
-        for row in complaints:
-            text = f"{row['title']} {row['description']}"
-            score = calculate_text_similarity(query, text)
-            if score > best_score:
-                best_score = score
-                best_row = row
-        if best_score >= threshold and best_row is not None:
-            return {
-                "id": best_row["id"],
-                "similarity": round(best_score * 100, 1),
-                "title": best_row["title"],
-                "status": best_row["status"],
-            }
-        return None
+    from services.common_issue_service import calculate_text_similarity
+    query = f"{title} {description}"
+    best_score = 0.0
+    best_row = None
 
-    _, _, _, vectorizer, _, _ = _models()
-    texts = [_clean(f"{row['title']} {row['description']}") for row in complaints]
-    query = vectorizer.transform([_clean(f"{title} {description}")])
+    for row in complaints:
+        text = f"{row['title']} {row['description'] or ''}"
+        score = calculate_text_similarity(query, text)
+        if score > best_score:
+            best_score = score
+            best_row = row
 
-    # Refit a small vectorizer on current complaint text so new vocabulary is
-    # represented. This is independent of the classifier training corpus.
-    current_vectorizer = TfidfVectorizer(ngram_range=(1, 2), min_df=1, sublinear_tf=True)
-    matrix = current_vectorizer.fit_transform(texts + [_clean(f"{title} {description}")])
-    scores = cosine_similarity(matrix[-1], matrix[:-1])[0]
-    if len(scores) == 0:
-        return None
-    idx = int(np.argmax(scores))
-    similarity = float(scores[idx])
-    if similarity < threshold:
-        return None
+    if SKLEARN_AVAILABLE:
+        try:
+            texts = [_clean(f"{row['title']} {row['description'] or ''}") for row in complaints]
+            current_vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 1), sublinear_tf=True)
+            matrix = current_vectorizer.fit_transform(texts + [_clean(query)])
+            scores = cosine_similarity(matrix[-1], matrix[:-1])[0]
+            if len(scores) > 0:
+                idx = int(np.argmax(scores))
+                sk_score = float(scores[idx])
+                if sk_score > best_score:
+                    best_score = sk_score
+                    best_row = complaints[idx]
+        except Exception:
+            pass
 
-    row = complaints[idx]
-    return {
-        "id": row["id"],
-        "similarity": round(similarity * 100, 1),
-        "title": row["title"],
-        "status": row["status"],
-    }
+    if best_score >= threshold and best_row is not None:
+        return {
+            "id": best_row["id"],
+            "similarity": round(best_score * 100, 1),
+            "title": best_row["title"],
+            "status": best_row["status"],
+        }
+    return None

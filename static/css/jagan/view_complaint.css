@@ -117,17 +117,17 @@
 
 /* AI Card Styles */
 .ai-intelligence-card {
-    background: radial-gradient(circle at top right, rgba(255, 107, 74, 0.12) 0%, rgba(255, 143, 107, 0.04) 40%, #ffffff 80%);
-    border: 1px solid var(--primary-border);
+    background: #f5f3ff;
+    border: 1.5px solid #ddd6fe;
     border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-card);
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.06);
     padding: 2rem;
     margin-bottom: 1.5rem;
 }
 
 .ai-stat-box {
     background: #ffffff;
-    border: 1px solid var(--border-light);
+    border: 1px solid #ddd6fe;
     border-radius: var(--radius-lg);
     padding: 1.15rem;
     margin-bottom: 1rem;
@@ -162,6 +162,10 @@
     height: 100%;
     background: var(--gradient-primary);
     border-radius: var(--radius-full);
+}
+
+.ai-stat-box .progress-mini-bar {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
 }
 
 /* Timeline Styles */

@@ -29,7 +29,7 @@
             <span class="badge text-bg-light px-3 py-2">
                 <i class="fa-solid fa-circle text-success me-1"></i> System Active
             </span>
-            <a class="btn btn-sm btn-outline-danger" href="{{ url_for('admin_logout') }}">
+            <a class="btn btn-sm btn-outline-danger" href="{{ url_for('admin_logout') }}" data-logout-trigger="true" title="Logout from portal">
                 <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Logout
             </a>
         </div>
@@ -154,8 +154,13 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2">
+                    {% if common_issues_affected_students %}
+                    <span class="badge common-issue-badge-count" style="background-color: #f0fdfa; color: #0d9488; border: 1px solid #ccfbf1;">
+                        <i class="fa-solid fa-users me-1"></i> {{ common_issues_affected_students }} Affected Students
+                    </span>
+                    {% endif %}
                     <span class="badge common-issue-badge-count">
-                        {{ common_issues_active or 0 }} Active Issues
+                        {{ common_issues_active or 0 }} Active Issue{{ 's' if common_issues_active != 1 else '' }}
                     </span>
                     <i class="fa-solid fa-arrow-right common-issue-arrow"></i>
                 </div>
@@ -181,7 +186,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Issue Title</th>
+                            <th>Issue</th>
                             <th>Hostel</th>
                             <th>Category</th>
                             <th>Status</th>
@@ -193,6 +198,7 @@
                         {% for issue in top_common_issues %}
                         <tr>
                             <td>
+                                <span class="badge bg-secondary-subtle text-secondary me-1" style="font-family: monospace;">{{ issue.issue_code or ('CI-%03d' % issue.id) }}</span>
                                 <strong class="text-dark">{{ issue.title }}</strong>
                                 {% if issue.admin_remarks %}
                                 <small class="text-muted d-block text-truncate" style="max-width: 300px;">

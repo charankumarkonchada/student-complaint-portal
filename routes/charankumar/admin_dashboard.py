@@ -24,7 +24,16 @@ def admin_dashboard():
             "SELECT COUNT(*) FROM complaints WHERE ai_duplicate_id IS NOT NULL"
         ).fetchone()[0],
         "common_issues_total": conn.execute("SELECT COUNT(*) FROM common_issues").fetchone()[0],
-        "common_issues_active": conn.execute("SELECT COUNT(*) FROM common_issues WHERE status!='Resolved'").fetchone()[0]
+        "common_issues_active": conn.execute(
+            "SELECT COUNT(*) FROM common_issues WHERE LOWER(TRIM(status)) IN ('pending', 'in progress')"
+        ).fetchone()[0],
+        "common_issues_affected_students": conn.execute(
+            """
+            SELECT COUNT(c.id) FROM complaints c
+            JOIN common_issues ci ON ci.id = c.common_issue_id
+            WHERE LOWER(TRIM(ci.status)) IN ('pending', 'in progress')
+            """
+        ).fetchone()[0]
     }
 
     recent = conn.execute(
