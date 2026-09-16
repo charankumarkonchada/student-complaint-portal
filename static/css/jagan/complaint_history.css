@@ -163,3 +163,13 @@
     font-weight: 500;
 }
 
+[data-theme="dark"] .ai-meta-chip {
+    color: #ff8566 !important;
+    background: rgba(255, 107, 74, 0.16) !important;
+    border-color: rgba(255, 107, 74, 0.35) !important;
+}
+
+[data-theme="dark"] .ai-meta-chip strong {
+    color: #f8fafc !important;
+}
+

@@ -85,7 +85,8 @@
 
                 <!-- Navigation Items -->
                 <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                    <!-- Center Navigation Links -->
+                    <ul class="navbar-nav mx-auto align-items-lg-center portal-nav-links">
                         
                         {% if session.get('student_id') %}
                             <!-- Student Links -->
@@ -121,35 +122,11 @@
                                 </a>
                             </li>
 
-                            <!-- Notifications with Live Badge -->
-                            <li class="nav-item">
-                                <a class="nav-link nav-notification-link {% if request.path == '/notifications' %}active{% endif %}" 
-                                   href="{{ url_for('notifications') }}"
-                                   title="Notifications">
+                            <li class="nav-item d-lg-none">
+                                <a class="nav-link nav-link-item {% if request.path == '/notifications' %}active{% endif %}" 
+                                   href="{{ url_for('notifications') }}">
                                     <i class="fa-solid fa-bell"></i>
-                                    {% if unread_notifications and unread_notifications > 0 %}
-                                        <span class="nav-notification-badge">{{ unread_notifications }}</span>
-                                    {% endif %}
-                                </a>
-                            </li>
-
-                            <!-- Student Identity Capsule -->
-                            <li class="nav-item ms-lg-2">
-                                <div class="nav-user-capsule">
-                                    <div class="nav-avatar-circle">
-                                        <i class="fa-solid fa-user-graduate"></i>
-                                    </div>
-                                    <div class="nav-user-details">
-                                        <span class="nav-user-name">{{ session.get('student_name', 'Student') }}</span>
-                                        <span class="nav-user-role">{{ session.get('id_no', 'Student') }}</span>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="nav-item ms-lg-1">
-                                <a class="nav-link nav-btn-logout" href="{{ url_for('logout') }}">
-                                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                                    <span>Logout</span>
+                                    <span>Notifications {% if unread_notifications and unread_notifications > 0 %}<span class="badge bg-primary ms-1">{{ unread_notifications }}</span>{% endif %}</span>
                                 </a>
                             </li>
 
@@ -179,37 +156,17 @@
                                 </a>
                             </li>
 
-                            <!-- Admin Identity Capsule -->
-                            <li class="nav-item ms-lg-2">
-                                <div class="nav-user-capsule">
-                                    <div class="nav-avatar-circle nav-avatar-admin">
-                                        <i class="fa-solid fa-shield-halved"></i>
-                                    </div>
-                                    <div class="nav-user-details">
-                                        <span class="nav-user-name">Administrator</span>
-                                        <span class="nav-user-role">Hostel Incharge</span>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="nav-item ms-lg-1">
-                                <a class="nav-link nav-btn-logout" href="{{ url_for('admin_logout') }}">
-                                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                                    <span>Logout</span>
-                                </a>
-                            </li>
-
                         {% else %}
                             <!-- Guest Links -->
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item" href="{{ url_for('home') }}">
+                                <a class="nav-link nav-link-item {% if request.path == '/' %}active{% endif %}" href="{{ url_for('home') }}">
                                     <i class="fa-solid fa-house"></i>
                                     <span>Home</span>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item" href="{{ url_for('login') }}">
+                                <a class="nav-link nav-link-item {% if request.path == '/login' %}active{% endif %}" href="{{ url_for('login') }}">
                                     <i class="fa-solid fa-right-to-bracket"></i>
                                     <span>Student Login</span>
                                 </a>
@@ -222,7 +179,7 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item ms-lg-1">
+                            <li class="nav-item">
                                 <a class="nav-link nav-btn-outline" href="{{ url_for('admin_login') }}">
                                     <i class="fa-solid fa-user-shield"></i>
                                     <span>Admin Portal</span>
@@ -230,9 +187,24 @@
                             </li>
                         {% endif %}
                         
-                        <!-- Theme Toggle (Desktop) -->
-                        <li class="nav-item ms-lg-2 d-none d-lg-block">
-                            <button class="theme-toggle-btn" 
+                    </ul>
+
+                    <!-- Right-Side Action Cluster: [Notification] [Theme] [Profile] [Logout] -->
+                    <div class="navbar-actions-cluster d-flex align-items-center">
+                        {% if session.get('student_id') %}
+                            <!-- 1. Notification Button with Live Badge -->
+                            <a class="nav-notification-link d-none d-lg-inline-flex {% if request.path == '/notifications' %}active{% endif %}" 
+                               href="{{ url_for('notifications') }}"
+                               title="Notifications"
+                               aria-label="Notifications">
+                                <i class="fa-solid fa-bell"></i>
+                                {% if unread_notifications and unread_notifications > 0 %}
+                                    <span class="nav-notification-badge">{{ unread_notifications }}</span>
+                                {% endif %}
+                            </a>
+
+                            <!-- 2. Theme Toggle (Desktop) -->
+                            <button class="theme-toggle-btn d-none d-lg-inline-flex" 
                                     type="button" 
                                     id="themeToggle"
                                     aria-label="Switch to dark mode"
@@ -240,9 +212,64 @@
                                     title="Switch to dark mode">
                                 <i class="fa-solid fa-moon theme-toggle-icon"></i>
                             </button>
-                        </li>
 
-                    </ul>
+                            <!-- 3. Student Identity Capsule -->
+                            <div class="nav-user-capsule">
+                                <div class="nav-avatar-circle">
+                                    <i class="fa-solid fa-user-graduate"></i>
+                                </div>
+                                <div class="nav-user-details">
+                                    <span class="nav-user-name" title="{{ session.get('student_name', 'Student') }}">{{ session.get('student_name', 'Student') }}</span>
+                                    <span class="nav-user-role">{{ session.get('id_no', 'Student') }}</span>
+                                </div>
+                            </div>
+
+                            <!-- 4. Logout Button -->
+                            <a class="nav-link nav-btn-logout" href="{{ url_for('logout') }}" title="Logout from portal">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                <span>Logout</span>
+                            </a>
+
+                        {% elif session.get('admin') %}
+                            <!-- Theme Toggle (Desktop) -->
+                            <button class="theme-toggle-btn d-none d-lg-inline-flex" 
+                                    type="button" 
+                                    id="themeToggle"
+                                    aria-label="Switch to dark mode"
+                                    aria-pressed="false"
+                                    title="Switch to dark mode">
+                                <i class="fa-solid fa-moon theme-toggle-icon"></i>
+                            </button>
+
+                            <!-- Admin Identity Capsule -->
+                            <div class="nav-user-capsule">
+                                <div class="nav-avatar-circle nav-avatar-admin">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <div class="nav-user-details">
+                                    <span class="nav-user-name">Administrator</span>
+                                    <span class="nav-user-role">Hostel Incharge</span>
+                                </div>
+                            </div>
+
+                            <!-- Logout Button -->
+                            <a class="nav-link nav-btn-logout" href="{{ url_for('admin_logout') }}" title="Logout from portal">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                <span>Logout</span>
+                            </a>
+
+                        {% else %}
+                            <!-- Theme Toggle (Desktop) for Guest -->
+                            <button class="theme-toggle-btn d-none d-lg-inline-flex" 
+                                    type="button" 
+                                    id="themeToggle"
+                                    aria-label="Switch to dark mode"
+                                    aria-pressed="false"
+                                    title="Switch to dark mode">
+                                <i class="fa-solid fa-moon theme-toggle-icon"></i>
+                            </button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </nav>

@@ -148,3 +148,25 @@
     font-weight: 500;
 }
 
+[data-theme="dark"] .update-back {
+    background: var(--bg-surface) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-heading) !important;
+}
+
+[data-theme="dark"] .update-back:hover {
+    background: var(--primary-light) !important;
+    border-color: var(--primary-border) !important;
+    color: var(--primary) !important;
+}
+
+[data-theme="dark"] .update-card {
+    background: var(--bg-surface) !important;
+    border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .action-form-card {
+    background: radial-gradient(circle at top right, rgba(255, 107, 74, 0.12) 0%, var(--bg-surface) 80%) !important;
+    border-color: var(--primary-border) !important;
+}
+

@@ -46,8 +46,8 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.readAsDataURL(file);
 
         if (uploadBox) {
-            uploadBox.style.borderColor = "#f59e0b";
-            uploadBox.style.background = "#fffbeb";
+            uploadBox.classList.add("upload-success");
+            uploadBox.classList.remove("drag-over");
         }
     }
 
@@ -58,6 +58,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 displayImagePreview(file);
             } else if (previewContainer) {
                 previewContainer.style.display = "none";
+                if (uploadBox) {
+                    uploadBox.classList.remove("upload-success", "drag-over");
+                }
             }
         });
     }
@@ -65,17 +68,16 @@ document.addEventListener("DOMContentLoaded", function () {
     if (uploadBox && imageInput) {
         uploadBox.addEventListener("dragover", function (event) {
             event.preventDefault();
-            uploadBox.style.borderColor = "#f59e0b";
-            uploadBox.style.background = "#fffbeb";
+            uploadBox.classList.add("drag-over");
         });
 
         uploadBox.addEventListener("dragleave", function () {
-            uploadBox.style.borderColor = "#cbd5e1";
-            uploadBox.style.background = "#f8fafc";
+            uploadBox.classList.remove("drag-over");
         });
 
         uploadBox.addEventListener("drop", function (event) {
             event.preventDefault();
+            uploadBox.classList.remove("drag-over");
             const files = event.dataTransfer.files;
             if (files.length === 0) return;
 
@@ -87,9 +89,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             imageInput.files = files;
             displayImagePreview(file);
-
-            uploadBox.style.borderColor = "#10b981";
-            uploadBox.style.background = "#ecfdf5";
         });
     }
 
@@ -108,8 +107,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const descriptionField = document.querySelector('[name="description"]');
     if (descriptionField && addForm) {
         const aiBox = document.createElement("div");
-        aiBox.className = "alert alert-light border mt-3";
-        aiBox.innerHTML = '<strong><i class="fa-solid fa-wand-magic-sparkles"></i> AI preview</strong><div id="aiPreview" class="small text-muted mt-2">Enter a title and description to analyze the complaint.</div>';
+        aiBox.className = "ai-preview-card mt-3";
+        aiBox.innerHTML = `
+            <div class="ai-preview-header">
+                <div class="ai-preview-title">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI Preview</span>
+                </div>
+                <span class="ai-live-badge"><span class="ai-live-dot"></span> Live Assistant</span>
+            </div>
+            <div id="aiPreview" class="ai-preview-body">
+                <div class="ai-idle-message">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    <span>Enter a title and description to analyze the complaint in real-time.</span>
+                </div>
+            </div>
+        `;
         descriptionField.parentElement.appendChild(aiBox);
 
         let aiTimer;
@@ -121,6 +134,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (title.length < 5 || desc.length < 10) return;
 
+            const aiPreviewEl = document.getElementById("aiPreview");
+            if (aiPreviewEl) {
+                aiPreviewEl.innerHTML = '<div class="ai-analyzing-msg"><i class="fa-solid fa-spinner fa-spin me-2"></i> Analyzing complaint with AI...</div>';
+            }
+
             try {
                 const response = await fetch("/api/ai_analyze", {
                     method: "POST",
@@ -130,9 +148,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (response.ok) {
                     const data = await response.json();
-                    const aiPreviewEl = document.getElementById("aiPreview");
                     if (aiPreviewEl) {
-                        aiPreviewEl.innerHTML = `Category: <b>${data.predicted_category}</b> (${data.category_confidence}%) · Priority: <b>${data.predicted_priority}</b> (${data.priority_confidence}%) · Estimated resolution: <b>${data.resolution_days} days</b>`;
+                        const priClass = (data.predicted_priority || '').toLowerCase();
+                        aiPreviewEl.innerHTML = `
+                            <div class="ai-results-grid">
+                                <div class="ai-result-card">
+                                    <span class="ai-result-label">Predicted Category</span>
+                                    <div class="ai-result-val-row">
+                                        <span class="ai-result-value">${data.predicted_category}</span>
+                                        <span class="ai-conf-pill">${data.category_confidence}%</span>
+                                    </div>
+                                </div>
+                                <div class="ai-result-card">
+                                    <span class="ai-result-label">Predicted Priority</span>
+                                    <div class="ai-result-val-row">
+                                        <span class="ai-result-value priority-text-${priClass}">${data.predicted_priority}</span>
+                                        <span class="ai-conf-pill">${data.priority_confidence}%</span>
+                                    </div>
+                                </div>
+                                <div class="ai-result-card">
+                                    <span class="ai-result-label">Estimated Resolution</span>
+                                    <div class="ai-result-val-row">
+                                        <span class="ai-result-value">${data.resolution_days} <small class="ai-unit">days</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ai-footer-note">
+                                <i class="fa-solid fa-circle-check text-success me-1"></i>
+                                <span>AI predictions ready. You may keep or modify your selected category and priority.</span>
+                            </div>
+                        `;
                     }
                 }
             } catch (e) {

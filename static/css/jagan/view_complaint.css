@@ -284,6 +284,12 @@
     color: var(--text-heading) !important;
 }
 
+[data-theme="dark"] .ai-intelligence-card .badge.text-bg-light {
+    background: rgba(255, 107, 74, 0.2) !important;
+    border: 1px solid rgba(255, 107, 74, 0.45) !important;
+    color: #ff8566 !important;
+}
+
 [data-theme="dark"] .progress-mini {
     background: var(--bg-input) !important;
 }
