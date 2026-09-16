@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request, session
+from services.csrf_service import get_csrf_token, validate_csrf_token
 
 import config
 from database.queries import init_database, unread_count
@@ -18,9 +19,23 @@ def create_app():
         SESSION_COOKIE_SAMESITE=config.SESSION_COOKIE_SAMESITE,
         SESSION_COOKIE_SECURE=config.SESSION_COOKIE_SECURE,
         PERMANENT_SESSION_LIFETIME=config.PERMANENT_SESSION_LIFETIME,
+        TESTING=os.environ.get("TESTING", "0").lower() in {"1", "true", "yes"},
+        APP_ENV=config.APP_ENV,
+        WTF_CSRF_ENABLED=True,
     )
 
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
+    # CSRF protection for all state-changing requests. Tests may disable explicitly.
+    @app.before_request
+    def protect_state_changing_requests():
+        if app.config.get("TESTING") and not app.config.get("WTF_CSRF_ENABLED", True):
+            return None
+        validate_csrf_token()
+
+    @app.context_processor
+    def inject_security_globals():
+        return {"csrf_token": get_csrf_token}
 
     # Initialize database schema
     init_database()
@@ -31,7 +46,7 @@ def create_app():
         return {
             "unread_notifications": unread_count(),
             "college_name": config.COLLEGE_NAME,
-            "current_year": 2026
+            "current_year": __import__("datetime").datetime.now().year
         }
 
     # Global Error Handlers (Member-owned templates: Charan 404, Vennela 500)
@@ -49,13 +64,16 @@ def create_app():
     def set_security_headers(response):
         response.headers["X-Frame-Options"] = "SAMEORIGIN"
         response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        if config.IS_PRODUCTION:
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         return response
 
     # Reverse proxy header trust (Nginx / PaaS / Load Balancers)
     from werkzeug.middleware.proxy_fix import ProxyFix
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    if config.IS_PRODUCTION:
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
     # Register all modular route blueprints
     register_blueprints(app)

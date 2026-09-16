@@ -35,7 +35,7 @@ def login():
 
     return render_template("deepthi/login.html")
 
-@login_bp.route("/logout")
+@login_bp.route("/logout", methods=["POST"])
 def logout():
     session.clear()
     flash("Logged Out Successfully.", "success")

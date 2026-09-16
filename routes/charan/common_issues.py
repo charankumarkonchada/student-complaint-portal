@@ -119,6 +119,9 @@ def update_common_issue(id):
         return redirect(url_for("admin_login"))
 
     status = request.form.get("status", "In Progress").strip()
+    if status not in {"Pending", "In Progress", "Resolved", "Closed", "Rejected"}:
+        flash("Invalid Common Issue status.", "danger")
+        return redirect(url_for("common_issues.view_common_issue", id=id))
     remarks = request.form.get("remarks", "").strip()
     assigned_to = request.form.get("assigned_to", "").strip()
 
@@ -162,6 +165,27 @@ def create_new_common_issue():
             return redirect(url_for("common_issues.list_common_issues"))
 
         conn = get_db_connection()
+        # Validate selected complaints server-side before creating relationships.
+        valid_ids = []
+        for cid_str in selected_complaints:
+            try:
+                cid = int(cid_str)
+            except (TypeError, ValueError):
+                continue
+            row = conn.execute(
+                """
+                SELECT c.id, c.category, c.common_issue_id, s.hostel
+                FROM complaints c
+                JOIN students s ON s.id=c.student_id
+                WHERE c.id=?
+                """,
+                (cid,)
+            ).fetchone()
+            if (row and row["common_issue_id"] is None
+                    and str(row["hostel"] or "").strip().lower() == hostel.strip().lower()
+                    and str(row["category"] or "").strip().lower() == category.strip().lower()):
+                valid_ids.append(cid)
+
         issue_id = create_common_issue(
             title=title,
             category=category,
@@ -176,22 +200,14 @@ def create_new_common_issue():
         )
 
         linked_count = 0
-        for cid_str in selected_complaints:
-            try:
-                cid = int(cid_str)
-                if associate_complaint_to_common_issue(cid, issue_id, conn):
-                    linked_count += 1
-            except ValueError:
-                pass
+        for cid in valid_ids:
+            if associate_complaint_to_common_issue(cid, issue_id, conn):
+                linked_count += 1
 
         conn.close()
 
-        msg = f"Common Issue #{issue_id} ('{title}') successfully created."
-        if linked_count > 0:
-            msg += f" Linked {linked_count} complaint(s)."
-        flash(msg, "success")
-
-        return redirect(url_for("common_issues.view_common_issue", id=issue_id))
+        flash("Master issue created successfully.", "success")
+        return redirect(url_for("common_issues.list_common_issues"))
 
     # GET request - show create form
     conn = get_db_connection()
@@ -212,10 +228,10 @@ def unlink_complaint(id, complaint_id):
         return redirect(url_for("admin_login"))
 
     conn = get_db_connection()
-    unlink_complaint_from_common_issue(complaint_id, conn)
+    success = unlink_complaint_from_common_issue(complaint_id, id, conn)
     conn.close()
 
-    flash(f"Complaint #{complaint_id} unlinked from Common Issue #{id}.", "info")
+    flash(f"Complaint #{complaint_id} unlinked from Common Issue #{id}." if success else "Complaint is not linked to this Common Issue.", "info" if success else "warning")
     return redirect(url_for("common_issues.view_common_issue", id=id))
 
 

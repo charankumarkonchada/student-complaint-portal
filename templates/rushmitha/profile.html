@@ -117,6 +117,7 @@
 
             <div class="profile-card-body">
                 <form method="POST" id="profileForm" class="profile-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="profile-form-grid">
                         <!-- Full Name -->
                         <div class="form-group-item">

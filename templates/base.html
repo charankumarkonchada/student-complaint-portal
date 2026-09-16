@@ -19,6 +19,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}Hostel Complaint Portal{% endblock %} - {{ college_name if college_name else 'RGUKT Ongole' }}</title>
 
@@ -333,7 +334,7 @@
                         </span>
                     </div>
                     <div class="text-muted small">
-                        &copy; {{ current_year if current_year else 2026 }} {{ college_name if college_name else 'RGUKT Ongole' }}. All rights reserved.
+                        &copy; {{ current_year }} {{ college_name if college_name else 'RGUKT Ongole' }}. All rights reserved.
                     </div>
                 </div>
             </div>
@@ -364,15 +365,21 @@
                     <button type="button" class="btn logout-btn-cancel" data-bs-dismiss="modal" id="logoutCancelBtn">
                         <i class="fa-solid fa-xmark me-1"></i> Cancel
                     </button>
-                    <a href="#" class="btn logout-btn-confirm" id="logoutConfirmBtn" role="button">
-                        <i class="fa-solid fa-arrow-right-from-bracket me-1"></i>
-                        <span>Logout</span>
-                    </a>
+                    <form method="POST" action="{{ url_for('logout') if session.get('student_id') else url_for('admin_logout') }}" id="logoutConfirmForm" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn logout-btn-confirm" id="logoutConfirmBtn">
+                            <i class="fa-solid fa-arrow-right-from-bracket me-1"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
     {% endif %}
+
+    <!-- Page Level Modals Block -->
+    {% block modals %}{% endblock %}
 
     <!-- Core Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

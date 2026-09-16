@@ -1,12 +1,13 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import logging
+import config
 from typing import Optional, Dict, Any, List
 from database.db import get_db_connection
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_AUTO_ARCHIVE_DAYS = 7
-MAX_ACTIVE_READ_NOTIFICATIONS = 20
+DEFAULT_AUTO_ARCHIVE_DAYS = config.NOTIFICATION_RETENTION_DAYS
+MAX_ACTIVE_READ_NOTIFICATIONS = config.MAX_ACTIVE_READ_NOTIFICATIONS
 
 
 def auto_archive_notifications(
@@ -31,7 +32,7 @@ def auto_archive_notifications(
 
     try:
         archived_count = 0
-        cutoff_dt = datetime.utcnow() - timedelta(days=days_retention)
+        cutoff_dt = datetime.now(timezone.utc) - timedelta(days=days_retention)
         cutoff_str = cutoff_dt.strftime("%Y-%m-%d %H:%M:%S")
 
         # 1. Time-based auto-archiving for individual notifications
@@ -341,7 +342,9 @@ def archive_all_read_notifications(
 def get_student_notifications(
     student_id: int,
     view: str = "active",
-    conn=None
+    conn=None,
+    page: int = 1,
+    per_page: int = 20
 ) -> Dict[str, Any]:
     """
     Fetches student notifications segmented by view ('active' or 'archived')
@@ -370,16 +373,18 @@ def get_student_notifications(
             # Archived shared common issue notifications
             common_rows = conn.execute(
                 """
-                SELECT DISTINCT cin.id, ? AS student_id, cin.message,
-                       1 AS is_read,
-                       1 AS is_archived,
-                       nr.archived_at,
-                       cin.created_at, 'common' AS notif_type
-                FROM common_issue_notifications cin
-                JOIN complaints c ON c.common_issue_id = cin.common_issue_id
-                JOIN notification_reads nr ON nr.common_issue_notification_id = cin.id AND nr.student_id = ?
-                WHERE c.student_id = ? AND nr.is_archived = 1
-                ORDER BY COALESCE(nr.archived_at, cin.created_at) DESC
+                SELECT * FROM (
+                    SELECT DISTINCT cin.id, ? AS student_id, cin.message,
+                           1 AS is_read,
+                           1 AS is_archived,
+                           nr.archived_at,
+                           cin.created_at, 'common' AS notif_type
+                    FROM common_issue_notifications cin
+                    JOIN complaints c ON c.common_issue_id = cin.common_issue_id
+                    JOIN notification_reads nr ON nr.common_issue_notification_id = cin.id AND nr.student_id = ?
+                    WHERE c.student_id = ? AND nr.is_archived = 1
+                ) sub
+                ORDER BY COALESCE(archived_at, created_at) DESC
                 """,
                 (student_id, student_id, student_id)
             ).fetchall()
@@ -399,16 +404,18 @@ def get_student_notifications(
             # Active shared common issue notifications
             common_rows = conn.execute(
                 """
-                SELECT DISTINCT cin.id, ? AS student_id, cin.message,
-                       CASE WHEN nr.id IS NOT NULL THEN 1 ELSE 0 END AS is_read,
-                       COALESCE(nr.is_archived, 0) AS is_archived,
-                       nr.archived_at,
-                       cin.created_at, 'common' AS notif_type
-                FROM common_issue_notifications cin
-                JOIN complaints c ON c.common_issue_id = cin.common_issue_id
-                LEFT JOIN notification_reads nr ON nr.common_issue_notification_id = cin.id AND nr.student_id = ?
-                WHERE c.student_id = ? AND (nr.is_archived = 0 OR nr.is_archived IS NULL)
-                ORDER BY cin.created_at DESC
+                SELECT * FROM (
+                    SELECT DISTINCT cin.id, ? AS student_id, cin.message,
+                           CASE WHEN nr.id IS NOT NULL THEN 1 ELSE 0 END AS is_read,
+                           COALESCE(nr.is_archived, 0) AS is_archived,
+                           nr.archived_at,
+                           cin.created_at, 'common' AS notif_type
+                    FROM common_issue_notifications cin
+                    JOIN complaints c ON c.common_issue_id = cin.common_issue_id
+                    LEFT JOIN notification_reads nr ON nr.common_issue_notification_id = cin.id AND nr.student_id = ?
+                    WHERE c.student_id = ? AND (nr.is_archived = 0 OR nr.is_archived IS NULL)
+                ) sub
+                ORDER BY created_at DESC
                 """,
                 (student_id, student_id, student_id)
             ).fetchall()
@@ -476,9 +483,20 @@ def get_student_notifications(
 
         active_read_total = max(0, active_total - unread_total)
 
+        page = max(1, int(page or 1))
+        per_page = min(50, max(1, int(per_page or 20)))
+        total_items = len(items)
+        start = (page - 1) * per_page
+        paged_items = items[start:start + per_page]
+        total_pages = max(1, (total_items + per_page - 1) // per_page)
+
         return {
-            "items": items,
+            "items": paged_items,
             "view": norm_view,
+            "page": page,
+            "per_page": per_page,
+            "total_items": total_items,
+            "total_pages": total_pages,
             "active_total": active_total,
             "unread_total": unread_total,
             "active_read_total": active_read_total,

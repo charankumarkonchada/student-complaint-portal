@@ -63,7 +63,7 @@ COLLEGE_NAME=RGUKT Ongole
 COLLEGE_DOMAIN=@rguktong.ac.in
 
 # Database Configuration:
-# - To use local SQLite: Leave DATABASE_URL blank!
+# - For local development, set APP_ENV=development and leave DATABASE_URL blank to use SQLite.
 # - To use Cloud PostgreSQL: Provide your Supabase connection string.
 DATABASE_URL=
 DB_SSLMODE=require
@@ -93,7 +93,7 @@ OTP_MAX_ATTEMPTS=5
 ```
 
 > [!NOTE]
-> **Zero-Config Local Fallback:** If `DATABASE_URL` is left empty, the application automatically uses local SQLite (`database.db`). If `SUPABASE_URL` is empty, image uploads fall back safely to `static/uploads/`.
+> **Environment-aware storage:** In development, SQLite and local uploads can be enabled explicitly. In production, PostgreSQL/Supabase and cloud attachment storage are required unless you explicitly opt into a fallback.
 
 ---
 

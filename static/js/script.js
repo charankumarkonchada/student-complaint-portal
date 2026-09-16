@@ -5,6 +5,22 @@
  */
 
 document.addEventListener("DOMContentLoaded", function () {
+    // CSRF protection for AJAX/fetch requests. Server validates every state-changing request.
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    if (csrfMeta && window.fetch) {
+        const originalFetch = window.fetch.bind(window);
+        window.fetch = function(input, init) {
+            init = init || {};
+            const method = (init.method || (input && input.method) || "GET").toUpperCase();
+            if (!["GET", "HEAD", "OPTIONS"].includes(method)) {
+                const headers = new Headers(init.headers || {});
+                if (!headers.has("X-CSRFToken")) headers.set("X-CSRFToken", csrfMeta.content);
+                init.headers = headers;
+            }
+            return originalFetch(input, init);
+        };
+    }
+
     // 0. Theme Management System (Light / Dark Mode with Persistence & System Detection)
     function getPreferredTheme() {
         try {
@@ -313,9 +329,13 @@ document.addEventListener("DOMContentLoaded", function () {
             // Extract intended destination URL (e.g. /logout or /admin_logout)
             pendingLogoutUrl = trigger.getAttribute("href") || (trigger.dataset && trigger.dataset.logoutUrl) || "/logout";
 
-            // Update modal confirm button destination and reset state
+            // Update modal confirm form action and button state
+            const logoutForm = document.getElementById("logoutConfirmForm");
+            if (logoutForm && pendingLogoutUrl && pendingLogoutUrl !== "#") {
+                logoutForm.setAttribute("action", pendingLogoutUrl);
+            }
+
             if (modalContext.confirmBtn) {
-                modalContext.confirmBtn.setAttribute("href", pendingLogoutUrl);
                 modalContext.confirmBtn.classList.remove("disabled");
                 modalContext.confirmBtn.removeAttribute("aria-disabled");
                 modalContext.confirmBtn.removeAttribute("data-logging-out");
@@ -343,6 +363,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            const logoutForm = document.getElementById("logoutConfirmForm");
+            const target = (logoutForm && logoutForm.getAttribute("action") && logoutForm.getAttribute("action") !== "#")
+                ? logoutForm.getAttribute("action")
+                : (pendingLogoutUrl || "/logout");
+
+            if (logoutForm) {
+                logoutForm.setAttribute("action", target);
+            }
+
             confirmBtn.classList.add("disabled");
             confirmBtn.setAttribute("aria-disabled", "true");
             confirmBtn.setAttribute("data-logging-out", "true");
@@ -351,10 +380,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 span.textContent = "Logging out...";
             }
 
-            // Ensure redirection to the target backend route if default action doesn't follow
-            const target = confirmBtn.getAttribute("href") || pendingLogoutUrl;
-            if (target && target !== "#") {
-                window.location.href = target;
+            if (logoutForm) {
+                e.preventDefault();
+                logoutForm.submit();
             }
         });
 

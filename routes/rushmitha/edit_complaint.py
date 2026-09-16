@@ -54,9 +54,19 @@ def edit_complaint(id):
                 flash("Complaint image upload failed. Please check Supabase Storage settings and try again.", "danger")
                 return redirect(url_for("edit_complaint", id=id))
 
+        student_row = conn.execute("SELECT hostel FROM students WHERE id=?", (session["student_id"],)).fetchone()
+        student_hostel = (student_row["hostel"] if student_row else "").strip()
         existing = conn.execute(
-            "SELECT id, title, description, status FROM complaints WHERE id!=?",
-            (id,)
+            """
+            SELECT c.id, c.title, c.description, c.status
+            FROM complaints c
+            JOIN students s ON s.id=c.student_id
+            WHERE c.id != ?
+              AND LOWER(TRIM(s.hostel)) = LOWER(TRIM(?))
+              AND LOWER(TRIM(c.category)) = LOWER(TRIM(?))
+              AND LOWER(c.status) IN ('pending', 'in progress')
+            """,
+            (id, student_hostel, category)
         ).fetchall()
 
         ai = predict_complaint(title, description, category, priority)

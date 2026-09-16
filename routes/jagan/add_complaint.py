@@ -49,11 +49,26 @@ def add_complaint():
                 return redirect(url_for("add_complaint"))
 
         conn = get_db_connection()
-        existing = conn.execute("SELECT id, title, description, status FROM complaints").fetchall()
 
-        # Fetch student's details for location-based grouping and notification delivery
-        student = conn.execute("SELECT name, email, hostel FROM students WHERE id = ?", (session["student_id"],)).fetchone()
+        # Restrict expensive duplicate candidates to the same hostel/category and active tickets.
+        student = conn.execute(
+            "SELECT name, email, hostel FROM students WHERE id = ?",
+            (session["student_id"],)
+        ).fetchone()
         student_hostel = (student["hostel"] if student else session.get("hostel", "")).strip()
+        existing = conn.execute(
+            """
+            SELECT c.id, c.title, c.description, c.status
+            FROM complaints c
+            JOIN students s ON s.id = c.student_id
+            WHERE LOWER(TRIM(s.hostel)) = LOWER(TRIM(?))
+              AND LOWER(TRIM(c.category)) = LOWER(TRIM(?))
+              AND LOWER(c.status) IN ('pending', 'in progress')
+            """,
+            (student_hostel, category)
+        ).fetchall()
+
+        # Student details were loaded above for location-aware grouping.
 
         ai = predict_complaint(title, description, category, priority)
         duplicate = find_duplicate(title, description, existing)
@@ -157,9 +172,10 @@ def add_complaint():
         if ci_id and issue_stats:
             code = issue_stats.get("issue_code") or f"CI-{ci_id:03d}"
             aff = issue_stats.get("affected_count") or 1
+            linked = issue_stats.get("linked_complaints") or 1
             iss_title = issue_stats.get("title") or "Hostel Issue"
             flash(
-                f"Complaint submitted and linked to Common Issue '{iss_title}' ({code}) affecting {aff} student(s) in {student_hostel}. Administration updates will automatically update your ticket.",
+                f"Complaint submitted and linked to Common Issue '{iss_title}' ({code}) with {linked} linked complaint(s) affecting {aff} unique student(s) in {student_hostel}. Administration updates will automatically update your ticket.",
                 "info"
             )
         elif duplicate:

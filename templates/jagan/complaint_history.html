@@ -146,6 +146,7 @@
                                 </a>
 
                                 <form method="POST" action="{{ url_for('delete_complaint', id=c.id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete complaint #{{ c.id }}?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>

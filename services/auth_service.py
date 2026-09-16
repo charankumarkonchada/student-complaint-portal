@@ -8,7 +8,7 @@ def is_college_email(email):
     email = (email or "").strip().lower()
     return (
         email.count("@") == 1
-        and email.endswith(config.COLLEGE_DOMAIN)
+        and email.endswith(config.COLLEGE_DOMAIN.lower())
     )
 
 def is_valid_id(id_no):

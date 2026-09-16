@@ -21,6 +21,7 @@ config.DATABASE_URL = ""
 config.DATABASE = TEST_DB_PATH
 config.SECRET_KEY = "test-secret-key-123"
 
+os.environ["TESTING"] = "1"
 from app import create_app
 from database.db import get_db_connection
 from database.queries import init_database
@@ -895,6 +896,187 @@ class TestCommonIssueScalability(unittest.TestCase):
         self.assertEqual(ci_total, 2)
         self.assertEqual(ci_active, 1)
 
+        # ---------------------------------------------------------------------
+        # SCENARIO 12: Create Master Issue Modal, DB Creation, and Manual Grouping
+        # ---------------------------------------------------------------------
+    def test_scenario_12_create_master_issue_modal_and_manual_grouping(self):
+        """
+        Comprehensive test for:
+        1. Create Master Issue modal rendering, scrollability, and form structure.
+        2. Admin authorization enforcement.
+        3. Form validation (missing required fields).
+        4. Successful DB creation and flash message.
+        5. Manual linking of unlinked student complaints.
+        6. Complaint unlinking and count synchronization.
+        """
+        # 1. Admin authorization check
+        with self.client.session_transaction() as sess:
+            sess.clear()
+
+        # Unauthenticated access
+        resp_unauth = self.client.post("/admin/common_issue/create", data={"title": "Test"}, follow_redirects=False)
+        self.assertEqual(resp_unauth.status_code, 302)
+        self.assertIn("/admin_login", resp_unauth.headers.get("Location", ""))
+
+        # Student access (forbidden from admin routes)
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 1
+            sess["student_name"] = "Alice Student"
+        resp_student = self.client.post("/admin/common_issue/create", data={"title": "Test"}, follow_redirects=False)
+        self.assertEqual(resp_student.status_code, 302)
+        self.assertIn("/admin_login", resp_student.headers.get("Location", ""))
+
+        # 2. Login as Admin & check Modal rendering on /admin/common_issues
+        with self.client.session_transaction() as sess:
+            sess.clear()
+            sess["admin"] = config.ADMIN_USERNAME
+
+        resp_list = self.client.get("/admin/common_issues")
+        self.assertEqual(resp_list.status_code, 200)
+        html = resp_list.data.decode("utf-8")
+
+        self.assertIn("createCommonIssueModal", html)
+        self.assertIn("modal-dialog-scrollable", html)
+        self.assertIn("Create Master Common Issue", html)
+
+        # Verify modal is placed at document root level (outside <main class="page-wrapper">)
+        main_end_pos = html.find("</main>")
+        modal_pos = html.find('id="createCommonIssueModal"')
+        self.assertGreater(modal_pos, main_end_pos, "Modal must be placed outside <main> at root level to prevent backdrop stacking trap")
+
+        # Verify all form controls are present and enabled (NOT disabled or readonly)
+        self.assertIn('name="title"', html)
+        self.assertIn('name="hostel"', html)
+        self.assertIn('name="category"', html)
+        self.assertIn('name="priority"', html)
+        self.assertIn('name="location_details"', html)
+        self.assertIn('name="description"', html)
+        self.assertIn('name="assigned_to"', html)
+        self.assertIn('name="admin_remarks"', html)
+        self.assertIn("Create Master Issue", html)
+
+        # Ensure form inputs are NOT disabled or readonly
+        self.assertNotIn('name="title" disabled', html)
+        self.assertNotIn('name="hostel" disabled', html)
+        self.assertNotIn('name="category" disabled', html)
+        self.assertNotIn('name="description" disabled', html)
+        self.assertNotIn('name="title" readonly', html)
+        self.assertNotIn('name="hostel" readonly', html)
+
+        # 3. Form Validation (Missing required title/hostel/category)
+        resp_invalid = self.client.post(
+            "/admin/common_issue/create",
+            data={
+                "title": "",
+                "hostel": "Hostel Block A",
+                "category": "Plumbing"
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp_invalid.status_code, 200)
+        self.assertIn("Title, category, and hostel location are required", resp_invalid.data.decode("utf-8"))
+
+        # 4. Successful creation of Master Issue
+        resp_create = self.client.post(
+            "/admin/common_issue/create",
+            data={
+                "title": "Master Solar Water Heater Failure",
+                "hostel": "Hostel Block D",
+                "category": "Plumbing",
+                "priority": "High",
+                "location_details": "Rooftop Solar Array 3",
+                "description": "Solar water heater pressure relief valve ruptured.",
+                "assigned_to": "Solar Maintenance Contractor",
+                "admin_remarks": "Technicians arriving at 10 AM"
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp_create.status_code, 200)
+        self.assertIn("Master issue created successfully.", resp_create.data.decode("utf-8"))
+
+        conn = get_db_connection()
+        created_issue = conn.execute(
+            "SELECT * FROM common_issues WHERE title = 'Master Solar Water Heater Failure'"
+        ).fetchone()
+        self.assertIsNotNone(created_issue)
+        issue_id = created_issue["id"]
+        self.assertEqual(created_issue["hostel"], "Hostel Block D")
+        self.assertEqual(created_issue["category"], "Plumbing")
+        self.assertEqual(created_issue["priority"], "High")
+        self.assertEqual(created_issue["status"], "Pending")
+        self.assertEqual(created_issue["assigned_to"], "Solar Maintenance Contractor")
+
+        # 5. Seed unlinked student complaints in Hostel Block D (Plumbing)
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (4001, 'Student D1', 'O400001', 'o400001@rguktong.ac.in', '9876544001', 'Hostel Block D', 'D-101', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (4002, 'Student D2', 'O400002', 'o400002@rguktong.ac.in', '9876544002', 'Hostel Block D', 'D-102', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        cur_c1 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (4001, 'Plumbing', 'No hot water in D-101', 'Solar hot water is completely cold.', 'High', 'Pending')
+            """
+        )
+        c1_id = cur_c1.lastrowid
+
+        cur_c2 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (4002, 'Plumbing', 'Cold water in morning D-102', 'Solar line leaking on roof.', 'High', 'Pending')
+            """
+        )
+        c2_id = cur_c2.lastrowid
+        conn.commit()
+        conn.close()
+
+        # 6. Admin manually links complaint 1 to the master issue
+        resp_link1 = self.client.post(
+            f"/admin/common_issue/{issue_id}/link",
+            data={"complaint_id": str(c1_id)},
+            follow_redirects=True
+        )
+        self.assertEqual(resp_link1.status_code, 200)
+        self.assertIn("successfully linked", resp_link1.data.decode("utf-8"))
+
+        # Admin manually links complaint 2 to the master issue
+        resp_link2 = self.client.post(
+            f"/admin/common_issue/{issue_id}/link",
+            data={"complaint_id": str(c2_id)},
+            follow_redirects=True
+        )
+        self.assertEqual(resp_link2.status_code, 200)
+
+        # Verify stats show 2 complaints and 2 affected students
+        conn = get_db_connection()
+        stats = get_common_issue_with_stats(issue_id, conn)
+        self.assertEqual(stats["linked_complaints"], 2)
+        self.assertEqual(stats["affected_count"], 2)
+
+        # 7. Admin unlinks complaint 1
+        resp_unlink = self.client.post(
+            f"/admin/common_issue/{issue_id}/unlink/{c1_id}",
+            follow_redirects=True
+        )
+        self.assertEqual(resp_unlink.status_code, 200)
+        self.assertIn(f"Complaint #{c1_id} unlinked", resp_unlink.data.decode("utf-8"))
+
+        # Verify stats updated to 1 complaint and 1 affected student
+        stats_after = get_common_issue_with_stats(issue_id, conn)
+        self.assertEqual(stats_after["linked_complaints"], 1)
+        self.assertEqual(stats_after["affected_count"], 1)
+
+        c1_record = conn.execute("SELECT common_issue_id FROM complaints WHERE id = ?", (c1_id,)).fetchone()
+        self.assertIsNone(c1_record["common_issue_id"])
         conn.close()
 
 

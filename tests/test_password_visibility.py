@@ -13,6 +13,7 @@ if os.path.exists(venv_site) and venv_site not in sys.path:
 
 from werkzeug.security import generate_password_hash
 import config
+os.environ["TESTING"] = "1"
 from app import create_app
 from database.db import get_db_connection
 from database.queries import init_database

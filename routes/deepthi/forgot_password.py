@@ -1,6 +1,7 @@
 import re
 import secrets
-from datetime import datetime, timedelta
+import time
+from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app
 
 import config
@@ -9,6 +10,8 @@ from services.auth_service import hash_reset_token
 from services.email_service import send_otp_email
 
 forgot_password_bp = Blueprint("forgot_password", __name__)
+
+_otp_request_log = {}
 
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
 
@@ -44,6 +47,20 @@ def forgot_password():
             flash("Please enter your registered RGUKT college email address.", "danger")
             return render_template("deepthi/forgot_password.html", email=email)
 
+        # Rate limiting on OTP requests
+        if not current_app.config.get("TESTING"):
+            now = time.time()
+            ip_key = request.remote_addr or "unknown"
+            ip_events = [t for t in _otp_request_log.get(ip_key, []) if now - t < 3600]
+            if ip_events and now - ip_events[-1] < config.OTP_REQUEST_COOLDOWN_SECONDS:
+                flash("Please wait before requesting another reset OTP.", "warning")
+                return render_template("deepthi/forgot_password.html", email=email)
+            if len(ip_events) >= config.OTP_MAX_REQUESTS_PER_HOUR:
+                flash("Too many OTP requests. Please try again later.", "danger")
+                return render_template("deepthi/forgot_password.html", email=email), 429
+            ip_events.append(now)
+            _otp_request_log[ip_key] = ip_events
+
         # 4. Check whether student account exists in the database
         conn = get_db_connection()
         student = conn.execute(
@@ -64,7 +81,7 @@ def forgot_password():
         otp = f"{secrets.randbelow(1000000):06d}"
         otp_hash = hash_reset_token(otp)
         expires_at = (
-            datetime.utcnow() + timedelta(minutes=config.OTP_EXPIRY_MINUTES)
+            datetime.now(timezone.utc) + timedelta(minutes=config.OTP_EXPIRY_MINUTES)
         ).isoformat()
 
         conn.execute(

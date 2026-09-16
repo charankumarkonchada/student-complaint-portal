@@ -22,6 +22,7 @@ config.DATABASE_URL = ""
 config.DATABASE = TEST_DB_PATH
 config.SECRET_KEY = "test-e2e-secret-key-456"
 
+os.environ["TESTING"] = "1"
 from app import create_app
 from database.db import get_db_connection
 from database.queries import init_database
@@ -156,7 +157,7 @@ class TestIntelliHostelE2EWorkflows(unittest.TestCase):
         self.assertIn(b"Electrical", res.data)
 
         # Submit Complaint 2 with mock image attachment
-        mock_image = (io.BytesIO(b"fake image bytes"), "evidence.jpg")
+        mock_image = (io.BytesIO(b"\xff\xd8\xff\xe0\x00\x10JFIF\x00fake image bytes"), "evidence.jpg")
         res = self.client.post("/add_complaint", data={
             "category": "Plumbing",
             "priority": "Medium",
@@ -228,7 +229,7 @@ class TestIntelliHostelE2EWorkflows(unittest.TestCase):
         self.assertIn(b"Password Updated Successfully", res.data)
 
         # Logout
-        res = self.client.get("/logout", follow_redirects=True)
+        res = self.client.post("/logout", follow_redirects=True)
         self.assertEqual(res.status_code, 200)
         self.assertIn(b"Logged Out Successfully", res.data)
 

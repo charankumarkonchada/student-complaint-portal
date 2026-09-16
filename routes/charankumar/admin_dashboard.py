@@ -48,7 +48,7 @@ def admin_dashboard():
 
     top_common_issues = conn.execute(
         """
-        SELECT ci.*, COUNT(c.id) AS affected_count
+        SELECT ci.*, COUNT(c.id) AS linked_complaints, COUNT(DISTINCT c.student_id) AS affected_count
         FROM common_issues ci
         LEFT JOIN complaints c ON c.common_issue_id = ci.id
         WHERE ci.status != 'Resolved'

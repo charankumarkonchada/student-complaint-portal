@@ -198,14 +198,17 @@ def create_common_issue(
         close_conn = True
 
     try:
-        cur = conn.execute(
-            """
+        from database.db import ConnectionAdapter
+        insert_sql = """
             INSERT INTO common_issues (
                 title, category, hostel, location_details, description,
                 priority, status, assigned_to, admin_remarks
             )
             VALUES (?, ?, ?, ?, ?, ?, 'Pending', ?, ?)
-            """,
+        """
+        if isinstance(conn, ConnectionAdapter):
+            insert_sql += " RETURNING id"
+        cur = conn.execute(insert_sql,
             (
                 title.strip(),
                 category.strip(),
@@ -218,11 +221,11 @@ def create_common_issue(
             )
         )
 
-        issue_id = cur.lastrowid
-        # In PostgreSQL ConnectionAdapter, lastrowid may be None, so fetch id
-        if not issue_id:
-            row = conn.execute("SELECT id FROM common_issues ORDER BY id DESC LIMIT 1").fetchone()
+        if isinstance(conn, ConnectionAdapter):
+            row = cur.fetchone()
             issue_id = row["id"] if row else None
+        else:
+            issue_id = cur.lastrowid
 
         # Ensure issue_code is set (e.g. CI-001)
         issue_code = f"CI-{issue_id:03d}"
@@ -261,11 +264,21 @@ def associate_complaint_to_common_issue(
 
     try:
         issue = conn.execute(
-            "SELECT status, assigned_to, admin_remarks FROM common_issues WHERE id = ?",
+            "SELECT status, assigned_to, admin_remarks, hostel, category FROM common_issues WHERE id = ?",
             (common_issue_id,)
         ).fetchone()
+        complaint = conn.execute(
+            "SELECT c.id, c.category, s.hostel FROM complaints c JOIN students s ON s.id=c.student_id WHERE c.id=?",
+            (complaint_id,)
+        ).fetchone()
 
-        if not issue:
+        if not issue or not complaint:
+            return False
+        if not is_active_status(issue["status"]):
+            return False
+        if str(issue["hostel"] or "").strip().lower() != str(complaint["hostel"] or "").strip().lower():
+            return False
+        if str(issue["category"] or "").strip().lower() != str(complaint["category"] or "").strip().lower():
             return False
 
         # Link complaint and synchronize state
@@ -412,6 +425,7 @@ def update_common_issue_once(
 
 def unlink_complaint_from_common_issue(
     complaint_id: int,
+    common_issue_id: Optional[int] = None,
     conn: Optional[Any] = None
 ) -> bool:
     """Detaches an individual complaint from a common issue if misclassified."""
@@ -421,12 +435,12 @@ def unlink_complaint_from_common_issue(
         close_conn = True
 
     try:
-        conn.execute(
-            "UPDATE complaints SET common_issue_id = NULL WHERE id = ?",
-            (complaint_id,)
-        )
+        if common_issue_id is None:
+            cur = conn.execute("UPDATE complaints SET common_issue_id = NULL WHERE id = ?", (complaint_id,))
+        else:
+            cur = conn.execute("UPDATE complaints SET common_issue_id = NULL WHERE id = ? AND common_issue_id = ?", (complaint_id, common_issue_id))
         conn.commit()
-        return True
+        return cur.rowcount != 0
     finally:
         if close_conn:
             conn.close()
@@ -453,10 +467,12 @@ def get_common_issue_with_stats(
 
         issue_dict = dict(issue)
         count_row = conn.execute(
-            "SELECT COUNT(*) AS total FROM complaints WHERE common_issue_id = ?",
+            "SELECT COUNT(*) AS total_complaints, COUNT(DISTINCT student_id) AS unique_students FROM complaints WHERE common_issue_id = ?",
             (common_issue_id,)
         ).fetchone()
-        issue_dict["affected_count"] = count_row["total"] if count_row else 0
+        issue_dict["linked_complaints"] = count_row["total_complaints"] if count_row else 0
+        issue_dict["affected_count"] = count_row["unique_students"] if count_row else 0
+        issue_dict["affected_students"] = issue_dict["affected_count"]
 
         # Fetch history
         history = conn.execute(
@@ -487,7 +503,7 @@ def get_all_common_issues(
     try:
         query = """
             SELECT ci.*,
-                   COUNT(c.id) AS affected_count
+                   COUNT(c.id) AS linked_complaints, COUNT(DISTINCT c.student_id) AS affected_count, COUNT(DISTINCT c.student_id) AS affected_students
             FROM common_issues ci
             LEFT JOIN complaints c ON c.common_issue_id = ci.id
         """

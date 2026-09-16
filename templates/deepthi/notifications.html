@@ -22,18 +22,18 @@
 
         <div class="topbar-actions">
             {% if view != 'archived' %}
-                {% if unread_total and unread_total > 0 %}
                 <form method="post" action="{{ url_for('notifications_read_all') }}" class="inline-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="view" value="{{ view }}">
-                    <button type="submit" class="btn-mark-all-read">
+                    <button type="submit" class="btn-mark-all-read" title="Mark all unread notifications as read">
                         <i class="fa-solid fa-check-double"></i>
                         <span>Mark All as Read</span>
                     </button>
                 </form>
-                {% endif %}
 
                 {% if active_read_total and active_read_total > 0 %}
                 <form method="post" action="{{ url_for('notifications_archive_all') }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn-archive-all-read" title="Move all read notifications to history archive">
                         <i class="fa-solid fa-box-archive"></i>
                         <span>Archive All Read</span>
@@ -154,6 +154,7 @@
                             {% if view == 'archived' or n.is_archived %}
                                 <!-- Restore to Active Inbox Action -->
                                 <form method="post" action="{{ url_for('notification_unarchive', id=n.id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="notif_type" value="{{ n.notif_type }}">
                                     <button type="submit" class="btn-restore-single" title="Restore back to active inbox">
                                         <i class="fa-solid fa-arrow-rotate-left"></i>
@@ -168,6 +169,7 @@
                                 <div class="d-flex align-items-center gap-2">
                                     {% if not n.is_read %}
                                     <form method="post" action="{{ url_for('notification_read', id=n.id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <input type="hidden" name="notif_type" value="{{ n.notif_type }}">
                                         <input type="hidden" name="view" value="active">
                                         <button type="submit" class="btn-read-single">
@@ -183,6 +185,7 @@
 
                                     <!-- Archive Single Action -->
                                     <form method="post" action="{{ url_for('notification_archive', id=n.id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <input type="hidden" name="notif_type" value="{{ n.notif_type }}">
                                         <input type="hidden" name="view" value="active">
                                         <button type="submit" class="btn-archive-single" title="Move to notification history">
@@ -237,4 +240,15 @@
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/deepthi/notifications.js') }}"></script>
+
+{% if total_pages > 1 %}
+<nav aria-label="Notification pages" class="mt-4">
+  <ul class="pagination justify-content-center">
+    <li class="page-item {% if page <= 1 %}disabled{% endif %}"><a class="page-link" href="{{ url_for('notifications', view=view, page=page-1) }}">Previous</a></li>
+    <li class="page-item active"><span class="page-link">Page {{ page }} of {{ total_pages }}</span></li>
+    <li class="page-item {% if page >= total_pages %}disabled{% endif %}"><a class="page-link" href="{{ url_for('notifications', view=view, page=page+1) }}">Next</a></li>
+  </ul>
+</nav>
+{% endif %}
+
 {% endblock %}

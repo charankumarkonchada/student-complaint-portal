@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 
 import config
@@ -46,9 +46,12 @@ def verify_reset_otp():
             return redirect(url_for("forgot_password"))
 
         try:
-            valid_time = (
-                datetime.fromisoformat(str(row["expires_at"])) > datetime.utcnow()
-            )
+            exp_dt = datetime.fromisoformat(str(row["expires_at"]))
+            now_utc = datetime.now(timezone.utc)
+            if exp_dt.tzinfo is None:
+                valid_time = exp_dt > now_utc.replace(tzinfo=None)
+            else:
+                valid_time = exp_dt > now_utc
         except ValueError:
             valid_time = False
 

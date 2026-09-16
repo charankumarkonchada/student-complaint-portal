@@ -26,7 +26,8 @@ def notifications():
     if current_view not in ("active", "archived"):
         current_view = "active"
 
-    data = get_student_notifications(student_id=sid, view=current_view)
+    page = max(1, request.args.get("page", 1, type=int) or 1)
+    data = get_student_notifications(student_id=sid, view=current_view, page=page, per_page=20)
 
     return render_template(
         "deepthi/notifications.html",
@@ -35,7 +36,9 @@ def notifications():
         active_total=data["active_total"],
         unread_total=data["unread_total"],
         active_read_total=data["active_read_total"],
-        archived_total=data["archived_total"]
+        archived_total=data["archived_total"],
+        page=data["page"],
+        total_pages=data["total_pages"]
     )
 
 @notifications_bp.route("/notification/read/<int:id>", methods=["POST"])
