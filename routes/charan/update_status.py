@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from database.db import get_db_connection
 from services.auth_service import admin_required
 
@@ -18,7 +18,11 @@ def update_status(id):
         return redirect(url_for("manage_complaints"))
 
     if request.method == "POST":
-        status = request.form.get("status", "Pending")
+        status = request.form.get("status", "Pending").strip()
+        if status not in {"Pending", "In Progress", "Resolved", "Closed", "Rejected"}:
+            conn.close()
+            flash("Invalid complaint status.", "danger")
+            return redirect(url_for("update_status", id=id))
         assigned = request.form.get("assigned_to", "").strip()
         remarks = request.form.get("remarks", "").strip()
         old_status = complaint["status"]
@@ -65,7 +69,7 @@ def update_status(id):
                     assigned_to=assigned
                 )
             except Exception:
-                pass
+                current_app.logger.exception("Failed to send complaint status email for complaint %s", id)
 
         flash("Complaint Updated Successfully.", "success")
         return redirect(url_for("manage_complaints"))

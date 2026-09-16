@@ -397,13 +397,6 @@ def migrate_sqlite(conn):
     except Exception:
         pass
 
-    # Auto-group existing duplicate complaints if any exist
-    try:
-        from services.common_issue_service import group_existing_duplicate_complaints
-        group_existing_duplicate_complaints(conn)
-    except Exception:
-        pass
-
 
 def migrate_postgresql(conn):
     """Safely adds new columns and indexes to existing PostgreSQL databases."""
@@ -477,13 +470,6 @@ def migrate_postgresql(conn):
             conn.commit()
         except Exception:
             pass
-
-        # Auto-group existing duplicate complaints if any exist
-        try:
-            from services.common_issue_service import group_existing_duplicate_complaints
-            group_existing_duplicate_complaints(conn)
-        except Exception:
-            pass
     except Exception as e:
         print("PostgreSQL migration notice:", e)
 
@@ -493,7 +479,7 @@ def create_admin(conn):
         "SELECT id FROM admin LIMIT 1"
     ).fetchone()
 
-    if admin is None:
+    if admin is None and config.ADMIN_USERNAME and config.ADMIN_PASSWORD and config.ADMIN_PASSWORD not in {"change-me", "change-to-a-strong-admin-password-here"}:
         conn.execute(
             """
             INSERT INTO admin(username, password)

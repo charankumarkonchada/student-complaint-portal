@@ -28,6 +28,7 @@
 
         <div class="admin-login-body">
             <form method="POST" id="adminLoginForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="admin-form-group">
                     <label for="username" class="admin-form-label">Administrator Username</label>
                     <div class="admin-input-wrapper">

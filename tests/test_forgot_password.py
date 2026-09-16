@@ -20,6 +20,7 @@ config.DATABASE_URL = ""
 config.DATABASE = TEST_DB_PATH
 config.SECRET_KEY = "test-forgot-secret-key-123"
 
+os.environ["TESTING"] = "1"
 from app import create_app
 from database.db import get_db_connection
 from database.queries import init_database

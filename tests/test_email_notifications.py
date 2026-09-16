@@ -18,6 +18,7 @@ config.DATABASE_URL = ""
 config.DATABASE = TEST_EMAIL_DB
 config.SECRET_KEY = "test-email-notifications-secret"
 
+os.environ["TESTING"] = "1"
 from app import create_app
 from database.db import get_db_connection
 from database.queries import init_database

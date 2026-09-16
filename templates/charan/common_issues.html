@@ -230,10 +230,12 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block modals %}
 <!-- Modal: Create Master Common Issue -->
 <div class="modal fade" id="createCommonIssueModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header border-bottom p-4">
                 <h5 class="modal-title fw-bold" id="createModalLabel">
@@ -241,16 +243,17 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="POST" action="{{ url_for('common_issues.create_new_common_issue') }}">
-                <div class="modal-body p-4">
+            <form method="POST" action="{{ url_for('common_issues.create_new_common_issue') }}" id="createMasterIssueForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body p-4" style="max-height: calc(100vh - 210px); overflow-y: auto;">
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label class="form-label fw-bold small">Issue Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="title" placeholder="e.g. Water Supply Outage in Hostel Block A" required>
+                            <input type="text" class="form-control" name="title" id="issueTitleInput" placeholder="e.g. Water Supply Outage in Hostel Block A" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Priority</label>
-                            <select class="form-select" name="priority">
+                            <select class="form-select" name="priority" id="issuePrioritySelect">
                                 <option value="High">High</option>
                                 <option value="Medium" selected>Medium</option>
                                 <option value="Low">Low</option>
@@ -259,13 +262,13 @@
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold small">Hostel Location <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="hostel" placeholder="e.g. Hostel A or Kaveri Bhavan" required>
+                            <input type="text" class="form-control" name="hostel" id="issueHostelInput" placeholder="e.g. Hostel A or Kaveri Bhavan" required>
                             <small class="text-muted" style="font-size: 0.75rem;">Strictly bounds matching student complaints to this hostel.</small>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold small">Category <span class="text-danger">*</span></label>
-                            <select class="form-select" name="category" required>
+                            <select class="form-select" name="category" id="issueCategorySelect" required>
                                 <option value="Plumbing">Plumbing</option>
                                 <option value="Electrical">Electrical</option>
                                 <option value="Carpentry">Carpentry</option>
@@ -277,33 +280,60 @@
 
                         <div class="col-12">
                             <label class="form-label fw-bold small">Specific Location Details</label>
-                            <input type="text" class="form-control" name="location_details" placeholder="e.g. All Wings / 2nd and 3rd Floors">
+                            <input type="text" class="form-control" name="location_details" id="issueLocationDetails" placeholder="e.g. All Wings / 2nd and 3rd Floors">
                         </div>
 
                         <div class="col-12">
                             <label class="form-label fw-bold small">Description</label>
-                            <textarea class="form-control" name="description" rows="3" placeholder="Explain the root problem and context..."></textarea>
+                            <textarea class="form-control" name="description" id="issueDescription" rows="3" placeholder="Explain the root problem and context..."></textarea>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold small">Assigned Maintenance Staff</label>
-                            <input type="text" class="form-control" name="assigned_to" placeholder="e.g. Campus Plumbing Supervisor">
+                            <input type="text" class="form-control" name="assigned_to" id="issueAssignedTo" placeholder="e.g. Campus Plumbing Supervisor">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold small">Initial Remarks</label>
-                            <input type="text" class="form-control" name="admin_remarks" placeholder="e.g. Maintenance crew dispatched">
+                            <input type="text" class="form-control" name="admin_remarks" id="issueAdminRemarks" placeholder="e.g. Maintenance crew dispatched">
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-top p-3">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #ff5733, #ff7847); border: none; font-weight: 700;">
-                        Create Master Issue
+                <div class="modal-footer border-top p-3 bg-light">
+                    <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="createMasterIssueSubmitBtn" class="btn btn-primary px-4 fw-bold" style="background: linear-gradient(135deg, #ff5733, #ff7847); border: none;">
+                        <i class="fa-solid fa-plus me-1"></i> Create Master Issue
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('createMasterIssueForm');
+    const modalEl = document.getElementById('createCommonIssueModal');
+    const btn = document.getElementById('createMasterIssueSubmitBtn');
+
+    if (form && btn) {
+        form.addEventListener('submit', function(e) {
+            if (!form.checkValidity()) {
+                return;
+            }
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Creating...';
+        });
+    }
+
+    if (modalEl && btn) {
+        modalEl.addEventListener('hidden.bs.modal', function() {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-plus me-1"></i> Create Master Issue';
+        });
+    }
+});
+</script>
 {% endblock %}

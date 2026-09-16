@@ -17,6 +17,7 @@
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
             <form method="POST" action="{{ url_for('common_issues.create_new_common_issue') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label fw-bold small">Issue Title <span class="text-danger">*</span></label>

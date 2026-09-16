@@ -13,6 +13,7 @@ if os.path.exists(venv_site) and venv_site not in sys.path:
 
 from werkzeug.security import generate_password_hash
 import config
+os.environ["TESTING"] = "1"
 from app import create_app
 from database.db import get_db_connection
 from database.queries import init_database
@@ -79,6 +80,10 @@ class LogoutModalParser(HTMLParser):
 
 
 class TestLogoutConfirmation(unittest.TestCase):
+    def _csrf(self):
+        with self.client.session_transaction() as sess:
+            return sess.get("_csrf_token") or ""
+
     @classmethod
     def setUpClass(cls):
         if os.path.exists(TEST_DB_PATH):
@@ -250,7 +255,7 @@ class TestLogoutConfirmation(unittest.TestCase):
             self.assertIsNotNone(sess.get("student_id"))
 
         # Trigger backend logout route
-        res = self.client.get("/logout", follow_redirects=True)
+        res = self.client.post("/logout", data={"csrf_token": self._csrf()}, follow_redirects=True)
         self.assertEqual(res.status_code, 200)
         self.assertIn("Logged Out Successfully", res.get_data(as_text=True))
 
@@ -269,7 +274,7 @@ class TestLogoutConfirmation(unittest.TestCase):
             self.assertEqual(sess.get("admin"), config.ADMIN_USERNAME)
 
         # Trigger backend admin logout route
-        res = self.client.get("/admin_logout", follow_redirects=True)
+        res = self.client.post("/admin_logout", data={"csrf_token": self._csrf()}, follow_redirects=True)
         self.assertEqual(res.status_code, 200)
         self.assertIn("Admin Logged Out Successfully", res.get_data(as_text=True))
 
@@ -280,6 +285,39 @@ class TestLogoutConfirmation(unittest.TestCase):
         # Protected admin page redirects to admin login
         protected = self.client.get("/admin_dashboard", follow_redirects=True)
         self.assertIn("Admin Portal", protected.get_data(as_text=True))
+
+    def test_08_student_cannot_access_profile_or_dashboard_after_logout(self):
+        """Verify student cannot access /profile or /dashboard after logout."""
+        self._login_student()
+        # Verify /profile is accessible before logout
+        res_before = self.client.get("/profile")
+        self.assertEqual(res_before.status_code, 200)
+        self.assertIn("Student Profile", res_before.get_data(as_text=True))
+
+        # Logout
+        res_logout = self.client.post("/logout", data={"csrf_token": self._csrf()}, follow_redirects=True)
+        self.assertEqual(res_logout.status_code, 200)
+
+        # Access /profile -> must redirect to login
+        res_prof = self.client.get("/profile", follow_redirects=True)
+        self.assertEqual(res_prof.status_code, 200)
+        self.assertIn("Student Login", res_prof.get_data(as_text=True))
+        self.assertNotIn("Personal & Hostel Details", res_prof.get_data(as_text=True))
+
+        # Access /dashboard -> must redirect to login
+        res_dash = self.client.get("/dashboard", follow_redirects=True)
+        self.assertEqual(res_dash.status_code, 200)
+        self.assertIn("Student Login", res_dash.get_data(as_text=True))
+
+    def test_09_logout_modal_form_has_csrf_and_valid_action(self):
+        """Verify the rendered logout modal includes CSRF token and valid POST action."""
+        self._login_student()
+        res = self.client.get("/profile")
+        html = res.get_data(as_text=True)
+        self.assertIn('id="logoutConfirmModal"', html)
+        self.assertIn('id="logoutConfirmForm"', html)
+        self.assertIn('name="csrf_token"', html)
+        self.assertIn('action="/logout"', html)
 
 
 if __name__ == "__main__":

@@ -46,6 +46,7 @@
             </div>
 
             <form method="POST" id="studentLoginForm" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="login-form-group">
                     <label class="login-label" for="id_no">University ID Number</label>
                     <div class="login-input-wrapper">

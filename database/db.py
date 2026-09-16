@@ -95,9 +95,14 @@ def get_db_connection():
             conn.autocommit = False
             return ConnectionAdapter(conn)
         except Exception as e:
-            logger.warning("PostgreSQL connection failed (%s). Falling back to SQLite.", e)
+            logger.exception("PostgreSQL connection failed.")
+
+    if not config.ALLOW_SQLITE_FALLBACK:
+        raise RuntimeError("PostgreSQL is unavailable and SQLite fallback is disabled for this environment.")
 
     import sqlite3
+
+    logger.warning("Using SQLite fallback because ALLOW_SQLITE_FALLBACK is enabled.")
 
     # Connect with 30s lock timeout to prevent database locks under concurrent workers
     conn = sqlite3.connect(config.DATABASE, timeout=30.0)

@@ -1,22 +1,15 @@
-import os
-import sys
-import subprocess
 from flask import session
 from database.db import get_db_connection
 import config
 
 def init_database():
-    """Initializes the database schema and default admin user."""
-    try:
-        from database.create_db import main as run_create_db
-        run_create_db()
-    except Exception:
-        script = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
-            "database",
-            "create_db.py"
-        )
-        subprocess.run([sys.executable, script], check=True)
+    """Initializes the database schema and bootstrap admin safely.
+
+    Initialization is intentionally performed once through the Python entry point;
+    failures are allowed to surface instead of silently executing a second path.
+    """
+    from database.create_db import main as run_create_db
+    run_create_db()
 
 def complaint_for_student(conn, complaint_id):
     """Fetches a complaint belonging to the currently logged in student."""

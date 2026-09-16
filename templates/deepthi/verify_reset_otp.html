@@ -22,6 +22,7 @@
         <p>Please enter the 6-digit one-time password sent to <strong>{{ email }}</strong>.</p>
 
         <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
                 <input
                     type="text"
