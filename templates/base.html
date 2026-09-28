@@ -35,13 +35,13 @@
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <!-- Global Design System -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
+
     {% block head %}{% endblock %}
     {% block extra_css %}{% endblock %}
 </head>
@@ -51,11 +51,11 @@
     <header>
         <nav class="navbar navbar-expand-lg portal-navbar">
             <div class="container-fluid px-lg-5">
-                
+
                 <!-- Brand / Logo -->
                 <a class="navbar-brand portal-navbar-brand" href="{{ url_for('home') }}">
-                    <img src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}" 
-                         alt="IntelliHostel Portal Logo" 
+                    <img src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}"
+                         alt="IntelliHostel Portal Logo"
                          class="portal-logo-img">
                     <div class="portal-brand-text d-none d-sm-flex">
                         <span class="portal-brand-title">Intelli<span>Hostel</span></span>
@@ -65,20 +65,20 @@
 
                 <!-- Mobile Actions (Theme Toggle + Menu Toggler) -->
                 <div class="d-flex align-items-center gap-2 d-lg-none">
-                    <button class="theme-toggle-btn" 
-                            type="button" 
+                    <button class="theme-toggle-btn"
+                            type="button"
                             id="mobileThemeToggle"
                             aria-label="Switch to dark mode"
                             aria-pressed="false"
                             title="Switch to dark mode">
                         <i class="fa-solid fa-moon theme-toggle-icon"></i>
                     </button>
-                    <button class="navbar-toggler portal-navbar-toggler" 
-                            type="button" 
-                            data-bs-toggle="collapse" 
-                            data-bs-target="#mainNavbar" 
-                            aria-controls="mainNavbar" 
-                            aria-expanded="false" 
+                    <button class="navbar-toggler portal-navbar-toggler"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#mainNavbar"
+                            aria-controls="mainNavbar"
+                            aria-expanded="false"
                             aria-label="Toggle navigation">
                         <i class="fa-solid fa-bars"></i>
                     </button>
@@ -88,11 +88,11 @@
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <!-- Center Navigation Links -->
                     <ul class="navbar-nav mx-auto align-items-lg-center portal-nav-links">
-                        
+
                         {% if session.get('student_id') %}
                             <!-- Student Links -->
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item {% if request.path == '/dashboard' %}active{% endif %}" 
+                                <a class="nav-link nav-link-item {% if request.path == '/dashboard' %}active{% endif %}"
                                    href="{{ url_for('dashboard') }}">
                                     <i class="fa-solid fa-gauge-high"></i>
                                     <span>Dashboard</span>
@@ -100,7 +100,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item {% if request.path == '/complaints' or request.path.startswith('/complaint/') %}active{% endif %}" 
+                                <a class="nav-link nav-link-item {% if request.path == '/complaints' or request.path.startswith('/complaint/') %}active{% endif %}"
                                    href="{{ url_for('complaints') }}">
                                     <i class="fa-solid fa-clipboard-list"></i>
                                     <span>My Complaints</span>
@@ -108,23 +108,15 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item {% if request.path == '/activity' %}active{% endif %}" 
+                                <a class="nav-link nav-link-item {% if request.path == '/activity' %}active{% endif %}"
                                    href="{{ url_for('activity') }}">
                                     <i class="fa-solid fa-clock-rotate-left"></i>
                                     <span>Activity</span>
                                 </a>
                             </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link nav-link-item {% if request.path == '/profile' %}active{% endif %}" 
-                                   href="{{ url_for('profile') }}">
-                                    <i class="fa-solid fa-id-card"></i>
-                                    <span>Profile</span>
-                                </a>
-                            </li>
-
                             <li class="nav-item d-lg-none">
-                                <a class="nav-link nav-link-item {% if request.path == '/notifications' %}active{% endif %}" 
+                                <a class="nav-link nav-link-item {% if request.path == '/notifications' %}active{% endif %}"
                                    href="{{ url_for('notifications') }}">
                                     <i class="fa-solid fa-bell"></i>
                                     <span>Notifications {% if unread_notifications and unread_notifications > 0 %}<span class="badge bg-primary ms-1">{{ unread_notifications }}</span>{% endif %}</span>
@@ -134,7 +126,7 @@
                         {% elif session.get('admin') %}
                             <!-- Admin Links -->
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item {% if request.path == '/admin_dashboard' %}active{% endif %}" 
+                                <a class="nav-link nav-link-item {% if request.path == '/admin_dashboard' %}active{% endif %}"
                                    href="{{ url_for('admin_dashboard') }}">
                                     <i class="fa-solid fa-chart-line"></i>
                                     <span>Dashboard</span>
@@ -142,7 +134,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item {% if request.path == '/manage_complaints' %}active{% endif %}" 
+                                <a class="nav-link nav-link-item {% if request.path == '/manage_complaints' %}active{% endif %}"
                                    href="{{ url_for('manage_complaints') }}">
                                     <i class="fa-solid fa-list-check"></i>
                                     <span>Manage Complaints</span>
@@ -150,7 +142,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item {% if request.path == '/analytics' %}active{% endif %}" 
+                                <a class="nav-link nav-link-item {% if request.path == '/analytics' %}active{% endif %}"
                                    href="{{ url_for('analytics') }}">
                                     <i class="fa-solid fa-chart-pie"></i>
                                     <span>AI Analytics</span>
@@ -158,43 +150,55 @@
                             </li>
 
                         {% else %}
-                            <!-- Guest Links -->
+                            <!-- Guest / Landing Page Section Navigation Links -->
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item {% if request.path == '/' %}active{% endif %}" href="{{ url_for('home') }}">
-                                    <i class="fa-solid fa-house"></i>
+                                <a class="nav-link landing-nav-link"
+                                   href="{{ url_for('home') if request.path != '/' else '' }}#home"
+                                   data-section="home">
                                     <span>Home</span>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link nav-link-item {% if request.path == '/login' %}active{% endif %}" href="{{ url_for('login') }}">
-                                    <i class="fa-solid fa-right-to-bracket"></i>
-                                    <span>Student Login</span>
+                                <a class="nav-link landing-nav-link"
+                                   href="{{ url_for('home') if request.path != '/' else '' }}#features"
+                                   data-section="features">
+                                    <span>Features</span>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link nav-btn-primary" href="{{ url_for('register') }}">
-                                    <i class="fa-solid fa-user-plus"></i>
-                                    <span>Register</span>
+                                <a class="nav-link landing-nav-link"
+                                   href="{{ url_for('home') if request.path != '/' else '' }}#how-it-works"
+                                   data-section="how-it-works">
+                                    <span>How It Works</span>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link nav-btn-outline" href="{{ url_for('admin_login') }}">
-                                    <i class="fa-solid fa-user-shield"></i>
-                                    <span>Admin Portal</span>
+                                <a class="nav-link landing-nav-link"
+                                   href="{{ url_for('home') if request.path != '/' else '' }}#get-started"
+                                   data-section="get-started">
+                                    <span>Get Started</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link landing-nav-link"
+                                   href="{{ url_for('home') if request.path != '/' else '' }}#about"
+                                   data-section="about">
+                                    <span>About</span>
                                 </a>
                             </li>
                         {% endif %}
-                        
+
                     </ul>
 
                     <!-- Right-Side Action Cluster: [Notification] [Theme] [Profile] [Logout] -->
                     <div class="navbar-actions-cluster d-flex align-items-center">
                         {% if session.get('student_id') %}
                             <!-- 1. Notification Button with Live Badge -->
-                            <a class="nav-notification-link d-none d-lg-inline-flex {% if request.path == '/notifications' %}active{% endif %}" 
+                            <a class="nav-notification-link d-none d-lg-inline-flex {% if request.path == '/notifications' %}active{% endif %}"
                                href="{{ url_for('notifications') }}"
                                title="Notifications"
                                aria-label="Notifications">
@@ -205,8 +209,8 @@
                             </a>
 
                             <!-- 2. Theme Toggle (Desktop) -->
-                            <button class="theme-toggle-btn d-none d-lg-inline-flex" 
-                                    type="button" 
+                            <button class="theme-toggle-btn d-none d-lg-inline-flex"
+                                    type="button"
                                     id="themeToggle"
                                     aria-label="Switch to dark mode"
                                     aria-pressed="false"
@@ -214,27 +218,44 @@
                                 <i class="fa-solid fa-moon theme-toggle-icon"></i>
                             </button>
 
-                            <!-- 3. Student Identity Capsule -->
-                            <div class="nav-user-capsule">
-                                <div class="nav-avatar-circle">
-                                    <i class="fa-solid fa-user-graduate"></i>
-                                </div>
-                                <div class="nav-user-details">
-                                    <span class="nav-user-name" title="{{ session.get('student_name', 'Student') }}">{{ session.get('student_name', 'Student') }}</span>
-                                    <span class="nav-user-role">{{ session.get('id_no', 'Student') }}</span>
-                                </div>
+                            <!-- 3. Student Account Dropdown -->
+                            <div class="dropdown nav-user-dropdown">
+                                <button class="nav-user-capsule nav-user-dropdown-btn dropdown-toggle"
+                                        type="button"
+                                        id="studentUserDropdown"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        title="{{ session.get('student_name', 'Student') }} ({{ session.get('id_no', 'Student') }})">
+                                    <div class="nav-avatar-circle">
+                                        <i class="fa-solid fa-user-graduate"></i>
+                                    </div>
+                                    <div class="nav-user-details">
+                                        <span class="nav-user-name" title="{{ session.get('student_name', 'Student') }}">{{ session.get('student_name', 'Student') }}</span>
+                                        <span class="nav-user-role">{{ session.get('id_no', 'Student') }}</span>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-down nav-dropdown-chevron"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end nav-user-dropdown-menu shadow-sm" aria-labelledby="studentUserDropdown">
+                                    <li>
+                                        <a class="dropdown-item nav-dropdown-item {% if request.path == '/profile' %}active{% endif %}" href="{{ url_for('profile') }}">
+                                            <i class="fa-solid fa-id-card"></i>
+                                            <span>Profile</span>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider my-1"></li>
+                                    <li>
+                                        <a class="dropdown-item nav-dropdown-item nav-btn-logout" href="{{ url_for('logout') }}" data-logout-trigger="true" title="Logout from portal">
+                                            <i class="fa-solid fa-right-from-bracket"></i>
+                                            <span>Logout</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
-
-                            <!-- 4. Logout Button -->
-                            <a class="nav-link nav-btn-logout" href="{{ url_for('logout') }}" data-logout-trigger="true" title="Logout from portal">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                                <span>Logout</span>
-                            </a>
 
                         {% elif session.get('admin') %}
                             <!-- Theme Toggle (Desktop) -->
-                            <button class="theme-toggle-btn d-none d-lg-inline-flex" 
-                                    type="button" 
+                            <button class="theme-toggle-btn d-none d-lg-inline-flex"
+                                    type="button"
                                     id="themeToggle"
                                     aria-label="Switch to dark mode"
                                     aria-pressed="false"
@@ -255,14 +276,14 @@
 
                             <!-- Logout Button -->
                             <a class="nav-link nav-btn-logout" href="{{ url_for('admin_logout') }}" data-logout-trigger="true" title="Logout from portal">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                <i class="fa-solid fa-right-from-bracket"></i>
                                 <span>Logout</span>
                             </a>
 
                         {% else %}
                             <!-- Theme Toggle (Desktop) for Guest -->
-                            <button class="theme-toggle-btn d-none d-lg-inline-flex" 
-                                    type="button" 
+                            <button class="theme-toggle-btn d-none d-lg-inline-flex"
+                                    type="button"
                                     id="themeToggle"
                                     aria-label="Switch to dark mode"
                                     aria-pressed="false"
@@ -318,8 +339,8 @@
             <div class="row align-items-center gy-3">
                 <div class="col-md-6">
                     <div class="footer-brand-wrap">
-                        <img src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}" 
-                             alt="IntelliHostel Logo" 
+                        <img src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}"
+                             alt="IntelliHostel Logo"
                              class="footer-logo-img">
                         <div>
                             <div class="fw-bold text-dark">{{ college_name if college_name else 'RGUKT Ongole' }}</div>
@@ -353,7 +374,7 @@
             <div class="modal-content logout-modal-content">
                 <div class="modal-header logout-modal-header border-0 pb-0">
                     <div class="logout-icon-circle" aria-hidden="true">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <i class="fa-solid fa-right-from-bracket"></i>
                     </div>
                     <button type="button" class="btn-close logout-close-btn" data-bs-dismiss="modal" aria-label="Close dialog"></button>
                 </div>
@@ -368,7 +389,7 @@
                     <form method="POST" action="{{ url_for('logout') if session.get('student_id') else url_for('admin_logout') }}" id="logoutConfirmForm" class="d-inline">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn logout-btn-confirm" id="logoutConfirmBtn">
-                            <i class="fa-solid fa-arrow-right-from-bracket me-1"></i>
+                            <i class="fa-solid fa-right-from-bracket me-1"></i>
                             <span>Logout</span>
                         </button>
                     </form>
@@ -384,7 +405,7 @@
     <!-- Core Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    
+
     {% block scripts %}{% endblock %}
     {% block extra_js %}{% endblock %}
 </body>

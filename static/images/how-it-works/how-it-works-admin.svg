@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 210" width="100%" height="100%" fill="none">
+  <defs>
+    <filter id="adm-card-shadow" x="-6%" y="-6%" width="112%" height="116%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#1E3A8A" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Ambient Pastel Accents in Background -->
+  <circle cx="350" cy="40" r="24" fill="#EFF6FF" opacity="0.7"/>
+  <circle cx="24" cy="170" r="18" fill="#F8FAFC"/>
+
+  <!-- Top Flow Header -->
+  <g transform="translate(25, 12)">
+    <rect x="0" y="0" width="24" height="24" rx="6" fill="#EFF6FF"/>
+    <!-- Shield / Admin Icon -->
+    <path d="M12 4 L6 7 V12 C6 16 12 19 12 19 C12 19 18 16 18 12 V7 L12 4 Z" fill="#1D4ED8"/>
+    <text x="32" y="16" fill="#172033" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="800" letter-spacing="0.5">ADMIN REVIEW</text>
+    
+    <!-- Review -> Assign -> Track Badge -->
+    <rect x="178" y="2" width="152" height="20" rx="10" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="0.8"/>
+    <text x="254" y="15" fill="#1D4ED8" font-family="'Inter', system-ui, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle">Review ➔ Assign ➔ Track</text>
+  </g>
+
+  <!-- Main Multi-row Card Container -->
+  <rect x="25" y="42" width="330" height="154" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#adm-card-shadow)"/>
+
+  <!-- Row 1: Complaint 1 (High, Pending) -->
+  <g transform="translate(38, 52)">
+    <text x="0" y="16" fill="#172033" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11" font-weight="700">Complaint #1042 • Room 204 Tap Leak</text>
+    <text x="0" y="28" fill="#64748B" font-family="'Inter', system-ui, sans-serif" font-size="8.5">Ganga Wing A • Plumbing Category</text>
+    
+    <!-- High Badge -->
+    <rect x="198" y="8" width="46" height="18" rx="9" fill="#FEE2E2"/>
+    <text x="221" y="20.5" fill="#DC2626" font-family="'Inter', system-ui, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle">● High</text>
+    
+    <!-- Pending Badge -->
+    <rect x="248" y="8" width="54" height="18" rx="9" fill="#FEF3C7"/>
+    <text x="275" y="20.5" fill="#B45309" font-family="'Inter', system-ui, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle">Pending</text>
+  </g>
+
+  <!-- Divider 1 -->
+  <line x1="38" y1="94" x2="342" y2="94" stroke="#F1F5F9" stroke-width="1"/>
+
+  <!-- Row 2: Complaint 2 (Medium, In Progress) -->
+  <g transform="translate(38, 102)">
+    <text x="0" y="16" fill="#172033" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11" font-weight="700">Complaint #1041 • Block B Power Trip</text>
+    <text x="0" y="28" fill="#64748B" font-family="'Inter', system-ui, sans-serif" font-size="8.5">Cauvery Wing B • Electrical Category</text>
+    
+    <!-- Medium Badge -->
+    <rect x="190" y="8" width="52" height="18" rx="9" fill="#FEF3C7"/>
+    <text x="216" y="20.5" fill="#B45309" font-family="'Inter', system-ui, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle">● Med</text>
+    
+    <!-- In Progress Badge -->
+    <rect x="246" y="8" width="58" height="18" rx="9" fill="#DBEAFE"/>
+    <text x="275" y="20.5" fill="#1D4ED8" font-family="'Inter', system-ui, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle">Progress</text>
+  </g>
+
+  <!-- Divider 2 -->
+  <line x1="38" y1="144" x2="342" y2="144" stroke="#F1F5F9" stroke-width="1"/>
+
+  <!-- Row 3: Assign Staff Row -->
+  <g transform="translate(38, 154)">
+    <rect x="0" y="2" width="20" height="20" rx="5" fill="#DCFCE7"/>
+    <path d="M5 12 L9 16 L15 8" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="26" y="16" fill="#172033" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11" font-weight="700">Assign Staff</text>
+    
+    <!-- Assigned Staff Chip -->
+    <rect x="164" y="3" width="138" height="22" rx="11" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="1"/>
+    <circle cx="175" cy="14" r="3.5" fill="#16A34A"/>
+    <text x="183" y="17" fill="#15803D" font-family="'Inter', system-ui, sans-serif" font-size="9" font-weight="600">Tech Rajesh Assigned ✓</text>
+  </g>
+</svg>

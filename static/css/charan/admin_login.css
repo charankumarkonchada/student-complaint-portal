@@ -161,9 +161,13 @@
 }
 
 .admin-login-btn:hover {
-    background: linear-gradient(135deg, #f4512a 0%, #ea5836 100%);
+    background: linear-gradient(135deg, #087F82 0%, #11626F 100%);
     transform: translateY(-1px);
     box-shadow: var(--shadow-primary-hover);
+}
+
+[data-theme="dark"] .admin-login-btn:hover {
+    background: linear-gradient(135deg, #f4512a 0%, #ea5836 100%);
 }
 
 .admin-footer-links {

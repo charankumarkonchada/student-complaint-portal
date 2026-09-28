@@ -114,7 +114,7 @@
                         {% elif 'resolved' in n.message | lower %}
                             <i class="fa-solid fa-circle-check"></i>
                         {% elif 'in progress' in n.message | lower or 'assigned' in n.message | lower %}
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                            <i class="fa-solid fa-arrows-rotate"></i>
                         {% elif 'rejected' in n.message | lower %}
                             <i class="fa-solid fa-circle-xmark"></i>
                         {% else %}
@@ -128,13 +128,13 @@
                                 {% if n.is_archived %}
                                     <span class="status-chip history"><i class="fa-solid fa-box-archive me-1"></i>Archived</span>
                                 {% elif 'resolved' in n.message | lower %}
-                                    <span class="status-chip success">Resolved</span>
+                                    <span class="status-chip success"><i class="fa-solid fa-circle-check me-1"></i>Resolved</span>
                                 {% elif 'in progress' in n.message | lower %}
-                                    <span class="status-chip progress">In Progress</span>
+                                    <span class="status-chip progress"><i class="fa-solid fa-arrows-rotate me-1"></i>In Progress</span>
                                 {% elif 'rejected' in n.message | lower %}
-                                    <span class="status-chip danger">Rejected</span>
+                                    <span class="status-chip danger"><i class="fa-solid fa-circle-xmark me-1"></i>Rejected</span>
                                 {% else %}
-                                    <span class="status-chip neutral">System Alert</span>
+                                    <span class="status-chip neutral"><i class="fa-solid fa-circle-info me-1"></i>System Alert</span>
                                 {% endif %}
 
                                 {% if not n.is_read and not n.is_archived %}
@@ -162,7 +162,7 @@
                                     </button>
                                 </form>
                                 <span class="badge-history-note text-muted small">
-                                    <i class="fa-solid fa-shield-check me-1"></i>Retained for audit
+                                    <i class="fa-solid fa-shield-halved me-1"></i>Retained for audit
                                 </span>
                             {% else %}
                                 <!-- Active Inbox Actions -->
@@ -216,7 +216,7 @@
                 {% else %}
                     <div class="empty-icon-wrap">
                         <i class="fa-regular fa-bell"></i>
-                        <span class="empty-sparkle"><i class="fa-solid fa-sparkles"></i></span>
+                        <span class="empty-sparkle"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
                     </div>
                     <h3>All Caught Up!</h3>
                     <p>You don't have any active notifications or pending alerts in your inbox. When updates occur, they'll appear here. Older updates are safely preserved in your History.</p>

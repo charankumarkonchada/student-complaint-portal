@@ -27,3 +27,10 @@ static/uploads/*
 # Temporary team distribution packages
 TEAM_PACKAGES/
 TEAM_FILE_DISTRIBUTION/
+
+test_database.db
+test_database.db-shm
+test_database.db-wal
+test_*.db
+test_*.db-shm
+test_*.db-wal

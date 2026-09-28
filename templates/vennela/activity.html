@@ -69,7 +69,7 @@
     <div class="activity-layout reveal-up reveal-delay-2">
         <main class="activity-feed-section">
             <div class="section-title-wrap">
-                <h3><i class="fa-solid fa-stream"></i> Audit Log Timeline</h3>
+                <h3><i class="fa-solid fa-timeline"></i> Audit Log Timeline</h3>
                 <span class="feed-count-pill">{{ history | length }} events</span>
             </div>
 
@@ -85,13 +85,13 @@
                             {% elif h.status == 'Rejected' %}dot-rejected
                             {% else %}dot-pending{% endif %}">
                             {% if h.status == 'Resolved' %}
-                                <i class="fa-solid fa-check"></i>
+                                <i class="fa-solid fa-circle-check"></i>
                             {% elif h.status == 'In Progress' %}
-                                <i class="fa-solid fa-wrench"></i>
+                                <i class="fa-solid fa-arrows-rotate"></i>
                             {% elif h.status == 'Rejected' %}
-                                <i class="fa-solid fa-ban"></i>
+                                <i class="fa-solid fa-circle-xmark"></i>
                             {% else %}
-                                <i class="fa-solid fa-hourglass-start"></i>
+                                <i class="fa-solid fa-hourglass-half"></i>
                             {% endif %}
                         </div>
                         <div class="marker-line"></div>
@@ -160,7 +160,7 @@
         <aside class="activity-sidebar">
             <div class="sidebar-box">
                 <div class="sidebar-box-header">
-                    <h4><i class="fa-solid fa-fire"></i> Recent Complaints</h4>
+                    <h4><i class="fa-solid fa-list-check"></i> Recent Complaints</h4>
                     <a href="{{ url_for('complaints') }}" class="sidebar-see-all">View all</a>
                 </div>
 
@@ -198,7 +198,7 @@
                 </div>
                 <h4>Need Immediate Help?</h4>
                 <p>For urgent room water or electricity emergencies, contact the hostel warden directly.</p>
-                <a href="{{ url_for('home') }}#contact" class="help-link">Campus Contacts &rarr;</a>
+                <a href="{{ url_for('home') }}#contact" class="help-link">Campus Contacts <i class="fa-solid fa-arrow-right ms-1"></i></a>
             </div>
         </aside>
     </div>

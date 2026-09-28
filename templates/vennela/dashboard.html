@@ -51,7 +51,7 @@
                     <span>Student Portal Active</span>
                 </div>
                 <a href="{{ url_for('add_complaint') }}" class="btn btn-primary-gradient">
-                    <i class="fa-solid fa-plus-circle"></i>
+                    <i class="fa-solid fa-circle-plus"></i>
                     <span>Raise a Complaint</span>
                 </a>
             </div>
@@ -81,7 +81,7 @@
                     <div class="kpi-card-top">
                         <span class="kpi-label">Pending Review</span>
                         <div class="kpi-icon-wrap">
-                            <i class="fa-solid fa-clock"></i>
+                            <i class="fa-solid fa-hourglass-half"></i>
                         </div>
                     </div>
                     <div class="kpi-value counter-number">{{ pending }}</div>
@@ -95,7 +95,7 @@
                     <div class="kpi-card-top">
                         <span class="kpi-label">In Progress</span>
                         <div class="kpi-icon-wrap">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                            <i class="fa-solid fa-arrows-rotate"></i>
                         </div>
                     </div>
                     <div class="kpi-value counter-number">{{ progress }}</div>
@@ -186,7 +186,7 @@
                         <div class="complaint-right-actions">
                             {% if c.status == 'Pending' %}
                                 <span class="badge badge-pending">
-                                    <i class="fa-solid fa-clock"></i> Pending
+                                    <i class="fa-solid fa-hourglass-half"></i> Pending
                                 </span>
                             {% elif c.status == 'In Progress' %}
                                 <span class="badge badge-progress">
@@ -199,7 +199,8 @@
                             {% endif %}
 
                             <a href="{{ url_for('view_complaint', id=c.id) }}" class="btn btn-sm btn-outline-secondary">
-                                Details
+                                <i class="fa-solid fa-eye me-1"></i>
+                                <span>Details</span>
                             </a>
                         </div>
                     </div>
@@ -213,7 +214,7 @@
                     <h6 class="fw-bold">No Complaints Submitted Yet</h6>
                     <p class="text-muted small mb-3">You currently have no active or previous hostel complaints on record.</p>
                     <a href="{{ url_for('add_complaint') }}" class="btn btn-primary-gradient">
-                        <i class="fa-solid fa-plus-circle"></i>
+                        <i class="fa-solid fa-circle-plus"></i>
                         <span>Raise Your First Complaint</span>
                     </a>
                 </div>

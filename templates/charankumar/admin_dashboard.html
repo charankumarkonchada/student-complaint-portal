@@ -30,7 +30,7 @@
                 <i class="fa-solid fa-circle text-success me-1"></i> System Active
             </span>
             <a class="btn btn-sm btn-outline-danger" href="{{ url_for('admin_logout') }}" data-logout-trigger="true" title="Logout from portal">
-                <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Logout
+                <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
             </a>
         </div>
     </div>
@@ -55,7 +55,7 @@
                 <div class="admin-kpi-card reveal-up reveal-delay-2">
                     <div class="kpi-icon-row">
                         <span class="kpi-lbl">Pending</span>
-                        <i class="fa-solid fa-clock text-warning"></i>
+                        <i class="fa-solid fa-hourglass-half text-warning"></i>
                     </div>
                     <div class="kpi-num">{{ pending }}</div>
                     <small class="text-muted">Awaiting triage</small>
@@ -67,7 +67,7 @@
                 <div class="admin-kpi-card reveal-up reveal-delay-3">
                     <div class="kpi-icon-row">
                         <span class="kpi-lbl">In Progress</span>
-                        <i class="fa-solid fa-spinner text-info"></i>
+                        <i class="fa-solid fa-arrows-rotate text-info"></i>
                     </div>
                     <div class="kpi-num">{{ progress }}</div>
                     <small class="text-muted">Assigned staff</small>
@@ -155,7 +155,7 @@
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     {% if common_issues_affected_students %}
-                    <span class="badge common-issue-badge-count" style="background-color: #f0fdfa; color: #0d9488; border: 1px solid #ccfbf1;">
+                    <span class="badge common-issue-badge-count" style="background-color: var(--surface-teal-soft, #E7F6F6); color: var(--brand-teal, #0EA5A8); border: 1px solid var(--border-color, #D8E3EA);">
                         <i class="fa-solid fa-users me-1"></i> {{ common_issues_affected_students }} Affected Students
                     </span>
                     {% endif %}
@@ -170,7 +170,7 @@
 
     <!-- Active Common Issues Spotlight (if any) -->
     {% if top_common_issues %}
-    <div class="card border-0 shadow-sm rounded-4 mb-4 reveal-up reveal-delay-3 common-issue-spotlight-card" style="border: 1px solid #ccfbf1 !important;">
+    <div class="card border-0 shadow-sm rounded-4 mb-4 reveal-up reveal-delay-3 common-issue-spotlight-card" style="border: 1px solid var(--border-color, #D8E3EA) !important;">
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex align-items-center gap-2">
@@ -210,11 +210,11 @@
                             <td><span class="badge bg-secondary-subtle text-secondary">{{ issue.category }}</span></td>
                             <td>
                                 {% if issue.status == 'Pending' %}
-                                    <span class="badge badge-pending">Pending</span>
+                                    <span class="badge badge-pending"><i class="fa-solid fa-hourglass-half me-1"></i>Pending</span>
                                 {% elif issue.status == 'In Progress' %}
-                                    <span class="badge badge-progress">In Progress</span>
+                                    <span class="badge badge-progress"><i class="fa-solid fa-arrows-rotate me-1"></i>In Progress</span>
                                 {% else %}
-                                    <span class="badge badge-resolved">Resolved</span>
+                                    <span class="badge badge-resolved"><i class="fa-solid fa-circle-check me-1"></i>Resolved</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -292,16 +292,16 @@
                             </td>
                             <td>
                                 {% if c.status == 'Pending' %}
-                                    <span class="badge badge-pending">Pending</span>
+                                    <span class="badge badge-pending"><i class="fa-solid fa-hourglass-half me-1"></i>Pending</span>
                                 {% elif c.status == 'In Progress' %}
-                                    <span class="badge badge-progress">In Progress</span>
+                                    <span class="badge badge-progress"><i class="fa-solid fa-arrows-rotate me-1"></i>In Progress</span>
                                 {% else %}
-                                    <span class="badge badge-resolved">Resolved</span>
+                                    <span class="badge badge-resolved"><i class="fa-solid fa-circle-check me-1"></i>Resolved</span>
                                 {% endif %}
                             </td>
                             <td style="text-align: right;">
                                 <a class="btn btn-sm btn-outline-primary" href="{{ url_for('update_status', id=c.id) }}">
-                                    <span>Review</span>
+                                    <i class="fa-solid fa-pen-to-square me-1"></i><span>Review</span>
                                 </a>
                             </td>
                         </tr>

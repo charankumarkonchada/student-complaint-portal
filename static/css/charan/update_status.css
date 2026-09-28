@@ -15,8 +15,8 @@
     margin-bottom: 2rem;
     padding: 1.75rem 2rem;
     border-radius: var(--radius-2xl);
-    background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.05) 0%, #ffffff 70%);
-    border: 1px solid var(--border-light);
+    background: #ffffff;
+    border: 1px solid var(--border-light, #E7EEF2);
     box-shadow: var(--shadow-sm);
     flex-wrap: wrap;
 }
@@ -31,13 +31,13 @@
     width: 54px;
     height: 54px;
     border-radius: var(--radius-xl);
-    background: #172033;
+    background: linear-gradient(135deg, var(--brand-navy, #123B5D) 0%, #167D8D 100%);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.45rem;
-    box-shadow: 0 8px 20px rgba(23, 32, 51, 0.25);
+    box-shadow: 0 8px 20px rgba(18, 59, 93, 0.25);
     flex-shrink: 0;
 }
 
@@ -45,12 +45,12 @@
     font-size: 1.65rem;
     font-weight: 800;
     margin-bottom: 0.25rem;
-    color: var(--text-heading);
+    color: var(--brand-navy, #123B5D);
 }
 
 .update-heading p {
     font-size: 0.92rem;
-    color: var(--text-muted);
+    color: var(--text-secondary, #52677A);
     margin-bottom: 0;
 }
 
@@ -60,17 +60,18 @@
     gap: 0.5rem;
     padding: 0.6rem 1.25rem;
     background: #ffffff;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color, #D8E3EA);
     border-radius: var(--radius-full);
     font-size: 0.88rem;
     font-weight: 600;
-    color: var(--text-heading);
+    color: var(--brand-navy, #123B5D);
     transition: all var(--transition-fast);
 }
 
 .update-back:hover {
-    background: var(--bg-surface-subtle);
-    border-color: #cbd5e1;
+    background: var(--surface-soft, #EEF4F7);
+    border-color: var(--border-color, #D8E3EA);
+    color: var(--brand-teal, #0EA5A8);
     transform: translateY(-1px);
 }
 
@@ -102,7 +103,7 @@
 }
 
 .action-form-card {
-    background: radial-gradient(circle at top right, rgba(255, 107, 74, 0.08) 0%, #ffffff 80%);
+    background: radial-gradient(circle at top right, rgba(14, 165, 168, 0.08) 0%, #ffffff 80%);
     border: 1px solid var(--primary-border);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-card);

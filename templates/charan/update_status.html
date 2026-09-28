@@ -38,7 +38,7 @@
 
             <div class="update-card">
                 <div class="update-card-title">
-                    <i class="fa-solid fa-file-invoice"></i>
+                    <i class="fa-solid fa-file-lines"></i>
                     <span>Ticket Overview</span>
                 </div>
 
@@ -109,7 +109,7 @@
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-light">
                             <div>
                                 <span class="badge {% if h.status == 'Resolved' %}badge-resolved{% elif h.status == 'In Progress' %}badge-progress{% else %}badge-pending{% endif %} me-2">
-                                    {{ h.status }}
+                                    {% if h.status == 'Resolved' %}<i class="fa-solid fa-circle-check me-1"></i>{% elif h.status == 'In Progress' %}<i class="fa-solid fa-arrows-rotate me-1"></i>{% else %}<i class="fa-solid fa-hourglass-half me-1"></i>{% endif %}{{ h.status }}
                                 </span>
                                 <span class="small text-dark">Status transitioned to {{ h.status }}</span>
                             </div>

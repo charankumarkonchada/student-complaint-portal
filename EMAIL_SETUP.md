@@ -19,9 +19,9 @@ The project already contains a `.env` file. Replace the placeholder values:
 ```env
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USERNAME=yourgmail@gmail.com
+SMTP_USERNAME=intellihostelrguktongole@gmail.com
 SMTP_PASSWORD=your_google_app_password
-MAIL_FROM=yourgmail@gmail.com
+MAIL_FROM=intellihostelrguktongole@gmail.com
 SMTP_USE_TLS=1
 ```
 
@@ -36,7 +36,7 @@ ADMIN_PASSWORD=replace-with-a-strong-admin-password
 
 Do NOT put your normal Gmail password in `SMTP_PASSWORD`.
 
-1. Sign in to the Gmail/Google account that will send reset emails.
+1. Sign in to the Gmail/Google account that will send reset emails (`intellihostelrguktongole@gmail.com`).
 2. Enable 2-Step Verification.
 3. Open Google Account -> Security -> App passwords.
 4. Create an app password for this project.
@@ -45,9 +45,9 @@ Do NOT put your normal Gmail password in `SMTP_PASSWORD`.
 Example:
 
 ```env
-SMTP_USERNAME=myportal@gmail.com
+SMTP_USERNAME=intellihostelrguktongole@gmail.com
 SMTP_PASSWORD=abcdefghijklmnop
-MAIL_FROM=myportal@gmail.com
+MAIL_FROM=intellihostelrguktongole@gmail.com
 ```
 
 ## 3. Run the project
@@ -96,3 +96,12 @@ FLASK_DEBUG=0
 Never commit `.env` to GitHub. It is already included in `.gitignore`.
 
 For deployment, configure these environment variables in the hosting provider instead of exposing them in source code.
+
+## 6. Automated Testing & Email Isolation
+
+Automated tests never send real emails. Email-specific tests use mocks. Production email notifications remain enabled through the normal production configuration.
+
+- During test execution (`TESTING=1` / `pytest`), real SMTP connections are strictly blocked by multi-layer test safety guards in `services/email_service.py` and `tests/conftest.py`.
+- Automated tests with mock/fake student addresses (e.g., `O200001`, `o200001@rguktong.ac.in`) will never trigger external SMTP delivery or generate Gmail bounce messages.
+- Production and live development environments continue to deliver notifications normally via Gmail SMTP when `EMAIL_NOTIFICATIONS_ENABLED=1`.
+

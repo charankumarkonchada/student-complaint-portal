@@ -91,6 +91,7 @@
             <!-- Submit Actions -->
             <div class="col-6 col-md-2 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-filter me-1"></i>
                     <span>Filter</span>
                 </button>
                 {% if request.args.get('search') or request.args.get('status') or request.args.get('priority') or request.args.get('date') %}
@@ -163,11 +164,11 @@
                             </td>
                             <td>
                                 {% if c.status == 'Pending' %}
-                                    <span class="badge badge-pending">Pending</span>
+                                    <span class="badge badge-pending"><i class="fa-solid fa-hourglass-half me-1"></i>Pending</span>
                                 {% elif c.status == 'In Progress' %}
-                                    <span class="badge badge-progress">In Progress</span>
+                                    <span class="badge badge-progress"><i class="fa-solid fa-arrows-rotate me-1"></i>In Progress</span>
                                 {% else %}
-                                    <span class="badge badge-resolved">Resolved</span>
+                                    <span class="badge badge-resolved"><i class="fa-solid fa-circle-check me-1"></i>Resolved</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -212,8 +213,8 @@
                     <ul class="pagination">
                         {% if page > 1 %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('manage_complaints', page=page-1, search=request.args.get('search',''), status=request.args.get('status',''), priority=request.args.get('priority',''), date=request.args.get('date','')) }}">
-                                    &laquo;
+                                <a class="page-link" href="{{ url_for('manage_complaints', page=page-1, search=request.args.get('search',''), status=request.args.get('status',''), priority=request.args.get('priority',''), date=request.args.get('date','')) }}" aria-label="Previous">
+                                    <i class="fa-solid fa-chevron-left"></i>
                                 </a>
                             </li>
                         {% endif %}
@@ -234,8 +235,8 @@
 
                         {% if page < pages %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('manage_complaints', page=page+1, search=request.args.get('search',''), status=request.args.get('status',''), priority=request.args.get('priority',''), date=request.args.get('date','')) }}">
-                                    &raquo;
+                                <a class="page-link" href="{{ url_for('manage_complaints', page=page+1, search=request.args.get('search',''), status=request.args.get('status',''), priority=request.args.get('priority',''), date=request.args.get('date','')) }}" aria-label="Next">
+                                    <i class="fa-solid fa-chevron-right"></i>
                                 </a>
                             </li>
                         {% endif %}

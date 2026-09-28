@@ -24,6 +24,7 @@ from database.db import get_db_connection
 from database.queries import init_database
 from services.email_service import (
     send_email,
+    send_otp_email,
     send_complaint_status_email,
     send_common_issue_status_email,
     send_common_issue_broadcast_emails,
@@ -314,6 +315,53 @@ class EmailNotificationTestSuite(unittest.TestCase):
 
             # Email service must NOT have been called under any circumstances
             mock_send.assert_not_called()
+
+    def test_11_project_sender_email_configuration(self):
+        """Verify that outgoing emails use the dedicated project Gmail account intellihostelrguktongole@gmail.com."""
+        expected_email = "intellihostelrguktongole@gmail.com"
+
+        # Verify config values
+        self.assertIn(expected_email, config.SMTP_USERNAME)
+        self.assertIn(expected_email, config.MAIL_FROM)
+
+        # Verify send_email constructs EmailMessage with From: project email
+        with patch.object(config, "EMAIL_NOTIFICATIONS_ENABLED", True), \
+             patch.object(config, "SMTP_USERNAME", expected_email), \
+             patch.object(config, "SMTP_PASSWORD", "mock-app-password"), \
+             patch.object(config, "MAIL_FROM", expected_email), \
+             patch.object(config, "SMTP_USE_TLS", True):
+            with patch("smtplib.SMTP") as mock_smtp_cls:
+                mock_instance = MagicMock()
+                mock_smtp_cls.return_value.__enter__.return_value = mock_instance
+
+                success = send_email("student@example.com", "Test Title", "Test Content")
+                self.assertTrue(success)
+
+                mock_instance.send_message.assert_called_once()
+                sent_msg = mock_instance.send_message.call_args[0][0]
+                self.assertEqual(sent_msg["From"], expected_email)
+                self.assertEqual(sent_msg["To"], "student@example.com")
+                mock_instance.login.assert_called_once_with(expected_email, "mock-app-password")
+
+    def test_12_send_otp_email_uses_project_sender(self):
+        """Verify that send_otp_email constructs EmailMessage with From: project email."""
+        expected_email = "intellihostelrguktongole@gmail.com"
+
+        with patch.object(config, "SMTP_USERNAME", expected_email), \
+             patch.object(config, "SMTP_PASSWORD", "mock-app-password"), \
+             patch.object(config, "MAIL_FROM", expected_email), \
+             patch.object(config, "SMTP_USE_TLS", True):
+            with patch("smtplib.SMTP") as mock_smtp_cls:
+                mock_instance = MagicMock()
+                mock_smtp_cls.return_value.__enter__.return_value = mock_instance
+
+                send_otp_email("student@rguktong.ac.in", "123456")
+
+                mock_instance.send_message.assert_called_once()
+                sent_msg = mock_instance.send_message.call_args[0][0]
+                self.assertEqual(sent_msg["From"], expected_email)
+                self.assertEqual(sent_msg["To"], "student@rguktong.ac.in")
+                mock_instance.login.assert_called_once_with(expected_email, "mock-app-password")
 
 
 if __name__ == "__main__":

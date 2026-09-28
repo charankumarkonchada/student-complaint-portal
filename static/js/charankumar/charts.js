@@ -9,11 +9,45 @@ function getChartColors() {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     return {
         isDark: isDark,
-        textColor: isDark ? '#cbd5e1' : '#172033',
-        mutedTextColor: isDark ? '#94a3b8' : '#64748b',
-        gridColor: isDark ? 'rgba(51, 65, 85, 0.45)' : 'rgba(226, 232, 240, 0.8)',
+        textColor: isDark ? '#cbd5e1' : '#102A43',
+        mutedTextColor: isDark ? '#94a3b8' : '#52677A',
+        gridColor: isDark ? 'rgba(51, 65, 85, 0.45)' : '#D8E3EA',
         borderColor: isDark ? '#111827' : '#ffffff',
-        tooltipBg: isDark ? 'rgba(17, 24, 39, 0.96)' : '#172033'
+        tooltipBg: isDark ? 'rgba(17, 24, 39, 0.96)' : '#102A43'
+    };
+}
+
+function getThemePalette(isDark) {
+    return {
+        primary: isDark ? '#ff6b4a' : '#0EA5A8',
+        primaryLight: isDark ? 'rgba(255, 107, 74, 0.15)' : 'rgba(14, 165, 168, 0.15)',
+        secondary: isDark ? '#f97316' : '#167D8D',
+        palette: isDark ? [
+            '#ff6b4a',
+            '#3b82f6',
+            '#16a34a',
+            '#f59e0b',
+            '#7c3aed',
+            '#dc2626',
+            '#64748b'
+        ] : [
+            '#123B5D',
+            '#0EA5A8',
+            '#2563EB',
+            '#6D5CE7',
+            '#168A5B',
+            '#D99000',
+            '#D64545'
+        ],
+        statusColors: isDark ? [
+            '#f59e0b', // Pending (Amber)
+            '#3b82f6', // In Progress (Blue)
+            '#16a34a'  // Resolved (Green)
+        ] : [
+            '#D99000', // Pending (Amber)
+            '#2563EB', // In Progress (Blue)
+            '#168A5B'  // Resolved (Green)
+        ]
     };
 }
 
@@ -23,27 +57,8 @@ function initChart(canvasId, type, labels, data, datasetLabel) {
         return null;
     }
 
-    const themeColors = {
-        primary: '#ff6b4a',
-        primaryLight: 'rgba(255, 107, 74, 0.15)',
-        secondary: '#f97316',
-        palette: [
-            '#ff6b4a',
-            '#3b82f6',
-            '#16a34a',
-            '#f59e0b',
-            '#7c3aed',
-            '#dc2626',
-            '#64748b'
-        ],
-        statusColors: [
-            '#f59e0b', // Pending (Amber)
-            '#3b82f6', // In Progress (Blue)
-            '#16a34a'  // Resolved (Green)
-        ]
-    };
-
     const colors = getChartColors();
+    const themeColors = getThemePalette(colors.isDark);
 
     let datasetConfig = {
         label: datasetLabel || 'Complaints',
@@ -129,6 +144,7 @@ function initChart(canvasId, type, labels, data, datasetLabel) {
 // Live Chart Theme Synchronization
 window.addEventListener('themeChanged', function () {
     const colors = getChartColors();
+    const themeColors = getThemePalette(colors.isDark);
     activeCharts.forEach(function (chart) {
         if (!chart || !chart.ctx) return;
 
@@ -157,9 +173,15 @@ window.addEventListener('themeChanged', function () {
         if (chart.data && chart.data.datasets) {
             chart.data.datasets.forEach(function (ds) {
                 if (chart.config.type === 'doughnut') {
+                    ds.backgroundColor = themeColors.statusColors;
                     ds.borderColor = colors.borderColor;
                 } else if (chart.config.type === 'line') {
+                    ds.borderColor = themeColors.primary;
+                    ds.backgroundColor = themeColors.primaryLight;
+                    ds.pointBackgroundColor = themeColors.primary;
                     ds.pointBorderColor = colors.borderColor;
+                } else if (chart.config.type === 'bar') {
+                    ds.backgroundColor = themeColors.palette.slice(0, ds.data.length);
                 }
             });
         }

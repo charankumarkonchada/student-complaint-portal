@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 210" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="sc-btn-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B4A"/>
+      <stop offset="100%" stop-color="#FF8F6B"/>
+    </linearGradient>
+    <filter id="sc-card-shadow" x="-6%" y="-6%" width="112%" height="116%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#172033" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Ambient Pastel Accents in Background -->
+  <circle cx="345" cy="35" r="28" fill="#FFF4F0" opacity="0.8"/>
+  <circle cx="28" cy="175" r="20" fill="#F8FAFC"/>
+
+  <!-- Main Card Container -->
+  <rect x="25" y="14" width="330" height="182" rx="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#sc-card-shadow)"/>
+
+  <!-- Card Header -->
+  <g transform="translate(42, 28)">
+    <rect x="0" y="0" width="24" height="24" rx="6" fill="#FFF4F0"/>
+    <path d="M12 6 L9 12 L11.5 12 L10.5 18 L15 11 L12.5 11 Z" fill="#FF6B4A"/>
+    <text x="32" y="16" fill="#172033" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12.5" font-weight="700">Raise a Complaint</text>
+    
+    <!-- Portal Pill -->
+    <rect x="210" y="2" width="76" height="20" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="0.8"/>
+    <circle cx="218" cy="12" r="3" fill="#16A34A"/>
+    <text x="225" y="15" fill="#64748B" font-family="'Inter', system-ui, sans-serif" font-size="8.5" font-weight="600">Student Intake</text>
+  </g>
+
+  <!-- Field 1: Issue Category Dropdown -->
+  <g transform="translate(42, 60)">
+    <rect x="0" y="0" width="296" height="28" rx="6" fill="#FFF4F0" stroke="#FF6B4A" stroke-width="1" stroke-opacity="0.5"/>
+    <text x="10" y="18" fill="#64748B" font-family="'Inter', system-ui, sans-serif" font-size="10">Issue Category:</text>
+    <text x="86" y="18" fill="#FF6B4A" font-family="'Inter', system-ui, sans-serif" font-size="10" font-weight="700">Plumbing &amp; Water ▼</text>
+  </g>
+
+  <!-- Field 2: Complaint Title & Description -->
+  <g transform="translate(42, 94)">
+    <rect x="0" y="0" width="296" height="34" rx="6" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+    <text x="10" y="15" fill="#172033" font-family="'Inter', system-ui, sans-serif" font-size="10" font-weight="600">Complaint Title: Bathroom tap leaking continuously</text>
+    <text x="10" y="28" fill="#94A3B8" font-family="'Inter', system-ui, sans-serif" font-size="8.5">Description: Room 204 Ganga Wing A • Requires washer fix</text>
+  </g>
+
+  <!-- Field 3 & 4: Add Photo Evidence + Submit CTA Button -->
+  <g transform="translate(42, 136)">
+    <!-- Add Photo Pill -->
+    <rect x="0" y="4" width="118" height="30" rx="15" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="0.8"/>
+    <circle cx="16" cy="19" r="6" fill="#CBD5E1"/>
+    <path d="M13 21 L16 17 L19 21 Z" fill="#475569"/>
+    <circle cx="18" cy="16" r="1.2" fill="#475569"/>
+    <text x="28" y="22" fill="#475569" font-family="'Inter', system-ui, sans-serif" font-size="9.5" font-weight="600">+ Add Photo</text>
+
+    <!-- Submit Button -->
+    <rect x="156" y="2" width="140" height="34" rx="17" fill="url(#sc-btn-grad)"/>
+    <text x="168" y="23" fill="#FFFFFF" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="10.5" font-weight="700">Submit Complaint →</text>
+  </g>
+</svg>

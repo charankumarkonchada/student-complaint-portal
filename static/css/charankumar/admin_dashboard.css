@@ -15,8 +15,8 @@
     margin-bottom: 2rem;
     padding: 1.75rem 2rem;
     border-radius: var(--radius-2xl);
-    background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.05) 0%, #ffffff 70%);
-    border: 1px solid var(--border-light);
+    background: #ffffff;
+    border: 1px solid var(--border-light, #E7EEF2);
     box-shadow: var(--shadow-sm);
     flex-wrap: wrap;
 }
@@ -31,13 +31,13 @@
     width: 54px;
     height: 54px;
     border-radius: var(--radius-xl);
-    background: #172033;
+    background: linear-gradient(135deg, var(--brand-navy, #123B5D) 0%, #167D8D 100%);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.45rem;
-    box-shadow: 0 8px 20px rgba(23, 32, 51, 0.25);
+    box-shadow: 0 8px 20px rgba(18, 59, 93, 0.25);
     flex-shrink: 0;
 }
 
@@ -45,12 +45,12 @@
     font-size: 1.65rem;
     font-weight: 800;
     margin-bottom: 0.25rem;
-    color: var(--text-heading);
+    color: var(--brand-navy, #123B5D);
 }
 
 .admin-title-wrap p {
     font-size: 0.92rem;
-    color: var(--text-muted);
+    color: var(--text-secondary, #52677A);
     margin-bottom: 0;
 }
 
@@ -140,30 +140,32 @@
 }
 
 .btn-tile-analytics {
-    background: #172033;
+    background: var(--brand-navy, #123B5D);
     color: #ffffff !important;
 }
 
 .btn-tile-analytics:hover {
-    background: #0f172a;
+    background: var(--brand-navy-dark, #0B2D46);
 }
 
 .btn-tile-pdf {
     background: #ffffff;
-    color: #be123c !important;
-    border-color: #fecdd3;
+    color: var(--danger, #D64545) !important;
+    border-color: #F8D7DA;
 }
 
 .btn-tile-pdf:hover {
-    background: #fff1f2;
+    background: #FDF2F2;
+    border-color: var(--danger, #D64545);
 }
 
 .btn-tile-excel {
     background: #ffffff;
-    color: #047857 !important;
-    border-color: #a7f3d0;
+    color: var(--success, #168A5B) !important;
+    border-color: #D1E7DD;
 }
 
 .btn-tile-excel:hover {
-    background: #ecfdf5;
+    background: #EBF8F2;
+    border-color: var(--success, #168A5B);
 }

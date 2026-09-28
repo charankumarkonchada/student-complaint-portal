@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 210" width="100%" height="100%" fill="none">
+  <defs>
+    <filter id="res-card-shadow" x="-6%" y="-6%" width="112%" height="116%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#16A34A" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Ambient Pastel Accents in Background -->
+  <circle cx="190" cy="20" r="32" fill="#F0FDF4" opacity="0.9"/>
+  <circle cx="355" cy="170" r="20" fill="#EFF6FF" opacity="0.8"/>
+
+  <!-- Top Hero Status: ✓ COMPLAINT RESOLVED -->
+  <g transform="translate(190, 8)" text-anchor="middle">
+    <!-- Circle Checkmark -->
+    <circle cx="0" cy="12" r="10" fill="#16A34A"/>
+    <path d="M-4 12 L-1 15 L4 9" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="0" y="34" fill="#166534" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11" font-weight="800" letter-spacing="0.8">COMPLAINT RESOLVED</text>
+  </g>
+
+  <!-- Timeline Flow Container -->
+  <g transform="translate(35, 48)">
+    <rect x="0" y="0" width="310" height="72" rx="12" fill="#FFFFFF" stroke="#BBF7D0" stroke-width="1.2" filter="url(#res-card-shadow)"/>
+
+    <!-- Track Line -->
+    <line x1="50" y1="26" x2="260" y2="26" stroke="#CBD5E1" stroke-width="2"/>
+    <line x1="50" y1="26" x2="260" y2="26" stroke="#16A34A" stroke-width="2" stroke-dasharray="100 0"/>
+
+    <!-- Node 1: Submitted -->
+    <g transform="translate(50, 26)">
+      <circle cx="0" cy="0" r="8" fill="#16A34A"/>
+      <circle cx="0" cy="0" r="3.5" fill="#FFFFFF"/>
+      <text x="0" y="22" fill="#172033" font-family="'Inter', system-ui, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Submitted</text>
+    </g>
+
+    <!-- Node 2: In Progress -->
+    <g transform="translate(155, 26)">
+      <circle cx="0" cy="0" r="8" fill="#16A34A"/>
+      <circle cx="0" cy="0" r="3.5" fill="#FFFFFF"/>
+      <text x="0" y="22" fill="#172033" font-family="'Inter', system-ui, sans-serif" font-size="9" font-weight="600" text-anchor="middle">In Progress</text>
+    </g>
+
+    <!-- Node 3: Resolved ✓ -->
+    <g transform="translate(260, 26)">
+      <circle cx="0" cy="0" r="10" fill="#16A34A"/>
+      <path d="M-3.5 0 L-1 2.5 L3.5 -2" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="0" y="22" fill="#166534" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="9.5" font-weight="800" text-anchor="middle">Resolved ✓</text>
+    </g>
+  </g>
+
+  <!-- Student Notification Toast (Bottom) -->
+  <g transform="translate(35, 130)">
+    <rect x="0" y="0" width="310" height="62" rx="10" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1" filter="url(#res-card-shadow)"/>
+    
+    <!-- Notification Bell Icon in Rounded Square -->
+    <rect x="12" y="14" width="32" height="32" rx="8" fill="#DBEAFE"/>
+    <path d="M28 22 A4 4 0 0 0 24 26 L22 30 L34 30 L32 26 A4 4 0 0 0 28 22 Z" fill="#1D4ED8"/>
+    <circle cx="28" cy="32" r="1.5" fill="#1D4ED8"/>
+
+    <!-- Toast Texts -->
+    <text x="54" y="25" fill="#1E40AF" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="10.5" font-weight="700">Notification Sent to Student</text>
+    <text x="54" y="38" fill="#3B82F6" font-family="'Inter', system-ui, sans-serif" font-size="9">Complaint #1042 marked resolved. Repaired in 1.8 days.</text>
+    <text x="54" y="51" fill="#16A34A" font-family="'Inter', system-ui, sans-serif" font-size="8.5" font-weight="700">★ ★ ★ ★ ★ Student Verified &amp; Closed</text>
+  </g>
+</svg>

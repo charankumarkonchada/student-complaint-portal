@@ -76,9 +76,9 @@ ADMIN_PASSWORD=change-me
 # Configure this according to the project environment.
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USERNAME=
+SMTP_USERNAME=intellihostelrguktongole@gmail.com
 SMTP_PASSWORD=
-MAIL_FROM=
+MAIL_FROM=intellihostelrguktongole@gmail.com
 SMTP_USE_TLS=1
 
 # Supabase Cloud Storage (For complaint image attachments)
@@ -149,3 +149,16 @@ Open your browser and navigate to:
    - Password: `change-me` (or from your `.env`)
 7. **Admin Dashboard & Analytics:** Access `/admin_dashboard` and `/analytics`
 8. **Reports Export:** Test `/export_pdf` and `/export_excel`
+
+---
+
+## 7. Running Automated Tests
+
+Automated tests never send real emails. Email-specific tests use mocks. Production email notifications remain enabled through the normal production configuration.
+
+Run the test suite:
+```bash
+pytest -q
+# OR
+python -m pytest -q
+```

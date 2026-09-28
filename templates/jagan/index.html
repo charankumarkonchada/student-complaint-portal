@@ -13,34 +13,31 @@
 {% block content %}
 <div class="home-page">
 
-    <!-- 1. Hero Section with Peach Ambient Glow -->
-    <section class="hero-section">
-        <div class="hero-shape hero-shape-1"></div>
-        <div class="hero-shape hero-shape-2"></div>
+    <!-- 1. Deep Navy Hero Section (#home) - Full Viewport Height -->
+    <section class="hero-section" id="home">
+        <!-- Layer 2: Subtle Brand Watermark Background Visual -->
+        <div class="hero-bg-logo" style="background-image: url('{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}');" aria-hidden="true"></div>
+        <!-- Layer 3: Readability Overlay -->
+        <div class="hero-overlay" aria-hidden="true"></div>
 
         <div class="hero-content">
-            <div class="hero-badge reveal-down">
-                <i class="fa-solid fa-sparkles"></i>
-                <span>Smart Hostel Management System</span>
-            </div>
-
-            <h1 class="hero-title reveal-up reveal-delay-1">
+            <h1 class="hero-title reveal-up">
                 Student Complaints,<br>
-                <span class="gradient-text">Handled Smarter.</span>
+                <span class="hero-highlight">Handled Smarter.</span>
             </h1>
 
-            <p class="hero-description reveal-up reveal-delay-2">
+            <p class="hero-description reveal-up reveal-delay-1">
                 A centralized, intelligent digital platform for RGUKT Ongole students to submit, track, and resolve hostel complaints with real-time AI triage and administrative transparency.
             </p>
 
             <div class="hero-buttons reveal-up reveal-delay-3">
                 <a href="{{ url_for('add_complaint') if session.get('student_id') else url_for('login') }}" class="hero-btn hero-btn-primary">
-                    <i class="fa-solid fa-plus-circle"></i>
+                    <i class="fa-solid fa-circle-plus"></i>
                     <span>Raise a Complaint</span>
                 </a>
 
                 <a href="{{ url_for('login') if not session.get('student_id') else url_for('dashboard') }}" class="hero-btn hero-btn-secondary">
-                    <i class="fa-solid fa-compass"></i>
+                    <i class="fa-solid {% if session.get('student_id') %}fa-gauge-high{% else %}fa-right-to-bracket{% endif %}"></i>
                     <span>{% if session.get('student_id') %}Go to Dashboard{% else %}Explore Portal / Login{% endif %}</span>
                 </a>
             </div>
@@ -48,71 +45,627 @@
             <!-- Floating UI Preview Card -->
             <div class="hero-mockup-card reveal-scale reveal-delay-4">
                 <div class="mockup-icon">
-                    <i class="fa-solid fa-bolt-lightning"></i>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
                 </div>
                 <div class="mockup-info">
                     <div class="mockup-title">Room Fan Not Working — Electrical</div>
                     <div class="mockup-sub">AI Estimated Resolution: 1.5 Days · Priority: High</div>
                 </div>
                 <span class="mockup-badge">
-                    <i class="fa-solid fa-circle-check me-1"></i> Live Triage
+                    <i class="fa-solid fa-wave-square me-1"></i> Live Triage
                 </span>
             </div>
         </div>
-    </section>
 
-    <!-- 2. Statistics Section -->
-    <section class="stats-section">
-        <div class="row g-3">
-            <div class="col-6 col-md-3">
-                <div class="stat-card reveal-up reveal-delay-1">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-clock"></i>
+        <!-- 4 KPI Metrics integrated inside Home Section -->
+        <div class="hero-stats-bar reveal-up reveal-delay-5">
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="hero-stat-card">
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Online Accessibility</span>
                     </div>
-                    <span class="stat-number">24/7</span>
-                    <span class="stat-label">Online Accessibility</span>
                 </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card reveal-up reveal-delay-2">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-bolt"></i>
+                <div class="col-6 col-md-3">
+                    <div class="hero-stat-card">
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <span class="stat-number">Fast</span>
+                        <span class="stat-label">AI Complaint Triage</span>
                     </div>
-                    <span class="stat-number">Fast</span>
-                    <span class="stat-label">AI Complaint Triage</span>
                 </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card reveal-up reveal-delay-3">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-chart-line"></i>
+                <div class="col-6 col-md-3">
+                    <div class="hero-stat-card">
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Status Transparency</span>
                     </div>
-                    <span class="stat-number">100%</span>
-                    <span class="stat-label">Status Transparency</span>
                 </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card reveal-up reveal-delay-4">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-shield-halved"></i>
+                <div class="col-6 col-md-3">
+                    <div class="hero-stat-card">
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <span class="stat-number">Secure</span>
+                        <span class="stat-label">Campus Verified Access</span>
                     </div>
-                    <span class="stat-number">Secure</span>
-                    <span class="stat-label">Campus Verified Access</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 3. Choose Your Portal Section -->
-    <div class="section-header reveal-up" id="portals">
-        <span class="section-label">Role-Based Access</span>
-        <h2 class="section-title">Choose Your Portal</h2>
-        <p class="section-description">
-            Tailored interfaces designed specifically for students and administrative staff.
-        </p>
-    </div>
+    <!-- 2. Features Section (#features) - 8 Professional SaaS Cards -->
+    <section class="features-section" id="features">
+        <div class="row g-4">
+            <!-- Row 1 -->
+            <!-- 1. Easy Submission -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="feature-card reveal-up reveal-delay-1">
+                    <div class="feature-icon icon-orange">
+                        <i class="fa-solid fa-file-circle-plus"></i>
+                    </div>
+                    <h6>Easy Submission</h6>
+                    <p>File hostel issues with category tags and description in seconds.</p>
+                </div>
+            </div>
 
-    <section class="mb-5">
+            <!-- 2. AI Analysis -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="feature-card reveal-up reveal-delay-2">
+                    <div class="feature-icon icon-green">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h6>AI Analysis</h6>
+                    <p>Automated category prediction and priority assignment on submission.</p>
+                </div>
+            </div>
+
+            <!-- 3. Live Timeline -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="feature-card reveal-up reveal-delay-3">
+                    <div class="feature-icon icon-blue">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <h6>Live Timeline</h6>
+                    <p>Track complaints from submission through review to final resolution.</p>
+                </div>
+            </div>
+
+            <!-- 4. Duplicate Detection -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="feature-card reveal-up reveal-delay-4">
+                    <div class="feature-icon icon-purple">
+                        <i class="fa-solid fa-copy"></i>
+                    </div>
+                    <h6>Duplicate Detection</h6>
+                    <p>Cosine similarity detects duplicate reports in the same hostel wing.</p>
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <!-- 5. Image Evidence -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="feature-card reveal-up reveal-delay-5">
+                    <div class="feature-icon icon-red">
+                        <i class="fa-solid fa-image"></i>
+                    </div>
+                    <h6>Image Evidence</h6>
+                    <p>Attach photo evidence directly for complaints.</p>
+                </div>
+            </div>
+
+            <!-- 6. Real-Time Alerts -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="feature-card reveal-up reveal-delay-6">
+                    <div class="feature-icon icon-cyan">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <h6>Real-Time Alerts</h6>
+                    <p>Instant student notification whenever complaint status changes.</p>
+                </div>
+            </div>
+
+            <!-- 7. AI Analytics -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="feature-card reveal-up reveal-delay-7">
+                    <div class="feature-icon icon-blue">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h6>AI Analytics</h6>
+                    <p>Visual dashboards providing complaint insights and trends.</p>
+                </div>
+            </div>
+
+            <!-- 8. Report Exports -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="feature-card reveal-up reveal-delay-8">
+                    <div class="feature-icon icon-green">
+                        <i class="fa-solid fa-file-export"></i>
+                    </div>
+                    <h6>Report Exports</h6>
+                    <p>Instant PDF and Excel report generation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. How It Works Section (#how-it-works) - 4-Step Interactive Showcase -->
+    <section class="how-it-works-section" id="how-it-works">
+        <div class="how-it-works-container reveal-up reveal-delay-1"
+             id="howItWorksContainer"
+             data-url-step-1="{{ url_for('add_complaint') if session.get('student_id') else url_for('login') }}"
+             data-url-step-2="#features"
+             data-url-step-3="{{ url_for('admin_dashboard') if session.get('admin') else url_for('admin_login') }}"
+             data-url-step-4="{{ url_for('complaints') if session.get('student_id') else url_for('login') }}">
+
+            <div class="row g-4 align-items-stretch">
+                <!-- Left Column: Step Selector Navigation & Step Info (40%) -->
+                <div class="col-lg-5 col-md-5 d-flex flex-column justify-content-between">
+                    <div class="how-it-works-nav" role="tablist" aria-label="IntelliHostel 4-Step Process Navigation">
+
+                        <!-- Step 1 Tab -->
+                        <button type="button"
+                                class="how-it-works-step active"
+                                id="step-tab-1"
+                                role="tab"
+                                aria-selected="true"
+                                aria-controls="visualPanel1"
+                                tabindex="0"
+                                data-step="1">
+                            <span class="step-nav-number">01</span>
+                            <span class="step-nav-content">
+                                <span class="step-nav-title">Submit Complaint</span>
+                                <span class="step-nav-subtitle">Report your issue easily</span>
+                            </span>
+                            <span class="step-nav-arrow" aria-hidden="true">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </span>
+                        </button>
+
+                        <!-- Step 2 Tab -->
+                        <button type="button"
+                                class="how-it-works-step"
+                                id="step-tab-2"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="visualPanel2"
+                                tabindex="-1"
+                                data-step="2">
+                            <span class="step-nav-number">02</span>
+                            <span class="step-nav-content">
+                                <span class="step-nav-title">AI Analysis</span>
+                                <span class="step-nav-subtitle">Smart ML triage pipeline</span>
+                            </span>
+                            <span class="step-nav-arrow" aria-hidden="true">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </span>
+                        </button>
+
+                        <!-- Step 3 Tab -->
+                        <button type="button"
+                                class="how-it-works-step"
+                                id="step-tab-3"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="visualPanel3"
+                                tabindex="-1"
+                                data-step="3">
+                            <span class="step-nav-number">03</span>
+                            <span class="step-nav-content">
+                                <span class="step-nav-title">Admin Review</span>
+                                <span class="step-nav-subtitle">Verify &amp; assign staff</span>
+                            </span>
+                            <span class="step-nav-arrow" aria-hidden="true">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </span>
+                        </button>
+
+                        <!-- Step 4 Tab -->
+                        <button type="button"
+                                class="how-it-works-step"
+                                id="step-tab-4"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="visualPanel4"
+                                tabindex="-1"
+                                data-step="4">
+                            <span class="step-nav-number">04</span>
+                            <span class="step-nav-content">
+                                <span class="step-nav-title">Resolution</span>
+                                <span class="step-nav-subtitle">Track &amp; get notified</span>
+                            </span>
+                            <span class="step-nav-arrow" aria-hidden="true">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </span>
+                        </button>
+
+                    </div>
+
+                    <!-- Dynamic Step Detail Box -->
+                    <div class="how-it-works-detail-box" id="howItWorksDetailBox">
+                        <div class="showcase-meta">
+                            <span class="showcase-step-badge" id="showcaseBadge">
+                                <span class="badge-dot"></span>
+                                <span id="showcaseBadgeText">STEP 01 OF 04</span>
+                            </span>
+                        </div>
+                        <h3 class="showcase-title" id="showcaseTitle">Submit Complaint</h3>
+                        <p class="showcase-description" id="showcaseDescription">
+                            Students submit hostel issues with category, description, and optional photo evidence.
+                        </p>
+                        <!-- Feature Chips / Tags -->
+                        <div class="showcase-tags" id="showcaseTags">
+                            <span class="showcase-tag">Complaint Details</span>
+                            <span class="showcase-tag">Photo Evidence</span>
+                            <span class="showcase-tag">Instant Triage</span>
+                        </div>
+                        <!-- Contextual CTA Button -->
+                        <div class="showcase-action-footer">
+                            <a href="{{ url_for('add_complaint') if session.get('student_id') else url_for('login') }}"
+                               class="showcase-btn"
+                               id="showcaseBtn">
+                                <span id="showcaseBtnText">Raise a Complaint</span>
+                                <i class="fa-solid fa-arrow-right" id="showcaseBtnIcon"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visual Stage (60%) -->
+                <div class="col-lg-7 col-md-7">
+                    <div class="how-it-works-visual-stage"
+                         id="howItWorksShowcase"
+                         role="region"
+                         aria-label="Interactive Process Showcase Visual">
+
+                        <!-- ============================================== -->
+                        <!-- STEP 01 VISUAL: COMPLAINT FORM / INPUT COMPOSITION -->
+                        <!-- ============================================== -->
+                        <div class="visual-panel visual-panel-1 active"
+                             id="visualPanel1"
+                             data-step="1"
+                             role="tabpanel"
+                             aria-labelledby="step-tab-1">
+                            <div class="mock-form-card">
+                                <!-- Form Header Bar -->
+                                <div class="mock-card-header">
+                                    <div class="mock-window-dots" aria-hidden="true">
+                                        <span class="dot red"></span>
+                                        <span class="dot yellow"></span>
+                                        <span class="dot green"></span>
+                                    </div>
+                                    <div class="mock-header-title">
+                                        <i class="fa-solid fa-file-lines text-teal"></i> Raise a Complaint
+                                    </div>
+                                    <div class="mock-header-badge">
+                                        <i class="fa-solid fa-location-dot"></i> Room 302 · Block B
+                                    </div>
+                                </div>
+
+                                <!-- Form Fields Mockup -->
+                                <div class="mock-form-body">
+                                    <!-- Field 1: Category -->
+                                    <div class="mock-form-row">
+                                        <label class="mock-label">Issue Category</label>
+                                        <div class="mock-select-box">
+                                            <span class="select-val"><i class="fa-solid fa-bolt text-amber"></i> Electrical</span>
+                                            <i class="fa-solid fa-chevron-down select-icon"></i>
+                                        </div>
+                                    </div>
+
+                                    <!-- Field 2: Complaint Title -->
+                                    <div class="mock-form-row">
+                                        <label class="mock-label">Complaint Title</label>
+                                        <div class="mock-input-box">
+                                            <span class="input-val">Room Fan Not Working</span>
+                                            <span class="input-cursor"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Field 3: Description -->
+                                    <div class="mock-form-row">
+                                        <label class="mock-label">Description</label>
+                                        <div class="mock-textarea-box">
+                                            <span>Fan stopped rotating last night. Humming sound heard when turned on. Need electrician repair.</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Field 4: Evidence Attachment & Priority Tag -->
+                                    <div class="mock-form-footer-row">
+                                        <div class="mock-attachment-pill">
+                                            <i class="fa-solid fa-paperclip"></i>
+                                            <span>fan_evidence.jpg</span>
+                                            <span class="attachment-size">1.2 MB</span>
+                                            <i class="fa-solid fa-circle-check text-success"></i>
+                                        </div>
+                                        <div class="mock-priority-indicator">
+                                            <span class="priority-dot"></span> High Urgency
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Button -->
+                                    <div class="mock-submit-row">
+                                        <button type="button" class="mock-submit-btn" tabindex="-1">
+                                            <span>Submit Complaint</span>
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </button>
+                                        <span class="mock-reassurance">
+                                            <i class="fa-solid fa-wand-magic-sparkles text-teal"></i> Instant ML Triage &amp; Auto-Routing
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================== -->
+                        <!-- STEP 02 VISUAL: AI PIPELINE / NODE COMPOSITION -->
+                        <!-- ============================================== -->
+                        <div class="visual-panel visual-panel-2"
+                             id="visualPanel2"
+                             data-step="2"
+                             role="tabpanel"
+                             aria-labelledby="step-tab-2">
+                            <div class="mock-ai-pipeline">
+                                <!-- Top Input Node -->
+                                <div class="pipe-node-input">
+                                    <div class="node-label-pill"><i class="fa-solid fa-inbox"></i> Complaint Input</div>
+                                    <div class="node-input-card">
+                                        <span class="node-input-text">"Room Fan Not Working: Fan stopped rotating, hums..."</span>
+                                        <span class="node-input-meta">Tokenized · 42 Words</span>
+                                    </div>
+                                </div>
+
+                                <!-- Flow Beam 1 -->
+                                <div class="pipe-connector-beam" aria-hidden="true">
+                                    <span class="beam-line"></span>
+                                    <span class="beam-pulse"></span>
+                                    <i class="fa-solid fa-chevron-down beam-arrow"></i>
+                                </div>
+
+                                <!-- Center AI Core Node -->
+                                <div class="pipe-node-core">
+                                    <div class="ai-core-card">
+                                        <div class="ai-core-header">
+                                            <span class="ai-stars"><i class="fa-solid fa-wand-magic-sparkles text-warning me-1"></i></span>
+                                            <span class="ai-core-title">INTELLIHOSTEL ML ENGINE</span>
+                                            <span class="ai-core-badge">Active Triage</span>
+                                        </div>
+                                        <div class="ai-core-models">
+                                            <span>NLP Classifier</span>
+                                            <span class="model-dot">•</span>
+                                            <span>Priority Regressor</span>
+                                            <span class="model-dot">•</span>
+                                            <span>Vector Embeddings</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Flow Beam 2 (Branching) -->
+                                <div class="pipe-branch-wrapper" aria-hidden="true">
+                                    <div class="branch-line left"></div>
+                                    <div class="branch-line center"></div>
+                                    <div class="branch-line right"></div>
+                                </div>
+
+                                <!-- 3 Branching Prediction Nodes -->
+                                <div class="pipe-predictions-grid">
+                                    <div class="pred-card cat-pred">
+                                        <span class="pred-label">CATEGORY</span>
+                                        <div class="pred-val"><i class="fa-solid fa-bolt text-amber"></i> Electrical</div>
+                                        <div class="pred-confidence">
+                                            <div class="conf-bar"><div class="conf-fill" style="width: 98%;"></div></div>
+                                            <span>98.4% match</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="pred-card prio-pred">
+                                        <span class="pred-label">PRIORITY</span>
+                                        <div class="pred-val"><span class="prio-pill-high"><i class="fa-solid fa-circle me-1" style="font-size: 0.5rem; vertical-align: middle;"></i>High</span></div>
+                                        <div class="pred-confidence">
+                                            <div class="conf-bar"><div class="conf-fill prio" style="width: 94%;"></div></div>
+                                            <span>Score: 4.8 / 5</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="pred-card eta-pred">
+                                        <span class="pred-label">EXPECTED RESOLUTION</span>
+                                        <div class="pred-val"><i class="fa-solid fa-clock-rotate-left text-teal"></i> 2.5 Days</div>
+                                        <div class="pred-confidence">
+                                            <span class="pred-subtext">Historical Avg: 2.1d</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bottom Similarity Detection Pill -->
+                                <div class="pipe-similarity-card">
+                                    <div class="sim-icon"><i class="fa-solid fa-object-ungroup text-purple"></i></div>
+                                    <div class="sim-content">
+                                        <span class="sim-title">Similar Complaint Found</span>
+                                        <span class="sim-desc">92% similarity with Resolved Ticket #982 ("Ceiling fan capacitor repair")</span>
+                                    </div>
+                                    <span class="sim-badge">Auto-Linked</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================== -->
+                        <!-- STEP 03 VISUAL: ADMIN REVIEW / DISPATCH COMPOSITION -->
+                        <!-- ============================================== -->
+                        <div class="visual-panel visual-panel-3"
+                             id="visualPanel3"
+                             data-step="3"
+                             role="tabpanel"
+                             aria-labelledby="step-tab-3">
+                            <div class="mock-admin-console">
+                                <!-- Admin Header -->
+                                <div class="admin-console-header">
+                                    <div class="admin-console-title">
+                                        <i class="fa-solid fa-shield-halved text-primary"></i>
+                                        <span>Campus Operations Console</span>
+                                    </div>
+                                    <div class="admin-ticket-id">
+                                        <span>Ticket #1042</span>
+                                        <span class="ticket-status-pill in-review">Under Review</span>
+                                    </div>
+                                </div>
+
+                                <!-- Ticket Main Details Box -->
+                                <div class="admin-ticket-card">
+                                    <div class="ticket-main-info">
+                                        <h4 class="ticket-title">Room Fan Not Working</h4>
+                                        <div class="ticket-meta-pills">
+                                            <span class="meta-pill prio-high"><i class="fa-solid fa-triangle-exclamation"></i> High Priority</span>
+                                            <span class="meta-pill cat-elec"><i class="fa-solid fa-bolt"></i> Electrical</span>
+                                            <span class="meta-pill reporter"><i class="fa-solid fa-user-graduate"></i> Deepthi · Room 302</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Staff Assignment Block -->
+                                    <div class="admin-assignment-box">
+                                        <div class="assign-label">Assigned Staff</div>
+                                        <div class="assign-staff-row">
+                                            <div class="staff-avatar">
+                                                <i class="fa-solid fa-user-gear"></i>
+                                            </div>
+                                            <div class="staff-info">
+                                                <div class="staff-name">K. Ramesh</div>
+                                                <div class="staff-role">Senior Electrician · Maintenance Dept</div>
+                                            </div>
+                                            <div class="staff-status-badge">
+                                                <span class="status-dot online"></span> Available
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Workflow Steps Strip -->
+                                <div class="admin-workflow-strip">
+                                    <div class="wf-step completed">
+                                        <span class="wf-icon"><i class="fa-solid fa-check"></i></span>
+                                        <span class="wf-label">1. Review</span>
+                                    </div>
+                                    <div class="wf-connector active"></div>
+                                    <div class="wf-step active">
+                                        <span class="wf-icon"><i class="fa-solid fa-user-check"></i></span>
+                                        <span class="wf-label">2. Assign Staff</span>
+                                    </div>
+                                    <div class="wf-connector"></div>
+                                    <div class="wf-step upcoming">
+                                        <span class="wf-icon"><i class="fa-solid fa-arrow-rotate-right"></i></span>
+                                        <span class="wf-label">3. Update Status</span>
+                                    </div>
+                                </div>
+
+                                <!-- Admin Action Buttons Mock -->
+                                <div class="admin-actions-row">
+                                    <div class="admin-btn-primary">
+                                        <i class="fa-solid fa-paper-plane"></i> Dispatch Work Order
+                                    </div>
+                                    <div class="admin-btn-secondary">
+                                        <i class="fa-solid fa-tag"></i> Link Common Issue
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================== -->
+                        <!-- STEP 04 VISUAL: RESOLUTION / LIFECYCLE COMPOSITION -->
+                        <!-- ============================================== -->
+                        <div class="visual-panel visual-panel-4"
+                             id="visualPanel4"
+                             data-step="4"
+                             role="tabpanel"
+                             aria-labelledby="step-tab-4">
+                            <div class="mock-resolution-view">
+                                <!-- Left side: Vertical Timeline Trail -->
+                                <div class="res-timeline-col">
+                                    <div class="res-col-title">
+                                        <i class="fa-solid fa-timeline text-success"></i> Complaint Lifecycle
+                                    </div>
+                                    <div class="res-timeline">
+                                        <div class="tl-item done">
+                                            <div class="tl-bullet"><i class="fa-solid fa-check"></i></div>
+                                            <div class="tl-content">
+                                                <span class="tl-title">Submitted</span>
+                                                <span class="tl-time">10:15 AM · Deepthi</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="tl-item done">
+                                            <div class="tl-bullet"><i class="fa-solid fa-check"></i></div>
+                                            <div class="tl-content">
+                                                <span class="tl-title">AI Analyzed</span>
+                                                <span class="tl-time">10:16 AM · Electrical / High</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="tl-item done">
+                                            <div class="tl-bullet"><i class="fa-solid fa-check"></i></div>
+                                            <div class="tl-content">
+                                                <span class="tl-title">Admin Reviewed</span>
+                                                <span class="tl-time">10:30 AM · Assigned to K. Ramesh</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="tl-item done">
+                                            <div class="tl-bullet"><i class="fa-solid fa-check"></i></div>
+                                            <div class="tl-content">
+                                                <span class="tl-title">In Progress</span>
+                                                <span class="tl-time">11:00 AM · Repair underway</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="tl-item resolved">
+                                            <div class="tl-bullet success"><i class="fa-solid fa-circle-check"></i></div>
+                                            <div class="tl-content">
+                                                <span class="tl-title success">Resolved <i class="fa-solid fa-circle-check text-success ms-1"></i></span>
+                                                <span class="tl-time">02:15 PM · Completed &amp; Verified</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right side: Verified Resolution Card -->
+                                <div class="res-alert-col">
+                                    <div class="res-success-card">
+                                        <div class="res-check-icon">
+                                            <i class="fa-solid fa-circle-check"></i>
+                                        </div>
+                                        <h4 class="res-card-title">Complaint Resolved</h4>
+                                        <p class="res-card-desc">
+                                            Room 302 ceiling fan capacitor has been replaced and verified at full speed.
+                                        </p>
+
+                                        <div class="res-notification-alert">
+                                            <i class="fa-solid fa-bell text-success"></i>
+                                            <span>Student notified via In-App Alert &amp; SMS</span>
+                                        </div>
+
+                                        <div class="res-satisfaction-rating">
+                                            <span class="stars"><i class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i></span>
+                                            <span class="rating-text">5.0 / 5.0 Rating</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Get Started / Portal Access Section (#get-started) -->
+    <section class="portals-section" id="get-started">
+        <span id="portals" class="section-anchor-alias" aria-hidden="true"></span>
+
         <div class="row justify-content-center g-4">
             <!-- Student Portal Card -->
             <div class="col-lg-5 col-md-6">
@@ -120,7 +673,6 @@
                     <div class="portal-icon">
                         <i class="fa-solid fa-user-graduate"></i>
                     </div>
-                    <h3>Student Portal</h3>
                     <p>
                         Register with your university roll number, submit hostel maintenance requests, attach photos, and receive instant status updates and alerts.
                     </p>
@@ -148,9 +700,8 @@
             <div class="col-lg-5 col-md-6">
                 <div class="portal-card reveal-right reveal-delay-2">
                     <div class="portal-icon admin-icon">
-                        <i class="fa-solid fa-shield-halved"></i>
+                        <i class="fa-solid fa-user-shield"></i>
                     </div>
-                    <h3>Administrator Portal</h3>
                     <p>
                         Administrative control center for hostel wardens and caretakers. Review incoming issues, assign technicians, update progress, and export reports.
                     </p>
@@ -172,202 +723,75 @@
         </div>
     </section>
 
-    <!-- 4. Feature Section -->
-    <div class="section-header reveal-up" id="features">
-        <span class="section-label">Smart Capabilities</span>
-        <h2 class="section-title">Everything You Need</h2>
-        <p class="section-description">
-            Engineered to streamline campus hostel living with transparency and automated intelligence.
-        </p>
-    </div>
-
-    <section class="mb-5">
-        <div class="row g-3">
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="feature-card reveal-up reveal-delay-1">
-                    <div class="feature-icon icon-orange">
-                        <i class="fa-solid fa-file-circle-plus"></i>
-                    </div>
-                    <h6>Easy Submission</h6>
-                    <p>File hostel issues with category tags and description in seconds.</p>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="feature-card reveal-up reveal-delay-2">
-                    <div class="feature-icon icon-green">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    </div>
-                    <h6>AI Analysis</h6>
-                    <p>Automated category prediction and priority assignment on submission.</p>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="feature-card reveal-up reveal-delay-3">
-                    <div class="feature-icon icon-blue">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                    </div>
-                    <h6>Live Timeline</h6>
-                    <p>Track complaints from submission through review to final resolution.</p>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="feature-card reveal-up reveal-delay-4">
-                    <div class="feature-icon icon-purple">
-                        <i class="fa-solid fa-copy"></i>
-                    </div>
-                    <h6>Duplicate Detection</h6>
-                    <p>Cosine similarity detects duplicate reports in the same hostel wing.</p>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="feature-card reveal-up reveal-delay-5">
-                    <div class="feature-icon icon-red">
-                        <i class="fa-solid fa-image"></i>
-                    </div>
-                    <h6>Image Evidence</h6>
-                    <p>Attach photo evidence directly for clear maintenance diagnosis.</p>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="feature-card reveal-up reveal-delay-6">
-                    <div class="feature-icon icon-cyan">
-                        <i class="fa-solid fa-bell"></i>
-                    </div>
-                    <h6>Real-Time Alerts</h6>
-                    <p>Instant student notification whenever admin updates complaint status.</p>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="feature-card reveal-up reveal-delay-7">
-                    <div class="feature-icon icon-blue">
-                        <i class="fa-solid fa-chart-pie"></i>
-                    </div>
-                    <h6>AI Analytics</h6>
-                    <p>Visual dashboards providing maintenance workload and category trends.</p>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="feature-card reveal-up reveal-delay-8">
-                    <div class="feature-icon icon-green">
-                        <i class="fa-solid fa-file-export"></i>
-                    </div>
-                    <h6>Report Exports</h6>
-                    <p>Instant PDF and Excel report downloads for official campus records.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. 4-Step Workflow Section -->
-    <section class="steps-section" id="workflow">
-        <div class="section-header reveal-up">
-            <span class="section-label">Seamless Flow</span>
-            <h2 class="section-title">How It Works</h2>
-            <p class="section-description">
-                From issue identification to resolved repairs in 4 transparent stages.
-            </p>
-        </div>
-
-        <div class="row g-4 steps-row">
-            <div class="col-md-3">
-                <div class="step-card reveal-up reveal-delay-1">
-                    <div class="step-circle">1</div>
-                    <h6>Submit Complaint</h6>
-                    <p>Select issue type, provide details, and attach optional photo evidence.</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="step-card reveal-up reveal-delay-2">
-                    <div class="step-circle">2</div>
-                    <h6>AI Analysis</h6>
-                    <p>Machine learning estimates turnaround days and checks for duplicate reports.</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="step-card reveal-up reveal-delay-3">
-                    <div class="step-circle">3</div>
-                    <h6>Admin Review</h6>
-                    <p>Hostel caretakers review the ticket and assign appropriate campus technicians.</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="step-card reveal-up reveal-delay-4">
-                    <div class="step-circle">4</div>
-                    <h6>Resolution</h6>
-                    <p>Maintenance completed, verified, and logged in your complaint history.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 6. About & Contact Section -->
-    <section class="info-banner-card reveal-up" id="about">
-        <div class="row align-items-center gy-4">
-            <div class="col-lg-7 reveal-left reveal-delay-1">
-                <span class="section-label">Campus Welfare</span>
-                <h3 class="fw-bold mb-3">About IntelliHostel</h3>
-                <p class="about-desc mb-4">
-                    IntelliHostel is the official digital hostel maintenance and grievance resolution system developed for <strong>{{ college_name if college_name else 'RGUKT Ongole' }}</strong>. It bridges the gap between campus residents and maintenance personnel, eliminating paper registers and long delays.
-                </p>
-                <div class="d-flex flex-wrap gap-3">
-                    <div class="about-check-item">
-                        <i class="fa-solid fa-circle-check text-success"></i>
-                        <span>Zero Paperwork</span>
-                    </div>
-                    <div class="about-check-item">
-                        <i class="fa-solid fa-circle-check text-success"></i>
-                        <span>Guaranteed Tracking</span>
-                    </div>
-                    <div class="about-check-item">
-                        <i class="fa-solid fa-circle-check text-success"></i>
-                        <span>Campus Secure</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-5 reveal-right reveal-delay-2" id="contact">
-                <div class="helpdesk-glass-card">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="helpdesk-icon-box">
-                            <i class="fa-solid fa-headset"></i>
+    <!-- 5. About Section (#about) -->
+    <section class="about-section" id="about">
+        <div class="info-banner-card reveal-up">
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-7 reveal-left reveal-delay-1">
+                    <h2 class="section-title text-start mb-3">About IntelliHostel</h2>
+                    <p class="about-desc mb-4">
+                        IntelliHostel is the official digital hostel maintenance and grievance resolution system developed for <strong>{{ college_name if college_name else 'RGUKT Ongole' }}</strong>. It bridges the gap between campus residents and maintenance personnel, eliminating paper registers and long delays.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <div class="about-check-item">
+                            <i class="fa-solid fa-circle-check text-success"></i>
+                            <span>Zero Paperwork</span>
                         </div>
-                        <div>
-                            <h5 class="helpdesk-title">Hostel Helpdesk</h5>
-                            <p class="helpdesk-sub">Contact administrative support for urgent room emergencies.</p>
+                        <div class="about-check-item">
+                            <i class="fa-solid fa-circle-check text-success"></i>
+                            <span>Guaranteed Tracking</span>
+                        </div>
+                        <div class="about-check-item">
+                            <i class="fa-solid fa-circle-check text-success"></i>
+                            <span>Campus Secure</span>
                         </div>
                     </div>
-                    <div class="helpdesk-item">
-                        <div class="helpdesk-item-icon">
-                            <i class="fa-solid fa-envelope"></i>
+                </div>
+                <div class="col-lg-5 reveal-right reveal-delay-2" id="contact">
+                    <div class="helpdesk-glass-card">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="helpdesk-icon-box">
+                                <i class="fa-solid fa-headset"></i>
+                            </div>
+                            <div>
+                                <h5 class="helpdesk-title">Hostel Helpdesk</h5>
+                                <p class="helpdesk-sub">Contact administrative support for urgent room emergencies.</p>
+                            </div>
                         </div>
-                        <span class="helpdesk-item-text">hostelhelpdesk@rguktong.ac.in</span>
-                    </div>
-                    <div class="helpdesk-item">
-                        <div class="helpdesk-item-icon">
-                            <i class="fa-solid fa-location-dot"></i>
+                        <div class="helpdesk-item">
+                            <div class="helpdesk-item-icon">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <span class="helpdesk-item-text">hostelhelpdesk@rguktong.ac.in</span>
                         </div>
-                        <span class="helpdesk-item-text">Hostel Office, RGUKT Ongole Campus</span>
+                        <div class="helpdesk-item">
+                            <div class="helpdesk-item-icon">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <span class="helpdesk-item-text">Hostel Office, RGUKT Ongole Campus</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- 7. Call To Action Section -->
-    <section class="cta-section reveal-scale">
-        <div class="cta-content">
-            <h3>Ready to Experience Smarter Complaint Management?</h3>
-            <p>Sign in with your RGUKT student ID to raise your first hostel request.</p>
-            {% if session.get('student_id') %}
-                <a href="{{ url_for('add_complaint') }}" class="cta-btn">
-                    <i class="fa-solid fa-plus-circle"></i>
-                    Raise a Complaint Now
-                </a>
-            {% else %}
-                <a href="{{ url_for('register') }}" class="cta-btn">
-                    <i class="fa-solid fa-rocket"></i>
-                    Create Student Account
-                </a>
-            {% endif %}
+        <!-- Call To Action Section -->
+        <div class="cta-section reveal-scale mt-4">
+            <div class="cta-content">
+                <h3>Ready to Experience Smarter Complaint Management?</h3>
+                <p>Sign in with your RGUKT student ID to raise your first hostel request.</p>
+                {% if session.get('student_id') %}
+                    <a href="{{ url_for('add_complaint') }}" class="cta-btn">
+                        <i class="fa-solid fa-circle-plus"></i>
+                        <span>Raise a Complaint Now</span>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('register') }}" class="cta-btn">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Create Student Account</span>
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </section>
 

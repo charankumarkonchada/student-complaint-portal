@@ -26,7 +26,7 @@
         </div>
 
         <a href="{{ url_for('add_complaint') }}" class="btn btn-primary-gradient">
-            <i class="fa-solid fa-plus-circle"></i>
+            <i class="fa-solid fa-circle-plus"></i>
             <span>Raise New Complaint</span>
         </a>
     </div>
@@ -61,6 +61,7 @@
 
             <div class="col-md-2 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-filter me-1"></i>
                     <span>Filter</span>
                 </button>
                 {% if request.args.get('search') or request.args.get('status') %}
@@ -100,11 +101,17 @@
                             {% endif %}
 
                             {% if c.status == 'Pending' %}
-                                <span class="badge badge-pending">Pending</span>
+                                <span class="badge badge-pending">
+                                    <i class="fa-solid fa-hourglass-half me-1"></i>Pending
+                                </span>
                             {% elif c.status == 'In Progress' %}
-                                <span class="badge badge-progress">In Progress</span>
+                                <span class="badge badge-progress">
+                                    <i class="fa-solid fa-arrows-rotate me-1"></i>In Progress
+                                </span>
                             {% else %}
-                                <span class="badge badge-resolved">Resolved</span>
+                                <span class="badge badge-resolved">
+                                    <i class="fa-solid fa-circle-check me-1"></i>Resolved
+                                </span>
                             {% endif %}
                         </div>
                     </div>
@@ -166,11 +173,13 @@
             <p class="text-muted small mb-3">No matching complaints were found for the selected filter criteria.</p>
             {% if request.args.get('search') or request.args.get('status') %}
                 <a href="{{ url_for('complaints') }}" class="btn btn-sm btn-outline-primary mx-auto">
-                    Clear Filters
+                    <i class="fa-solid fa-rotate-left me-1"></i>
+                    <span>Clear Filters</span>
                 </a>
             {% else %}
                 <a href="{{ url_for('add_complaint') }}" class="btn btn-primary-gradient mx-auto">
-                    <i class="fa-solid fa-plus-circle me-1"></i> Submit a Complaint
+                    <i class="fa-solid fa-circle-plus me-1"></i>
+                    <span>Submit a Complaint</span>
                 </a>
             {% endif %}
         </div>
