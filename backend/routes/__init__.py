@@ -8,6 +8,7 @@ from backend.routes.charan.admin_login import admin_login_bp
 from backend.routes.charan.manage_complaints import manage_complaints_bp
 from backend.routes.charan.update_status import update_status_bp
 from backend.routes.charan.common_issues import common_issues_bp
+from backend.routes.charan.student_id_requests import student_id_requests_bp
 
 # Team 2: K. Charankumar
 from backend.routes.charankumar.admin_dashboard import admin_dashboard_bp
@@ -43,6 +44,7 @@ ALL_BLUEPRINTS = [
     manage_complaints_bp,
     update_status_bp,
     common_issues_bp,
+    student_id_requests_bp,
     # Charankumar
     admin_dashboard_bp,
     analytics_bp,

@@ -149,6 +149,14 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-item {% if request.path.startswith('/admin/id_correction_requests') or request.path.startswith('/admin/student_id_requests') %}active{% endif %}"
+                                   href="{{ url_for('student_id_requests.list_requests') }}">
+                                    <i class="fa-solid fa-id-card-clip"></i>
+                                    <span>ID Requests</span>
+                                </a>
+                            </li>
+
                         {% else %}
                             <!-- Guest / Landing Page Section Navigation Links -->
                             <li class="nav-item">
@@ -263,22 +271,37 @@
                                 <i class="fa-solid fa-moon theme-toggle-icon"></i>
                             </button>
 
-                            <!-- Admin Identity Capsule -->
-                            <div class="nav-user-capsule">
-                                <div class="nav-avatar-circle nav-avatar-admin">
-                                    <i class="fa-solid fa-shield-halved"></i>
-                                </div>
-                                <div class="nav-user-details">
-                                    <span class="nav-user-name">Administrator</span>
-                                    <span class="nav-user-role">Hostel Incharge</span>
-                                </div>
+                            <!-- Admin Account Dropdown -->
+                            <div class="dropdown nav-user-dropdown">
+                                <button class="nav-user-capsule nav-user-dropdown-btn dropdown-toggle"
+                                        type="button"
+                                        id="adminUserDropdown"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        title="Administrator (Hostel Incharge)">
+                                    <div class="nav-avatar-circle nav-avatar-admin">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                    </div>
+                                    <div class="nav-user-details">
+                                        <span class="nav-user-name">Administrator</span>
+                                        <span class="nav-user-role">Hostel Incharge</span>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-down nav-dropdown-chevron"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end nav-user-dropdown-menu shadow-sm" aria-labelledby="adminUserDropdown">
+                                    <li class="dropdown-header px-3 py-2">
+                                        <div class="fw-semibold text-heading small">Administrator</div>
+                                        <div class="text-muted smaller">Hostel Incharge</div>
+                                    </li>
+                                    <li><hr class="dropdown-divider my-1"></li>
+                                    <li>
+                                        <a class="dropdown-item nav-dropdown-item nav-btn-logout" href="{{ url_for('admin_logout') }}" data-logout-trigger="true" title="Logout from portal">
+                                            <i class="fa-solid fa-right-from-bracket"></i>
+                                            <span>Logout</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
-
-                            <!-- Logout Button -->
-                            <a class="nav-link nav-btn-logout" href="{{ url_for('admin_logout') }}" data-logout-trigger="true" title="Logout from portal">
-                                <i class="fa-solid fa-right-from-bracket"></i>
-                                <span>Logout</span>
-                            </a>
 
                         {% else %}
                             <!-- Theme Toggle (Desktop) for Guest -->

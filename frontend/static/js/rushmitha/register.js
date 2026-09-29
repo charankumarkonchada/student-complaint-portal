@@ -22,6 +22,25 @@ function validateRegistration() {
         }
     }
 
+    const emailInput = document.getElementById("email");
+    const emailMismatchError = document.getElementById("emailMismatchError");
+
+    if (idInput && emailInput && idInput.value && emailInput.value) {
+        const idVal = idInput.value.trim().toLowerCase();
+        const emailVal = emailInput.value.trim().toLowerCase();
+        if (idPattern.test(idVal) && emailVal.includes("@")) {
+            const emailLocal = emailVal.split("@")[0];
+            if (emailLocal !== idVal) {
+                if (emailMismatchError) emailMismatchError.style.display = "block";
+                emailInput.classList.add("is-invalid");
+                valid = false;
+            } else {
+                if (emailMismatchError) emailMismatchError.style.display = "none";
+                emailInput.classList.remove("is-invalid");
+            }
+        }
+    }
+
     if (password !== confirmPassword) {
         if (passwordError) passwordError.style.display = "block";
         const cPassEl = document.getElementById("confirm_password");
@@ -39,6 +58,26 @@ function validateRegistration() {
 document.addEventListener("DOMContentLoaded", function () {
     const idInput = document.getElementById("id_no");
     const idError = document.getElementById("idError");
+    const emailInput = document.getElementById("email");
+    const emailMismatchError = document.getElementById("emailMismatchError");
+
+    function checkEmailIdMatch() {
+        if (idInput && emailInput && emailMismatchError) {
+            const idVal = idInput.value.trim().toLowerCase();
+            const emailVal = emailInput.value.trim().toLowerCase();
+            if (/^[onrs][0-9]{6}$/.test(idVal) && emailVal.includes("@")) {
+                const emailLocal = emailVal.split("@")[0];
+                if (emailLocal !== idVal) {
+                    emailMismatchError.style.display = "block";
+                } else {
+                    emailMismatchError.style.display = "none";
+                    emailInput.classList.remove("is-invalid");
+                }
+            } else {
+                emailMismatchError.style.display = "none";
+            }
+        }
+    }
 
     if (idInput) {
         idInput.addEventListener("input", function () {
@@ -52,6 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     idError.style.display = "block";
                 }
             }
+            checkEmailIdMatch();
         });
+    }
+
+    if (emailInput) {
+        emailInput.addEventListener("input", checkEmailIdMatch);
     }
 });

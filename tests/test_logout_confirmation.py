@@ -206,13 +206,20 @@ class TestLogoutConfirmation(unittest.TestCase):
             self.assertTrue(parser.has_cancel_btn)
             self.assertTrue(parser.has_confirm_btn)
 
-            # 2. Navbar logout trigger points to admin logout
+            # 2. Navbar logout trigger points to admin logout inside account dropdown
             admin_logout_links = [l for l in parser.logout_links if l.get("href") == "/admin_logout"]
             self.assertTrue(len(admin_logout_links) >= 1, f"Admin logout link missing on {url}")
 
-            # 3. On Admin Dashboard, check that both banner button and navbar have admin_logout
+            # 3. Verify admin account dropdown exists and is properly structured
+            self.assertIn('id="adminUserDropdown"', html, f"Admin account dropdown trigger missing on {url}")
+            self.assertIn('data-bs-toggle="dropdown"', html, f"Admin dropdown toggle missing on {url}")
+            self.assertIn('Administrator', html, f"Administrator label missing on {url}")
+            self.assertIn('Hostel Incharge', html, f"Hostel Incharge role missing on {url}")
+
+            # 4. On Admin Dashboard, verify standalone banner logout button is removed (unified in dropdown)
             if url == "/admin_dashboard":
-                self.assertTrue(len(admin_logout_links) >= 2, "Admin Dashboard should have both navbar and banner logout buttons")
+                self.assertEqual(len(admin_logout_links), 1, "Admin Dashboard should have unified account dropdown logout button, not redundant banner logout")
+                self.assertIn("System Active", html, "System Active indicator should remain intact")
 
     # -------------------------------------------------------------------------
     # 4. CANCEL FLOW: SESSION REMAINS COMPLETELY INTACT

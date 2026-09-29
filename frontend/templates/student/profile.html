@@ -148,6 +148,14 @@
                                 </span>
                             </div>
                             <small class="field-hint">Non-editable college identifier</small>
+                            <div class="id-correction-callout">
+                                <span class="id-correction-text">
+                                    <i class="fa-solid fa-triangle-exclamation text-warning me-1"></i> Entered the wrong ID?
+                                </span>
+                                <button type="button" class="btn-request-correction" data-bs-toggle="modal" data-bs-target="#idCorrectionModal">
+                                    Request ID Correction
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Email Address -->
@@ -231,8 +239,122 @@
                         <span>Change Password</span>
                     </a>
                 </div>
+
+                {% if correction_requests %}
+                <!-- Student ID Correction Request History Card -->
+                <div class="correction-history-card mt-4">
+                    <div class="correction-history-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="correction-history-icon">
+                                <i class="fa-solid fa-id-card-clip"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0 fw-bold fs-6">Student ID Correction Request</h4>
+                                <small class="text-muted">Official identity revision tracking</small>
+                            </div>
+                        </div>
+                        {% set latest_req = correction_requests[0] %}
+                        <span class="badge {% if latest_req.status == 'Approved' %}bg-success{% elif latest_req.status == 'Rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                            {{ latest_req.status }}
+                        </span>
+                    </div>
+                    <div class="correction-history-body">
+                        {% for req in correction_requests %}
+                        <div class="correction-req-item {% if not loop.first %}mt-3 pt-3 border-top{% endif %}">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                <div class="req-id-comparison">
+                                    <span class="text-muted small">Current ID:</span>
+                                    <span class="badge text-bg-secondary font-monospace">{{ req.current_student_id }}</span>
+                                    <i class="fa-solid fa-arrow-right text-muted mx-1"></i>
+                                    <span class="text-muted small">Requested ID:</span>
+                                    <span class="badge text-bg-primary font-monospace">{{ req.requested_student_id }}</span>
+                                </div>
+                                <span class="badge {% if req.status == 'Approved' %}bg-success{% elif req.status == 'Rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                                    Status: {{ req.status }}
+                                </span>
+                            </div>
+                            <div class="small text-muted mb-1">
+                                <i class="fa-regular fa-calendar-check me-1"></i> Submitted: {{ req.created_at }}
+                            </div>
+                            <div class="small mb-1">
+                                <strong>Reason:</strong> {{ req.reason }}
+                            </div>
+                            {% if req.status == 'Rejected' and req.admin_remarks %}
+                            <div class="alert alert-danger py-2 px-3 mt-2 mb-0 small">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                <strong>Admin Remark:</strong> {{ req.admin_remarks }}
+                            </div>
+                            {% elif req.status == 'Approved' %}
+                            <div class="alert alert-success py-2 px-3 mt-2 mb-0 small">
+                                <i class="fa-solid fa-circle-check me-1"></i>
+                                <strong>Updated Student ID:</strong> {{ req.requested_student_id }}
+                                {% if req.admin_remarks %} | <strong>Admin Remark:</strong> {{ req.admin_remarks }}{% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </main>
+    </div>
+</div>
+
+<!-- Student ID Correction Request Modal -->
+<div class="modal fade" id="idCorrectionModal" tabindex="-1" aria-labelledby="idCorrectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-custom-theme">
+            <div class="modal-header">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="modal-header-icon-box">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0" id="idCorrectionModalLabel">Request Student ID Correction</h5>
+                        <small class="text-muted">Submit an official correction for admin review</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('profile.request_id_correction') }}" method="POST" id="idCorrectionForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted small">Current Student ID</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-lock text-muted"></i></span>
+                            <input type="text" class="form-control bg-light border-start-0 fw-bold" value="{{ student.id_no }}" readonly>
+                        </div>
+                        <div class="form-text small text-muted">Read-only account identifier</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="requested_id" class="form-label fw-semibold">Correct Student ID <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-id-badge"></i></span>
+                            <input type="text" class="form-control text-uppercase" id="requested_id" name="requested_id"
+                                placeholder="e.g. O221169" pattern="^[ONRSonrs][0-9]{6}$" maxlength="7" required
+                                oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                        <div class="form-text small text-muted">Must start with O, N, R, or S followed by 6 digits.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reason" class="form-label fw-semibold">Reason for Correction <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3"
+                            placeholder="Explain why this ID correction is needed (e.g. Entered wrong digit during registration)..."
+                            minlength="5" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light p-3">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-paper-plane me-1"></i> Submit Correction Request
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

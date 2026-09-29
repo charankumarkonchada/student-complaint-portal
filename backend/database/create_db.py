@@ -152,6 +152,23 @@ def create_postgresql_tables(conn):
         """,
 
         """
+        CREATE TABLE IF NOT EXISTS student_id_correction_requests (
+            id BIGSERIAL PRIMARY KEY,
+            student_id BIGINT NOT NULL
+                REFERENCES students(id)
+                ON DELETE CASCADE,
+            current_student_id TEXT NOT NULL,
+            requested_student_id TEXT NOT NULL,
+            reason TEXT NOT NULL,
+            status TEXT DEFAULT 'Pending',
+            admin_remarks TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            reviewed_at TIMESTAMP,
+            reviewed_by TEXT
+        )
+        """,
+
+        """
         CREATE TABLE IF NOT EXISTS admin (
             id BIGSERIAL PRIMARY KEY,
             username TEXT UNIQUE NOT NULL,
@@ -314,6 +331,23 @@ def create_sqlite_tables(conn):
         """,
 
         """
+        CREATE TABLE IF NOT EXISTS student_id_correction_requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER NOT NULL
+                REFERENCES students(id)
+                ON DELETE CASCADE,
+            current_student_id TEXT NOT NULL,
+            requested_student_id TEXT NOT NULL,
+            reason TEXT NOT NULL,
+            status TEXT DEFAULT 'Pending',
+            admin_remarks TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            reviewed_at TIMESTAMP,
+            reviewed_by TEXT
+        )
+        """,
+
+        """
         CREATE TABLE IF NOT EXISTS admin (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
@@ -375,7 +409,9 @@ def migrate_sqlite(conn):
         "CREATE INDEX IF NOT EXISTS idx_common_issue_notifications_issue ON common_issue_notifications(common_issue_id)",
         "CREATE INDEX IF NOT EXISTS idx_notification_reads_lookup ON notification_reads(student_id, common_issue_notification_id)",
         "CREATE INDEX IF NOT EXISTS idx_notifications_student_archived ON notifications(student_id, is_archived, is_read)",
-        "CREATE INDEX IF NOT EXISTS idx_notification_reads_archived ON notification_reads(student_id, is_archived)"
+        "CREATE INDEX IF NOT EXISTS idx_notification_reads_archived ON notification_reads(student_id, is_archived)",
+        "CREATE INDEX IF NOT EXISTS idx_id_correction_student ON student_id_correction_requests(student_id)",
+        "CREATE INDEX IF NOT EXISTS idx_id_correction_status ON student_id_correction_requests(status)"
     ]
     for idx in indexes:
         try:
@@ -383,6 +419,28 @@ def migrate_sqlite(conn):
         except Exception:
             pass
     conn.commit()
+
+    # Ensure student_id_correction_requests exists
+    try:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS student_id_correction_requests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+                current_student_id TEXT NOT NULL,
+                requested_student_id TEXT NOT NULL,
+                reason TEXT NOT NULL,
+                status TEXT DEFAULT 'Pending',
+                admin_remarks TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                reviewed_at TIMESTAMP,
+                reviewed_by TEXT
+            )
+            """
+        )
+        conn.commit()
+    except Exception:
+        pass
 
     # Backfill missing issue_code values
     try:
@@ -449,7 +507,9 @@ def migrate_postgresql(conn):
             "CREATE INDEX IF NOT EXISTS idx_common_issue_notifications_issue ON common_issue_notifications(common_issue_id)",
             "CREATE INDEX IF NOT EXISTS idx_notification_reads_lookup ON notification_reads(student_id, common_issue_notification_id)",
             "CREATE INDEX IF NOT EXISTS idx_notifications_student_archived ON notifications(student_id, is_archived, is_read)",
-            "CREATE INDEX IF NOT EXISTS idx_notification_reads_archived ON notification_reads(student_id, is_archived)"
+            "CREATE INDEX IF NOT EXISTS idx_notification_reads_archived ON notification_reads(student_id, is_archived)",
+            "CREATE INDEX IF NOT EXISTS idx_id_correction_student ON student_id_correction_requests(student_id)",
+            "CREATE INDEX IF NOT EXISTS idx_id_correction_status ON student_id_correction_requests(status)"
         ]
         for idx in indexes:
             try:
@@ -457,6 +517,28 @@ def migrate_postgresql(conn):
                 conn.commit()
             except Exception:
                 conn.rollback()
+
+        # Ensure student_id_correction_requests exists
+        try:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS student_id_correction_requests (
+                    id BIGSERIAL PRIMARY KEY,
+                    student_id BIGINT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+                    current_student_id TEXT NOT NULL,
+                    requested_student_id TEXT NOT NULL,
+                    reason TEXT NOT NULL,
+                    status TEXT DEFAULT 'Pending',
+                    admin_remarks TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    reviewed_at TIMESTAMP,
+                    reviewed_by TEXT
+                )
+                """
+            )
+            conn.commit()
+        except Exception:
+            conn.rollback()
 
         # Backfill missing issue_code values
         try:
