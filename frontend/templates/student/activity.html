@@ -66,7 +66,7 @@
     </div>
 
     <!-- Main Activity Stream Container -->
-    <div class="activity-layout reveal-up reveal-delay-2">
+    <div class="activity-layout">
         <main class="activity-feed-section">
             <div class="section-title-wrap">
                 <h3><i class="fa-solid fa-timeline"></i> Audit Log Timeline</h3>
@@ -113,7 +113,7 @@
                                 </a>
                             </div>
                             <span class="timeline-timestamp">
-                                <i class="fa-regular fa-clock"></i> {{ h.date }}
+                                <i class="fa-regular fa-clock"></i> {{ h.formatted_date or h.date }}
                             </span>
                         </div>
 
@@ -122,6 +122,8 @@
                             <i class="fa-solid fa-quote-left quote-icon"></i>
                             <p>{{ h.remarks }}</p>
                         </div>
+                        {% elif h.action_text %}
+                        <p class="timeline-default-text">{{ h.action_text }}</p>
                         {% else %}
                         <p class="timeline-default-text">Ticket status updated to <strong>{{ h.status }}</strong>.</p>
                         {% endif %}

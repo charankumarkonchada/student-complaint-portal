@@ -175,7 +175,7 @@ class TestIntelliHostelE2EWorkflows(unittest.TestCase):
         self.assertIn(b"Leaking washroom tap", res.data)
 
     def test_04_activity_page_robustness(self):
-        """CRITICAL: Ensure /activity NEVER returns 500 even with complex datetime types and history entries."""
+        """CRITICAL: Ensure /activity NEVER returns 500 and renders recent events chronologically."""
         with self.client.session_transaction() as sess:
             sess["student_id"] = 1
             sess["student_name"] = "Student Alpha"
@@ -188,6 +188,28 @@ class TestIntelliHostelE2EWorkflows(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn(b"Recent Activity", res.data)
         self.assertIn(b"Ceiling fan motor burning smell", res.data)
+        self.assertIn(b"Leaking washroom tap", res.data)
+        self.assertIn(b"activity-layout", res.data)
+        self.assertNotIn(b"activity-layout reveal-up", res.data)
+        self.assertIn(b"activity-timeline", res.data)
+        self.assertIn(b"activity-item", res.data)
+
+        # Verify newest event appears first in the HTML
+        tap_pos = res.data.find(b"Leaking washroom tap")
+        fan_pos = res.data.find(b"Ceiling fan motor burning smell")
+        self.assertTrue(tap_pos != -1 and fan_pos != -1)
+        self.assertTrue(tap_pos < fan_pos, "Newer complaint (tap) must appear before older complaint (fan)")
+
+        # Verify tenant isolation: another student cannot see Student 1's events
+        with self.client.session_transaction() as sess:
+            sess["student_id"] = 999
+            sess["student_name"] = "Other Student"
+            sess["id_no"] = "O219999"
+
+        res_other = self.client.get("/activity")
+        self.assertEqual(res_other.status_code, 200)
+        self.assertNotIn(b"Ceiling fan motor burning smell", res_other.data)
+        self.assertNotIn(b"Leaking washroom tap", res_other.data)
 
     def test_05_student_profile_and_password_change(self):
         """Test student profile view/edit and password change."""
