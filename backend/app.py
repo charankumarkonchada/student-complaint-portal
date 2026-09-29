@@ -1,5 +1,7 @@
 import os
+from pathlib import Path
 from flask import Flask, render_template, request, session
+import jinja2
 from backend.services.csrf_service import get_csrf_token, validate_csrf_token
 
 import backend.config as config
@@ -9,15 +11,31 @@ from backend.routes import register_blueprints
 
 def create_app():
     """Application factory for IntelliHostel Flask application."""
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    template_folder = os.path.join(project_root, "frontend", "templates")
-    static_folder = os.path.join(project_root, "frontend", "static")
+    project_root = Path(__file__).resolve().parent.parent
+    template_folder = project_root / "frontend" / "templates"
+    static_folder = project_root / "frontend" / "static"
 
     app = Flask(
         __name__,
-        template_folder=template_folder,
-        static_folder=static_folder
+        root_path=str(project_root),
+        template_folder=str(template_folder),
+        static_folder=str(static_folder)
     )
+
+    # Multi-path Jinja loader to guarantee reliable template discovery across environments
+    template_search_paths = [
+        str(template_folder),
+        str(Path.cwd() / "frontend" / "templates"),
+        str(Path("/var/task") / "frontend" / "templates"),
+    ]
+    unique_paths = []
+    for p in template_search_paths:
+        if p not in unique_paths and os.path.isdir(p):
+            unique_paths.append(p)
+    if not unique_paths:
+        unique_paths.append(str(template_folder))
+
+    app.jinja_loader = jinja2.FileSystemLoader(unique_paths)
 
     app.config.update(
         SECRET_KEY=config.SECRET_KEY,
