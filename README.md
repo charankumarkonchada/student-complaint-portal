@@ -1,42 +1,121 @@
-# IntelliHostel — Modular Multi-Contributor Complaint Portal
+# IntelliHostel — Modular Student Complaint Portal
 
-An enterprise-grade, AI-assisted Student Hostel Complaint Management System designed for RGUKT. Restructured into a clean, modular 6-member team architecture operating under a **File-Distribution + Admin-Integration** workflow.
-
----
-
-## 👥 Team 15 Member Assignments & Ownership
-
-| Team Member | ID | Role / Module Ownership | Assigned Feature Folders |
-| :--- | :--- | :--- | :--- |
-| **R. Charan Kumar** | `OXXXXXX` | Admin Login, Admin Logout, Manage Complaints, Update Status, 404 Error Page | `routes/charan/`<br>`templates/charan/`<br>`static/css/charan/`<br>`static/js/charan/` |
-| **K. Charankumar** | `OXXXXXX` | Admin Dashboard, Analytics Dashboard, Export Reports (PDF/Excel), **Project Admin & Integration Owner** | `routes/charankumar/`<br>`templates/charankumar/`<br>`static/css/charankumar/`<br>`static/js/charankumar/`<br>+ Shared Infrastructure |
-| **B. Jagan** | `OXXXXXX` | Home Page, Add Complaint, Complaint History, View Complaint Details | `routes/jagan/`<br>`templates/jagan/`<br>`static/css/jagan/`<br>`static/js/jagan/` |
-| **M. Rushmitha** | `OXXXXXX` | Student Registration, Edit Complaint, Delete Complaint, Student Profile | `routes/rushmitha/`<br>`templates/rushmitha/`<br>`static/css/rushmitha/`<br>`static/js/rushmitha/` |
-| **K. Deepthi** | `OXXXXXX` | Student Login, Logout, Forgot Password, OTP Verification, Reset Password, Change Password, Notifications | `routes/deepthi/`<br>`templates/deepthi/`<br>`static/css/deepthi/`<br>`static/js/deepthi/` |
-| **K. Vennela** | `OXXXXXX` | Student Dashboard, Recent Activity, 500 Server Error Page | `routes/vennela/`<br>`templates/vennela/`<br>`static/css/vennela/`<br>`static/js/vennela/` |
+An enterprise-grade, AI-assisted Student Hostel Complaint Management System designed for RGUKT. Built with Flask, PostgreSQL (via Supabase), Supabase Object Storage, Gmail SMTP, and Scikit-Learn NLP.
 
 ---
 
-## 🔄 File-Distribution + Admin-Integration Workflow
+## 📁 Production Directory Structure
 
-Under this collaboration model:
-1. **K. Charankumar distributes assigned files** to each collaborator from `TEAM_FILE_DISTRIBUTION/<MEMBER_NAME>/`.
-2. Collaborators **modify only their assigned feature files** locally.
-3. Collaborators do **not** push branches or open Pull Requests on GitHub.
-4. Collaborators **return their completed files** to K. Charankumar.
-5. K. Charankumar **copies the completed files into the main project**, runs safety checks, and creates **separate, dedicated Git commits** for each member on the `main` branch.
+```text
+student-complaint-portal/
+│
+├── app.py                     # Top-level application entry point (Vercel & local execution)
+├── wsgi.py                    # Production WSGI entry point (Gunicorn)
+├── requirements.txt           # Python dependencies
+├── runtime.txt                # Python runtime specification
+├── Procfile                   # Process definition for deployment platforms
+├── Dockerfile                 # Container image specification
+├── docker-compose.yml         # Container orchestration configuration
+├── gunicorn.conf.py           # Production Gunicorn worker settings
+├── .gitignore                 # Git ignore rules
+├── .env.example               # Environment template
+├── README.md                  # Project overview
+│
+├── frontend/
+│   ├── templates/             # Jinja2 HTML templates
+│   │   ├── base.html          # Base layout template
+│   │   ├── public/            # Public-facing views (index.html)
+│   │   ├── student/           # Student portals (login, register, dashboard, complaints, etc.)
+│   │   ├── admin/             # Admin portals (admin_login, dashboard, manage, analytics, etc.)
+│   │   └── errors/            # HTTP error handlers (404.html, 500.html)
+│   │
+│   └── static/                # Static assets
+│       ├── css/               # Modular CSS and global style.css
+│       ├── js/                # Modular JavaScript and global script.js
+│       ├── images/            # SVGs, icons, branding
+│       └── uploads/           # Local development upload directory (.gitkeep)
+│
+├── backend/
+│   ├── __init__.py            # Backend package root
+│   ├── app.py                 # Core Flask application factory (create_app)
+│   ├── config/                # Centralized configuration settings
+│   │   ├── __init__.py
+│   │   └── settings.py
+│   ├── database/              # Database adapters, schema bootstrap & queries
+│   │   ├── __init__.py
+│   │   ├── db.py
+│   │   ├── queries.py
+│   │   └── create_db.py
+│   ├── routes/                # Modular blueprint route packages
+│   │   ├── __init__.py
+│   │   ├── charan/            # Admin login, manage complaints, update status, common issues
+│   │   ├── charankumar/       # Admin dashboard, analytics, export reports
+│   │   ├── jagan/             # Public home, add complaint, complaint history, view complaint
+│   │   ├── rushmitha/         # Register, edit complaint, student profile
+│   │   ├── deepthi/           # Student login, password reset flow, notifications
+│   │   └── vennela/           # Student dashboard, activity log
+│   ├── services/              # Business & infrastructure services
+│   │   ├── __init__.py
+│   │   ├── auth_service.py
+│   │   ├── common_issue_service.py
+│   │   ├── csrf_service.py
+│   │   ├── email_service.py
+│   │   ├── notification_service.py
+│   │   └── storage_service.py
+│   └── utils/                 # Utility helpers
+│       └── __init__.py
+│
+├── ml/
+│   ├── __init__.py            # Machine Learning engine package
+│   ├── ml_engine.py           # NLP classifier, Ridge regression, duplicate detection
+│   └── models/                # ML model artifacts (.gitkeep)
+│
+├── data/
+│   ├── training_data.csv      # Training dataset for AI models
+│   └── README.md              # Dataset documentation
+│
+├── tests/
+│   ├── conftest.py            # Global test fixtures & test safety guards
+│   ├── test_archived_notifications.py
+│   ├── test_common_issues.py
+│   ├── test_e2e_workflows.py
+│   ├── test_email_isolation_regression.py
+│   ├── test_email_notifications.py
+│   ├── test_forgot_password.py
+│   ├── test_logout_confirmation.py
+│   ├── test_password_visibility.py
+│   └── test_theme_system.py
+│
+├── docs/
+│   ├── diagrams/              # Architectural diagrams
+│   │   ├── uml/
+│   │   └── dfd/
+│   ├── deployment/            # Deployment and operational guides
+│   │   ├── CLOUD_DEPLOYMENT.md
+│   │   ├── EMAIL_SETUP.md
+│   │   └── RUN_PROJECT.md
+│   ├── architecture/          # Architecture overview
+│   │   └── SYSTEM_ARCHITECTURE.md
+│   └── project-documentation/ # Project guides and documentation
+│
+└── scripts/
+    ├── development/           # Development convenience scripts (run_dev.sh)
+    ├── database/              # Database bootstrap scripts (init_db.py)
+    └── maintenance/           # Maintenance and cleanup tasks (group_common_issues.py)
+```
 
 ---
 
-## 📚 Team Documentation Directory
+## 👥 Team Module Ownership
 
-| Guide | Purpose | Primary Audience |
-| :--- | :--- | :--- |
-| [MEMBER_FILE_INSTRUCTIONS.md](MEMBER_FILE_INSTRUCTIONS.md) | Simple instructions for members receiving, modifying, and returning their assigned files. | Team Collaborators |
-| [ADMIN_FILE_INTEGRATION_GUIDE.md](ADMIN_FILE_INTEGRATION_GUIDE.md) | Step-by-step instructions for Charankumar to copy, test, and commit each member's files separately. | K. Charankumar (Admin) |
-| [TEAM_OWNERSHIP.md](TEAM_OWNERSHIP.md) | Definitive feature assignment, directory ownership, and commit message matrix. | All Team Members |
-| [SHARED_FILES.md](SHARED_FILES.md) | Full registry of shared infrastructure files owned exclusively by K. Charankumar. | All Team Members |
-| [RUN_PROJECT.md](RUN_PROJECT.md) | Local environment setup, dependencies, `.env` config, database setup, and startup. | All Team Members |
+| Team Member | Role / Feature Ownership | Backend Routes | Templates | Static Assets |
+| :--- | :--- | :--- | :--- | :--- |
+| **R. Charan Kumar** | Admin Login, Manage Complaints, Update Status, Common Issues, 404 Page | `backend/routes/charan/` | `frontend/templates/admin/`, `frontend/templates/errors/` | `frontend/static/{css,js}/charan/` |
+| **K. Charankumar** | Admin Dashboard, Analytics Dashboard, Reports Export, **Project Integration** | `backend/routes/charankumar/` | `frontend/templates/admin/` | `frontend/static/{css,js}/charankumar/` |
+| **B. Jagan** | Home Page, Add Complaint, Complaint History, View Complaint Details | `backend/routes/jagan/` | `frontend/templates/public/`, `frontend/templates/student/` | `frontend/static/{css,js}/jagan/` |
+| **M. Rushmitha** | Student Registration, Edit Complaint, Delete Complaint, Student Profile | `backend/routes/rushmitha/` | `frontend/templates/student/` | `frontend/static/{css,js}/rushmitha/` |
+| **K. Deepthi** | Student Login, Password Reset (OTP), Notifications | `backend/routes/deepthi/` | `frontend/templates/student/` | `frontend/static/{css,js}/deepthi/` |
+| **K. Vennela** | Student Dashboard, Activity Feed, 500 Error Page | `backend/routes/vennela/` | `frontend/templates/student/`, `frontend/templates/errors/` | `frontend/static/{css,js}/vennela/` |
 
 ---
 
@@ -55,9 +134,20 @@ pip install -r requirements.txt
 cp .env.example .env
 
 # 4. Initialize database
-python3 database/create_db.py
+python3 scripts/database/init_db.py
 
 # 5. Launch server
 python3 app.py
 ```
 Open `http://127.0.0.1:5000` in your web browser.
+
+---
+
+## 🧪 Running Automated Tests
+
+Run the complete test suite:
+```bash
+pytest -q
+# OR
+python3 -m unittest discover tests
+```

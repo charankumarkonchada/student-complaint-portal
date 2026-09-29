@@ -11,7 +11,7 @@ if BASE_DIR not in sys.path:
 os.environ["TESTING"] = "1"
 os.environ["FLASK_ENV"] = "testing"
 
-import config
+import backend.config as config
 import smtplib
 
 

@@ -12,7 +12,7 @@ if os.path.exists(venv_site) and venv_site not in sys.path:
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-import config
+import backend.config as config
 
 # Force isolated SQLite test database
 TEST_DB_PATH = os.path.join(BASE_DIR, "test_forgot_password.db")
@@ -22,9 +22,9 @@ config.SECRET_KEY = "test-forgot-secret-key-123"
 
 os.environ["TESTING"] = "1"
 from app import create_app
-from database.db import get_db_connection
-from database.queries import init_database
-from services.auth_service import hash_reset_token
+from backend.database.db import get_db_connection
+from backend.database.queries import init_database
+from backend.services.auth_service import hash_reset_token
 
 class TestForgotPasswordWorkflow(unittest.TestCase):
     @classmethod
@@ -287,7 +287,7 @@ class TestForgotPasswordWorkflow(unittest.TestCase):
         self.assertIn('id="submitBtn"', html)
 
         # JS client script
-        js_path = os.path.join(BASE_DIR, "static", "js", "deepthi", "forgot_password.js")
+        js_path = os.path.join(BASE_DIR, "frontend", "static", "js", "deepthi", "forgot_password.js")
         with open(js_path, "r", encoding="utf-8") as f:
             js = f.read()
 
@@ -317,7 +317,7 @@ class TestForgotPasswordWorkflow(unittest.TestCase):
 
     def test_13_otp_input_css_styles_both_themes(self):
         """Test 13: Verify OTP CSS definitions for readable text and dark theme overrides."""
-        css_path = os.path.join(BASE_DIR, "static", "css", "deepthi", "verify_reset_otp.css")
+        css_path = os.path.join(BASE_DIR, "frontend", "static", "css", "deepthi", "verify_reset_otp.css")
         with open(css_path, "r", encoding="utf-8") as f:
             css = f.read()
 
@@ -331,7 +331,7 @@ class TestForgotPasswordWorkflow(unittest.TestCase):
         self.assertIn("[data-theme=\"dark\"] .otp-verify-card", css)
 
         # Check style.css theme dark mappings
-        style_css_path = os.path.join(BASE_DIR, "static", "css", "style.css")
+        style_css_path = os.path.join(BASE_DIR, "frontend", "static", "css", "style.css")
         with open(style_css_path, "r", encoding="utf-8") as f:
             style_css = f.read()
 
@@ -383,7 +383,7 @@ class TestForgotPasswordWorkflow(unittest.TestCase):
         self.assertIn('value="0221168@rguktong.ac.in"', err_html)
 
         # 3. Component CSS: forgot_password.css
-        css_path = os.path.join(BASE_DIR, "static", "css", "deepthi", "forgot_password.css")
+        css_path = os.path.join(BASE_DIR, "frontend", "static", "css", "deepthi", "forgot_password.css")
         with open(css_path, "r", encoding="utf-8") as f:
             css = f.read()
 
@@ -395,7 +395,7 @@ class TestForgotPasswordWorkflow(unittest.TestCase):
         self.assertIn("[data-theme=\"dark\"] .recovery-input::placeholder", css)
 
         # 4. Global CSS: style.css
-        style_path = os.path.join(BASE_DIR, "static", "css", "style.css")
+        style_path = os.path.join(BASE_DIR, "frontend", "static", "css", "style.css")
         with open(style_path, "r", encoding="utf-8") as f:
             style = f.read()
 

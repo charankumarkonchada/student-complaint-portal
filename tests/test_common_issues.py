@@ -13,7 +13,7 @@ if os.path.exists(venv_site) and venv_site not in sys.path:
 
 from werkzeug.security import generate_password_hash
 
-import config
+import backend.config as config
 
 # Force isolated SQLite test database
 TEST_DB_PATH = os.path.join(BASE_DIR, "test_database.db")
@@ -23,9 +23,9 @@ config.SECRET_KEY = "test-secret-key-123"
 
 os.environ["TESTING"] = "1"
 from app import create_app
-from database.db import get_db_connection
-from database.queries import init_database
-from services.common_issue_service import (
+from backend.database.db import get_db_connection
+from backend.database.queries import init_database
+from backend.services.common_issue_service import (
     create_common_issue,
     find_matching_common_issue,
     update_common_issue_once,

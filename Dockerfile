@@ -24,7 +24,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY . .
 
 # Create uploads directory and non-privileged user for security
-RUN mkdir -p /app/static/uploads && \
+RUN mkdir -p /app/frontend/static/uploads && \
     useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app
 

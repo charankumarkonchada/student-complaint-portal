@@ -19,6 +19,8 @@ __pycache__/
 database.db
 static/uploads/*
 !static/uploads/.gitkeep
+frontend/static/uploads/*
+!frontend/static/uploads/.gitkeep
 
 # Logs and OS files
 *.log
@@ -34,3 +36,4 @@ test_database.db-wal
 test_*.db
 test_*.db-shm
 test_*.db-wal
+.env.save

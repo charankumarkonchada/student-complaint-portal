@@ -6,10 +6,10 @@ class TestThemeSystem(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
         self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.base_html_path = os.path.join(self.base_dir, 'templates', 'base.html')
-        self.style_css_path = os.path.join(self.base_dir, 'static', 'css', 'style.css')
-        self.script_js_path = os.path.join(self.base_dir, 'static', 'js', 'script.js')
-        self.charts_js_path = os.path.join(self.base_dir, 'static', 'js', 'charankumar', 'charts.js')
+        self.base_html_path = os.path.join(self.base_dir, 'frontend', 'templates', 'base.html')
+        self.style_css_path = os.path.join(self.base_dir, 'frontend', 'static', 'css', 'style.css')
+        self.script_js_path = os.path.join(self.base_dir, 'frontend', 'static', 'js', 'script.js')
+        self.charts_js_path = os.path.join(self.base_dir, 'frontend', 'static', 'js', 'charankumar', 'charts.js')
 
     def test_anti_fout_script_in_head(self):
         """Verify the synchronous anti-FOUT script is in <head> before stylesheets."""

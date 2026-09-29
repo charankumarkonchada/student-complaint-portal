@@ -11,7 +11,7 @@ venv_site = os.path.join(BASE_DIR, ".venv", "lib", "python3.13", "site-packages"
 if os.path.exists(venv_site) and venv_site not in sys.path:
     sys.path.append(venv_site)
 
-import config
+import backend.config as config
 
 TEST_EMAIL_DB = os.path.join(BASE_DIR, "test_email.db")
 config.DATABASE_URL = ""
@@ -20,9 +20,9 @@ config.SECRET_KEY = "test-email-notifications-secret"
 
 os.environ["TESTING"] = "1"
 from app import create_app
-from database.db import get_db_connection
-from database.queries import init_database
-from services.email_service import (
+from backend.database.db import get_db_connection
+from backend.database.queries import init_database
+from backend.services.email_service import (
     send_email,
     send_otp_email,
     send_complaint_status_email,
@@ -30,7 +30,7 @@ from services.email_service import (
     send_common_issue_broadcast_emails,
     send_complaint_submitted_email
 )
-from services.common_issue_service import update_common_issue_once
+from backend.services.common_issue_service import update_common_issue_once
 
 
 class EmailNotificationTestSuite(unittest.TestCase):
@@ -147,7 +147,7 @@ class EmailNotificationTestSuite(unittest.TestCase):
         with self.client.session_transaction() as sess:
             sess["admin"] = config.ADMIN_USERNAME
 
-        with patch("services.email_service.send_email", return_value=True) as mock_send_email:
+        with patch("backend.services.email_service.send_email", return_value=True) as mock_send_email:
             res = self.client.post("/update_status/1", data={
                 "status": "Resolved",
                 "assigned_to": "Plumber Rajesh",
@@ -176,7 +176,7 @@ class EmailNotificationTestSuite(unittest.TestCase):
         with self.client.session_transaction() as sess:
             sess["admin"] = config.ADMIN_USERNAME
 
-        with patch("services.email_service.send_complaint_status_email", side_effect=RuntimeError("SMTP crash")):
+        with patch("backend.services.email_service.send_complaint_status_email", side_effect=RuntimeError("SMTP crash")):
             res = self.client.post("/update_status/1", data={
                 "status": "In Progress",
                 "assigned_to": "Technician Anand",
@@ -207,7 +207,7 @@ class EmailNotificationTestSuite(unittest.TestCase):
             VALUES ('CI-999', 'Water Pressure Failure', 'Water', 'Hostel Block A', 'Pending')
             """
         )
-        from database.db import ConnectionAdapter
+        from backend.database.db import ConnectionAdapter
         ci_id = cur.fetchone()["id"] if isinstance(conn, ConnectionAdapter) else cur.lastrowid
 
         # Insert 2 complaints for Student 1 and 1 complaint for Student 2
@@ -238,7 +238,7 @@ class EmailNotificationTestSuite(unittest.TestCase):
         s2 = conn.execute("SELECT email FROM students WHERE id = 2").fetchone()
         conn.close()
 
-        with patch("services.email_service.send_email", return_value=True) as mock_send_email:
+        with patch("backend.services.email_service.send_email", return_value=True) as mock_send_email:
             affected = update_common_issue_once(
                 common_issue_id=ci_id,
                 status="Resolved",
@@ -265,7 +265,7 @@ class EmailNotificationTestSuite(unittest.TestCase):
             sess["name"] = "Charan"
             sess["hostel"] = "Hostel Block A"
 
-        with patch("services.email_service.send_email", return_value=True) as mock_send_email:
+        with patch("backend.services.email_service.send_email", return_value=True) as mock_send_email:
             res = self.client.post("/add_complaint", data={
                 "category": "Electrical",
                 "priority": "High",
@@ -297,7 +297,7 @@ class EmailNotificationTestSuite(unittest.TestCase):
             sess["role"] = "student"
             sess["name"] = "Charan"
 
-        with patch("services.email_service.send_email") as mock_send:
+        with patch("backend.services.email_service.send_email") as mock_send:
             # 1. View notifications page
             res = self.client.get("/notifications")
             self.assertEqual(res.status_code, 200)

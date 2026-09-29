@@ -7,7 +7,7 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-import config
+import backend.config as config
 import smtplib
 
 TEST_REG_DB = os.path.join(BASE_DIR, "test_regression_email.db")
@@ -17,9 +17,9 @@ config.SECRET_KEY = "test-regression-secret-key"
 
 os.environ["TESTING"] = "1"
 from app import create_app
-from database.db import get_db_connection
-from database.queries import init_database
-from services.email_service import (
+from backend.database.db import get_db_connection
+from backend.database.queries import init_database
+from backend.services.email_service import (
     send_email,
     send_otp_email,
     send_complaint_status_email,
@@ -29,7 +29,7 @@ from services.email_service import (
     is_test_environment,
     is_smtp_mocked,
 )
-from services.common_issue_service import (
+from backend.services.common_issue_service import (
     create_common_issue,
     update_common_issue_once,
 )
@@ -97,7 +97,7 @@ class TestEmailIsolationRegression(unittest.TestCase):
 
             with patch.object(smtplib, "SMTP", side_effect=spy_smtp):
                 # Ensure is_smtp_mocked returns False so we test the unmocked safety branch
-                with patch("services.email_service.is_smtp_mocked", return_value=False):
+                with patch("backend.services.email_service.is_smtp_mocked", return_value=False):
                     res = send_email("o200001@rguktong.ac.in", "Test Subject", "Test Body")
                     self.assertFalse(res, "send_email must return False when suppressed in test mode")
                     self.assertEqual(len(smtp_called), 0, "No SMTP instance should ever be created")
@@ -116,7 +116,7 @@ class TestEmailIsolationRegression(unittest.TestCase):
                 raise AssertionError("smtplib.SMTP was invoked during send_otp_email in test mode!")
 
             with patch.object(smtplib, "SMTP", side_effect=spy_smtp):
-                with patch("services.email_service.is_smtp_mocked", return_value=False):
+                with patch("backend.services.email_service.is_smtp_mocked", return_value=False):
                     # Should return None safely and NOT raise or call SMTP
                     send_otp_email("o200001@rguktong.ac.in", "123456")
                     self.assertEqual(len(smtp_called), 0, "No SMTP instance should ever be created for OTP")
@@ -136,7 +136,7 @@ class TestEmailIsolationRegression(unittest.TestCase):
             raise AssertionError("smtplib.SMTP was invoked during complaint submission!")
 
         with patch.object(smtplib, "SMTP", side_effect=spy_smtp):
-            with patch("services.email_service.is_smtp_mocked", return_value=False):
+            with patch("backend.services.email_service.is_smtp_mocked", return_value=False):
                 res = self.client.post("/add_complaint", data={
                     "category": "Plumbing",
                     "priority": "Medium",
@@ -184,7 +184,7 @@ class TestEmailIsolationRegression(unittest.TestCase):
             raise AssertionError("smtplib.SMTP was invoked during Common Issue broadcast!")
 
         with patch.object(smtplib, "SMTP", side_effect=spy_smtp):
-            with patch("services.email_service.is_smtp_mocked", return_value=False):
+            with patch("backend.services.email_service.is_smtp_mocked", return_value=False):
                 affected = update_common_issue_once(
                     common_issue_id=ci_id,
                     status="Resolved",
@@ -261,7 +261,7 @@ class TestEmailIsolationRegression(unittest.TestCase):
     def test_c2_is_smtp_mocked_detection_accuracy(self):
         """Proves is_smtp_mocked() reliably distinguishes between real smtplib and unittest.mock."""
         # Unmocked state
-        with patch("services.email_service.smtplib.SMTP", smtplib.SMTP):
+        with patch("backend.services.email_service.smtplib.SMTP", smtplib.SMTP):
             self.assertFalse(is_smtp_mocked(), "Real smtplib.SMTP must not be identified as mocked")
 
         # Mocked state

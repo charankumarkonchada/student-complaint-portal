@@ -14,7 +14,7 @@ if os.path.exists(venv_site) and venv_site not in sys.path:
 
 from werkzeug.security import generate_password_hash
 
-import config
+import backend.config as config
 
 # Force isolated SQLite test database
 TEST_DB_PATH = os.path.join(BASE_DIR, "test_e2e.db")
@@ -24,9 +24,9 @@ config.SECRET_KEY = "test-e2e-secret-key-456"
 
 os.environ["TESTING"] = "1"
 from app import create_app
-from database.db import get_db_connection
-from database.queries import init_database
-from services.common_issue_service import (
+from backend.database.db import get_db_connection
+from backend.database.queries import init_database
+from backend.services.common_issue_service import (
     create_common_issue,
     update_common_issue_once,
     associate_complaint_to_common_issue,
@@ -389,7 +389,7 @@ class TestIntelliHostelE2EWorkflows(unittest.TestCase):
     # =========================================================================
     def test_10_notifications_and_read_isolation(self):
         """Test that per-student read status is completely isolated and Mark All as Read works after single read."""
-        from database.queries import unread_count
+        from backend.database.queries import unread_count
         from flask import session as flask_sess
 
         conn = get_db_connection()

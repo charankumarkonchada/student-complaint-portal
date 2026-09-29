@@ -12,7 +12,7 @@ services:
     env_file:
       - .env
     volumes:
-      - uploads_data:/app/static/uploads
+      - uploads_data:/app/frontend/static/uploads
       - sqlite_data:/app/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/"]

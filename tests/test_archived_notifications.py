@@ -11,7 +11,7 @@ venv_site = os.path.join(BASE_DIR, ".venv", "lib", "python3.13", "site-packages"
 if os.path.exists(venv_site) and venv_site not in sys.path:
     sys.path.append(venv_site)
 
-import config
+import backend.config as config
 
 TEST_DB_PATH = os.path.join(BASE_DIR, "test_notifications.db")
 config.DATABASE_URL = ""
@@ -20,16 +20,16 @@ config.SECRET_KEY = "test-notifications-secret-123"
 
 os.environ["TESTING"] = "1"
 from app import create_app
-from database.db import get_db_connection
-from database.queries import init_database
-from services.notification_service import (
+from backend.database.db import get_db_connection
+from backend.database.queries import init_database
+from backend.services.notification_service import (
     get_student_notifications,
     archive_single_notification,
     unarchive_single_notification,
     archive_all_read_notifications,
     auto_archive_notifications,
 )
-from services.common_issue_service import (
+from backend.services.common_issue_service import (
     create_common_issue,
     associate_complaint_to_common_issue,
 )

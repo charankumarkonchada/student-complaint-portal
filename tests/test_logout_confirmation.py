@@ -12,11 +12,11 @@ if os.path.exists(venv_site) and venv_site not in sys.path:
     sys.path.append(venv_site)
 
 from werkzeug.security import generate_password_hash
-import config
+import backend.config as config
 os.environ["TESTING"] = "1"
 from app import create_app
-from database.db import get_db_connection
-from database.queries import init_database
+from backend.database.db import get_db_connection
+from backend.database.queries import init_database
 
 TEST_DB_PATH = os.path.join(BASE_DIR, "test_logout_confirm.db")
 
