@@ -31,8 +31,12 @@ SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
 MAIL_FROM = os.environ.get('MAIL_FROM', '') or SMTP_USERNAME
 SMTP_USE_TLS = os.environ.get('SMTP_USE_TLS', '1').lower() in {'1', 'true', 'yes', 'on'}
 _default_email_enabled = '0' if os.environ.get('TESTING', '').strip().lower() in {'1', 'true', 'yes'} else '1'
-EMAIL_NOTIFICATIONS_ENABLED = os.environ.get('EMAIL_NOTIFICATIONS_ENABLED', _default_email_enabled).lower() in {'1', 'true', 'yes', 'on'}
-APP_BASE_URL = os.environ.get('APP_BASE_URL', 'http://127.0.0.1:5000').rstrip('/')
+DEFAULT_APP_BASE_URL = (
+    'https://student-complaint-portal-beta.vercel.app'
+    if IS_PRODUCTION or os.environ.get('VERCEL') == '1'
+    else 'http://127.0.0.1:5000'
+)
+APP_BASE_URL = os.environ.get('APP_BASE_URL', DEFAULT_APP_BASE_URL).rstrip('/')
 ALLOW_SQLITE_FALLBACK = os.environ.get('ALLOW_SQLITE_FALLBACK', '1' if not IS_PRODUCTION else '0').lower() in {'1', 'true', 'yes', 'on'}
 ALLOW_LOCAL_STORAGE_FALLBACK = os.environ.get('ALLOW_LOCAL_STORAGE_FALLBACK', '1' if not IS_PRODUCTION else '0').lower() in {'1', 'true', 'yes', 'on'}
 NOTIFICATION_RETENTION_DAYS = max(1, int(os.environ.get('NOTIFICATION_RETENTION_DAYS', '30')))

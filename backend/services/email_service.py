@@ -5,6 +5,7 @@ import logging
 from email.message import EmailMessage
 from typing import Optional, Any
 import backend.config as config
+from backend.utils.url_helper import build_public_url
 
 logger = logging.getLogger(__name__)
 
@@ -219,6 +220,8 @@ def send_complaint_status_email(
     assigned_line = f"Assigned Technician/Staff: {assigned_to.strip()}\n" if assigned_to else ""
     remarks_line = f"Administration Remarks: {remarks.strip()}\n" if remarks else ""
 
+    complaint_url = build_public_url(f"/complaint/{complaint_id}")
+
     text_body = (
         f"Dear {name},\n\n"
         f"Your hostel complaint has been updated:\n\n"
@@ -228,7 +231,7 @@ def send_complaint_status_email(
         f"{assigned_line}"
         f"{remarks_line}\n"
         f"Please log in to the IntelliHostel portal to view the complete details and tracking history:\n"
-        f"{config.APP_BASE_URL}/complaint/{complaint_id}\n\n"
+        f"{complaint_url}\n\n"
         f"Regards,\n"
         f"IntelliHostel Administration\n"
         f"{config.COLLEGE_NAME}\n"
@@ -278,7 +281,7 @@ def send_complaint_status_email(
             {"<div class='field-label'>Admin Remarks</div><div class='field-val'>" + remarks + "</div>" if remarks else ""}
           </div>
           
-          <a href="{config.APP_BASE_URL}/complaint/{complaint_id}" class="btn">View Complaint in Portal</a>
+          <a href="{complaint_url}" class="btn">View Complaint in Portal</a>
         </div>
         <div class="footer">
           IntelliHostel Complaint System • {config.COLLEGE_NAME}<br>
@@ -312,6 +315,8 @@ def send_common_issue_status_email(
     assigned_line = f"Assigned Technician/Staff: {assigned_to.strip()}\n" if assigned_to else ""
     remarks_line = f"Admin Remark:\n{remarks.strip()}\n" if remarks else ""
 
+    notifications_url = build_public_url("/notifications")
+
     text_body = (
         f"Dear {name},\n\n"
         f"Your hostel complaint associated with:\n\n"
@@ -321,7 +326,7 @@ def send_common_issue_status_email(
         f"{assigned_line}"
         f"{remarks_line}"
         f"Please log in to IntelliHostel to view the complete details:\n"
-        f"{config.APP_BASE_URL}/notifications\n\n"
+        f"{notifications_url}\n\n"
         f"Regards,\n"
         f"IntelliHostel Administration\n"
         f"{config.COLLEGE_NAME}\n"
@@ -371,7 +376,7 @@ def send_common_issue_status_email(
             {"<div class='field-label'>Admin Remark</div><div class='field-val'>" + remarks + "</div>" if remarks else ""}
           </div>
           
-          <a href="{config.APP_BASE_URL}/notifications" class="btn">View Notifications in Portal</a>
+          <a href="{notifications_url}" class="btn">View Notifications in Portal</a>
         </div>
         <div class="footer">
           IntelliHostel Common Issues Engine • {config.COLLEGE_NAME}<br>
@@ -466,6 +471,8 @@ def send_complaint_submitted_email(
     name = student_name.strip() if student_name else "Student"
     est_line = f"Estimated Resolution Time: {estimated_days:.1f} days\n" if estimated_days is not None else ""
 
+    complaint_url = build_public_url(f"/complaint/{complaint_id}")
+
     text_body = (
         f"Dear {name},\n\n"
         f"Your hostel complaint has been successfully recorded in the IntelliHostel portal:\n\n"
@@ -476,7 +483,7 @@ def send_complaint_submitted_email(
         f"{est_line}\n"
         f"You will receive portal notifications and emails as hostel administration updates your ticket.\n\n"
         f"View your complaint status:\n"
-        f"{config.APP_BASE_URL}/complaint/{complaint_id}\n\n"
+        f"{complaint_url}\n\n"
         f"Regards,\n"
         f"IntelliHostel Administration\n"
         f"{config.COLLEGE_NAME}\n"

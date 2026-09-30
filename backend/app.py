@@ -48,6 +48,7 @@ def create_app():
         PERMANENT_SESSION_LIFETIME=config.PERMANENT_SESSION_LIFETIME,
         TESTING=os.environ.get("TESTING", "0").lower() in {"1", "true", "yes"},
         APP_ENV=config.APP_ENV,
+        APP_BASE_URL=config.APP_BASE_URL,
         WTF_CSRF_ENABLED=True,
     )
 

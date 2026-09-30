@@ -31,6 +31,7 @@ from backend.services.email_service import (
     send_complaint_submitted_email
 )
 from backend.services.common_issue_service import update_common_issue_once
+from backend.utils.url_helper import build_public_url, get_app_base_url
 
 
 class EmailNotificationTestSuite(unittest.TestCase):
@@ -362,6 +363,145 @@ class EmailNotificationTestSuite(unittest.TestCase):
                 self.assertEqual(sent_msg["From"], expected_email)
                 self.assertEqual(sent_msg["To"], "student@rguktong.ac.in")
                 mock_instance.login.assert_called_once_with(expected_email, "mock-app-password")
+
+    def test_13_url_builder_production_and_local(self):
+        """Regression test: build_public_url outputs public Vercel URL in prod and localhost in dev."""
+        # 1. Production environment
+        with patch.dict(os.environ, {"APP_BASE_URL": "https://student-complaint-portal-beta.vercel.app"}):
+            prod_url = build_public_url("/complaint/14")
+            self.assertEqual(prod_url, "https://student-complaint-portal-beta.vercel.app/complaint/14")
+
+        # 2. Local development environment
+        with patch.dict(os.environ, {"APP_BASE_URL": "http://127.0.0.1:5000"}):
+            local_url = build_public_url("/complaint/14")
+            self.assertEqual(local_url, "http://127.0.0.1:5000/complaint/14")
+
+    def test_14_url_builder_no_double_slash_and_slash_normalization(self):
+        """Verify URL helper normalizes leading and trailing slashes without double slashes."""
+        # Trailing slash on base, leading slash on path
+        with patch.dict(os.environ, {"APP_BASE_URL": "https://student-complaint-portal-beta.vercel.app/"}):
+            url1 = build_public_url("/complaint/14")
+            self.assertEqual(url1, "https://student-complaint-portal-beta.vercel.app/complaint/14")
+            self.assertNotIn(".app//", url1)
+
+            # Multiple leading slashes on path
+            url2 = build_public_url("///complaint/14")
+            self.assertEqual(url2, "https://student-complaint-portal-beta.vercel.app/complaint/14")
+
+            # Path without leading slash
+            url3 = build_public_url("complaint/14")
+            self.assertEqual(url3, "https://student-complaint-portal-beta.vercel.app/complaint/14")
+
+            # Empty path returns clean base URL
+            url4 = build_public_url("")
+            self.assertEqual(url4, "https://student-complaint-portal-beta.vercel.app")
+
+    def test_15_production_complaint_status_email_contains_public_url_and_no_localhost(self):
+        """
+        Verify that send_complaint_status_email in production generates links pointing to
+        the public Vercel deployment and never contains localhost / 127.0.0.1.
+        """
+        with patch.dict(os.environ, {"APP_BASE_URL": "https://student-complaint-portal-beta.vercel.app"}):
+            with patch("backend.services.email_service.send_email", return_value=True) as mock_send:
+                send_complaint_status_email(
+                    student_name="Charan",
+                    student_email="o210001@rguktong.ac.in",
+                    complaint_id=14,
+                    complaint_title="Ceiling fan motor defective",
+                    new_status="In Progress",
+                    remarks="Technician dispatched to Room 101",
+                    assigned_to="Electrical Team"
+                )
+
+                mock_send.assert_called_once()
+                kwargs = mock_send.call_args.kwargs
+                text_body = kwargs.get("text_body")
+                html_body = kwargs.get("html_body")
+
+                expected_link = "https://student-complaint-portal-beta.vercel.app/complaint/14"
+
+                # Check text body
+                self.assertIn(expected_link, text_body)
+                self.assertNotIn("127.0.0.1", text_body)
+                self.assertNotIn("localhost", text_body)
+
+                # Check HTML body
+                self.assertIn(f'href="{expected_link}"', html_body)
+                self.assertNotIn("127.0.0.1", html_body)
+                self.assertNotIn("localhost", html_body)
+
+                # Confirm complaint ID is included correctly
+                self.assertIn("/complaint/14", text_body)
+                self.assertIn("/complaint/14", html_body)
+
+                # Confirm no double slash
+                self.assertNotIn(".app//", text_body)
+                self.assertNotIn(".app//", html_body)
+
+    def test_16_production_complaint_submission_email_contains_public_url_and_no_localhost(self):
+        """Verify that send_complaint_submitted_email in production uses public Vercel URL and no localhost."""
+        with patch.dict(os.environ, {"APP_BASE_URL": "https://student-complaint-portal-beta.vercel.app"}):
+            with patch("backend.services.email_service.send_email", return_value=True) as mock_send:
+                send_complaint_submitted_email(
+                    student_name="Charan",
+                    student_email="o210001@rguktong.ac.in",
+                    complaint_id=14,
+                    title="Ceiling fan motor defective",
+                    category="Electrical",
+                    priority="High",
+                    estimated_days=2.0
+                )
+
+                mock_send.assert_called_once()
+                kwargs = mock_send.call_args.kwargs
+                text_body = kwargs.get("text_body")
+
+                expected_link = "https://student-complaint-portal-beta.vercel.app/complaint/14"
+
+                self.assertIn(expected_link, text_body)
+                self.assertNotIn("127.0.0.1", text_body)
+                self.assertNotIn("localhost", text_body)
+                self.assertNotIn(".app//", text_body)
+
+    def test_17_production_common_issue_broadcast_email_contains_public_url_and_no_localhost(self):
+        """Verify that send_common_issue_status_email in production uses public notifications link and no localhost."""
+        with patch.dict(os.environ, {"APP_BASE_URL": "https://student-complaint-portal-beta.vercel.app"}):
+            with patch("backend.services.email_service.send_email", return_value=True) as mock_send:
+                send_common_issue_status_email(
+                    student_name="Deepthi",
+                    student_email="o210002@rguktong.ac.in",
+                    issue_code="CI-001",
+                    issue_title="Water supply disruption",
+                    hostel="Hostel Block A",
+                    new_status="Resolved",
+                    remarks="Water tank motor repaired.",
+                    assigned_to="Plumbing Team"
+                )
+
+                mock_send.assert_called_once()
+                kwargs = mock_send.call_args.kwargs
+                text_body = kwargs.get("text_body")
+                html_body = kwargs.get("html_body")
+
+                expected_link = "https://student-complaint-portal-beta.vercel.app/notifications"
+
+                self.assertIn(expected_link, text_body)
+                self.assertIn(f'href="{expected_link}"', html_body)
+                self.assertNotIn("127.0.0.1", text_body)
+                self.assertNotIn("127.0.0.1", html_body)
+                self.assertNotIn("localhost", text_body)
+                self.assertNotIn("localhost", html_body)
+
+    def test_18_production_auto_fallback_when_app_base_url_unset(self):
+        """Verify that production environment auto-detects public URL even if APP_BASE_URL is not set."""
+        env_without_app_url = {k: v for k, v in os.environ.items() if k != "APP_BASE_URL"}
+        env_without_app_url["VERCEL"] = "1"
+        with patch.dict(os.environ, env_without_app_url, clear=True):
+            with patch.object(config, "APP_BASE_URL", ""):
+                url = build_public_url("/complaint/14")
+                self.assertEqual(url, "https://student-complaint-portal-beta.vercel.app/complaint/14")
+                self.assertNotIn("127.0.0.1", url)
+                self.assertNotIn("localhost", url)
 
 
 if __name__ == "__main__":
