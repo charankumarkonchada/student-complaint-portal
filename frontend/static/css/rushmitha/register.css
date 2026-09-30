@@ -173,3 +173,18 @@
     color: var(--primary);
     font-weight: 600;
 }
+
+@media (max-width: 480px) {
+    .register-page {
+        padding: 1.5rem 0.75rem;
+    }
+    .register-header {
+        padding: 2rem 1.25rem 1.25rem;
+    }
+    .register-body {
+        padding: 1.5rem 1.25rem;
+    }
+    .register-header h1 {
+        font-size: 1.5rem;
+    }
+}

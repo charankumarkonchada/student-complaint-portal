@@ -199,3 +199,18 @@
     justify-content: center;
     gap: 0.4rem;
 }
+
+@media (max-width: 480px) {
+    .admin-login-page {
+        padding: 1.5rem 0.75rem;
+    }
+    .admin-login-header {
+        padding: 2rem 1.25rem 1rem;
+    }
+    .admin-login-body {
+        padding: 1rem 1.25rem 2rem;
+    }
+    .admin-login-header h1 {
+        font-size: 1.5rem;
+    }
+}

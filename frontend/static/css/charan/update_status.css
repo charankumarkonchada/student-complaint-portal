@@ -171,3 +171,32 @@
     border-color: var(--primary-border) !important;
 }
 
+@media (max-width: 768px) {
+    .update-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.25rem;
+    }
+    .update-back {
+        width: 100%;
+        justify-content: center;
+    }
+    .update-card,
+    .action-form-card {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .update-header {
+        padding: 1rem;
+    }
+    .update-heading h1 {
+        font-size: 1.4rem;
+    }
+    .update-card,
+    .action-form-card {
+        padding: 1.25rem 1rem;
+    }
+}
+

@@ -2,14 +2,21 @@
    IntelliHostel — Landing Page Styles (Deep Navy & Electric Blue SaaS)
    ========================================================================== */
 
-/* Allow landing page to break out of the main-container for full-width sections */
 .home-page {
     position: relative;
     padding-top: 0;
-    /* Break out of .main-container's max-width constraint */
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    width: 100vw;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+@media (min-width: 1200px) {
+    .home-page {
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+        width: 100vw;
+        max-width: 100vw;
+    }
 }
 
 /* Inner content stays within readable max-width */

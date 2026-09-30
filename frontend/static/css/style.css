@@ -251,12 +251,17 @@
 }
 
 html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 body {
+    width: 100%;
+    max-width: 100%;
     margin: 0;
     padding: 0;
     min-height: 100vh;
@@ -279,7 +284,8 @@ body::before {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100vw;
+    width: 100%;
+    max-width: 100%;
     height: 550px;
     background: var(--gradient-hero-glow);
     pointer-events: none;
@@ -292,6 +298,8 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1.25;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 a {
@@ -1298,6 +1306,11 @@ html {
    ========================================================================== */
 
 .table-responsive {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-light);
     background: var(--bg-surface);
@@ -3347,11 +3360,47 @@ html:not([data-theme="dark"]) textarea:-webkit-autofill {
     box-shadow: 0 6px 18px rgba(239, 68, 68, 0.5);
 }
 
-/* Mobile & Tablet Responsiveness */
-@media (max-width: 576px) {
-    .logout-confirm-modal .modal-dialog {
-        margin: 1rem;
+/* ==========================================================================
+   Global Responsive System (IntelliHostel Production Standard)
+   Breakpoints:
+     - Tablet: 768px - 1023px
+     - Large Mobile: 480px - 767px
+     - Small Mobile: 320px - 479px
+   ========================================================================== */
+
+/* Universal element containment */
+img, svg, canvas {
+    max-width: 100%;
+}
+
+/* Modals */
+@media (max-width: 991.98px) {
+    .modal-dialog {
+        margin: 1rem auto;
         max-width: calc(100% - 2rem);
+    }
+}
+
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.75rem auto;
+        max-width: calc(100% - 1.5rem);
+    }
+    .modal-content {
+        border-radius: var(--radius-lg);
+    }
+    .modal-footer {
+        flex-direction: column-reverse;
+        width: 100%;
+        gap: 0.5rem;
+    }
+    .modal-footer > * {
+        width: 100%;
+        margin: 0 !important;
+    }
+    .logout-confirm-modal .modal-dialog {
+        margin: 0.75rem auto;
+        max-width: calc(100% - 1.5rem);
     }
     .logout-modal-content {
         border-radius: var(--radius-lg);
@@ -3365,6 +3414,64 @@ html:not([data-theme="dark"]) textarea:-webkit-autofill {
     .logout-btn-confirm {
         width: 100%;
         min-height: 44px;
+    }
+}
+
+/* Dropdowns Containment */
+.dropdown-menu {
+    max-width: calc(100vw - 2rem);
+    overflow-wrap: break-word;
+}
+
+@media (max-width: 991.98px) {
+    .nav-user-dropdown {
+        width: 100%;
+    }
+    .nav-user-dropdown-btn {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .nav-user-dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        width: 100%;
+        box-shadow: none;
+        border: 1px solid var(--border-light);
+        margin-top: 0.4rem !important;
+    }
+}
+
+/* Page Containers & Padding */
+@media (max-width: 767.98px) {
+    .main-container {
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+    .card-body.p-4 {
+        padding: 1.15rem 1rem !important;
+    }
+    .portal-toast-container {
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: 1rem;
+        max-width: none;
+    }
+}
+
+@media (max-width: 360px) {
+    .main-container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    .portal-navbar-brand .portal-brand-title {
+        font-size: 1rem;
+    }
+    .portal-navbar-brand .portal-logo-img {
+        width: 34px;
+        height: 34px;
+    }
+    .card-body.p-4 {
+        padding: 0.85rem 0.65rem !important;
     }
 }
 

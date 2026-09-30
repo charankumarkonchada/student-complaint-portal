@@ -158,3 +158,19 @@
     -webkit-text-fill-color: var(--text-subtle) !important;
 }
 
+@media (max-width: 480px) {
+    .otp-verify-page {
+        padding: 1.5rem 0.75rem;
+    }
+    .otp-verify-card {
+        padding: 2rem 1.25rem;
+    }
+    .otp-verify-card h2 {
+        font-size: 1.5rem;
+    }
+    .otp-input-control {
+        font-size: 1.4rem;
+        letter-spacing: 0.3rem;
+    }
+}
+

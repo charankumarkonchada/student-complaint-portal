@@ -143,6 +143,72 @@
     color: var(--primary);
 }
 
+/* ==========================================================================
+   Responsive Breakpoints for AI Analytics
+   ========================================================================== */
+@media (max-width: 991.98px) {
+    .analytics-page {
+        padding-top: 0.5rem;
+        padding-bottom: 2rem;
+    }
+    .analytics-header {
+        padding: 1.5rem 1.15rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.25rem;
+    }
+    .analytics-title-wrap {
+        gap: 0.85rem;
+    }
+    .analytics-title-wrap h1 {
+        font-size: 1.35rem;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+    .analytics-header .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .insight-card {
+        padding: 1.25rem 1.15rem;
+    }
+    .insight-val {
+        font-size: 1.95rem;
+    }
+    .chart-card {
+        padding: 1.25rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .analytics-header {
+        padding: 1.15rem 0.85rem;
+    }
+    .analytics-icon-circle {
+        width: 44px;
+        height: 44px;
+        font-size: 1.25rem;
+        border-radius: var(--radius-lg);
+    }
+    .analytics-title-wrap h1 {
+        font-size: 1.2rem;
+    }
+    .insight-card {
+        padding: 1rem 0.85rem;
+    }
+    .insight-val {
+        font-size: 1.7rem;
+    }
+    .chart-card {
+        padding: 1rem 0.75rem;
+    }
+    .chart-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+}
+
 /* Dark Theme Overrides for AI Analytics */
 [data-theme="dark"] .analytics-header {
     background: radial-gradient(circle at top left, rgba(255, 107, 74, 0.15) 0%, #111827 70%) !important;

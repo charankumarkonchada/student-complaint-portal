@@ -304,3 +304,18 @@
         padding: 2.5rem 1.75rem;
     }
 }
+
+@media (max-width: 480px) {
+    .login-page {
+        padding: 1.5rem 0.75rem;
+    }
+    .login-brand {
+        padding: 2rem 1.25rem;
+    }
+    .login-form-panel {
+        padding: 2rem 1.25rem;
+    }
+    .login-heading h2 {
+        font-size: 1.5rem;
+    }
+}

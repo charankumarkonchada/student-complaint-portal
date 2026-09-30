@@ -84,6 +84,12 @@
     margin-bottom: 2rem;
 }
 
+.manage-page .card {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
 /* Pagination */
 .pagination-wrap {
     display: flex;
@@ -147,6 +153,62 @@
     max-height: 85vh;
     border-radius: var(--radius-xl);
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints for Manage Complaints
+   ========================================================================== */
+@media (max-width: 991.98px) {
+    .manage-page {
+        padding-top: 0.5rem;
+        padding-bottom: 2rem;
+    }
+    .manage-header {
+        padding: 1.5rem 1.15rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.25rem;
+    }
+    .manage-heading {
+        gap: 0.85rem;
+    }
+    .manage-heading h1 {
+        font-size: 1.35rem;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+    .manage-header .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0.65rem !important;
+    }
+    .manage-header .d-flex .btn,
+    .manage-back-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .manage-filter-card {
+        padding: 1.15rem 1rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .manage-header {
+        padding: 1.15rem 0.85rem;
+    }
+    .manage-heading-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.25rem;
+        border-radius: var(--radius-lg);
+    }
+    .manage-heading h1 {
+        font-size: 1.2rem;
+    }
+    .manage-filter-card {
+        padding: 1rem 0.85rem;
+    }
 }
 
 /* Dark Mode Overrides */

@@ -659,6 +659,32 @@
     }
 }
 
+@media (max-width: 480px) {
+    .activity-topbar {
+        padding: 16px;
+    }
+
+    .activity-heading h1 {
+        font-size: 1.35rem;
+    }
+
+    .activity-topbar-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-history-link,
+    .btn-back-link {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .timeline-content-card {
+        padding: 16px 14px;
+    }
+}
+
+
 /* ==========================================================================
    Dark Mode Overrides for Activity Stream
    ========================================================================== */
