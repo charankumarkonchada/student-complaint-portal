@@ -352,14 +352,15 @@
     border-radius: var(--radius-xl);
     padding: 1.75rem 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(10, 37, 64, 0.04);
-    transition: all var(--transition-fast);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    will-change: transform;
     height: 100%;
 }
 
 .feature-card:hover {
     border-color: #2563EB;
-    transform: translateY(-3px);
-    box-shadow: 0 12px 24px -4px rgba(10, 37, 64, 0.08);
+    transform: translateY(-4px) !important;
+    box-shadow: 0 10px 20px -3px rgba(10, 37, 64, 0.08);
 }
 
 .feature-icon {
@@ -2256,6 +2257,7 @@
 }
 
 [data-theme="dark"] .feature-card:hover {
+    transform: translateY(-4px) !important;
     border-color: rgba(255, 107, 74, 0.35) !important;
     box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.45), 0 0 20px rgba(255, 107, 74, 0.08) !important;
 }
