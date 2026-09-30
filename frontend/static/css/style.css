@@ -1628,9 +1628,13 @@ html {
         background: var(--bg-surface);
         border: 1px solid var(--border-light);
         border-radius: var(--radius-xl);
-        padding: 1.25rem;
+        padding: 1.15rem 1rem;
         margin-top: 0.75rem;
         box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
     }
     .portal-navbar .portal-nav-links {
         width: 100%;
@@ -1646,35 +1650,115 @@ html {
         border-radius: var(--radius-md);
     }
     .navbar-actions-cluster {
-        width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        min-width: 0 !important;
         margin-top: 0.85rem;
         display: flex;
         flex-direction: column;
         align-items: stretch !important;
         gap: 0.65rem;
     }
-    .navbar-actions-cluster .nav-user-capsule {
-        width: 100%;
-        justify-content: flex-start;
-        padding: 0.45rem 0.85rem;
+    .navbar-actions-cluster .nav-user-dropdown,
+    .nav-user-dropdown {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .navbar-actions-cluster .nav-user-capsule,
+    .nav-user-capsule {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        border-radius: var(--radius-lg, 14px) !important;
+        padding: 0.6rem 0.85rem !important;
+        gap: 0.65rem !important;
+        flex-shrink: 1 !important;
+    }
+    .navbar-actions-cluster .nav-user-details,
+    .nav-user-details {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        text-align: left !important;
+        padding-right: 0.35rem !important;
     }
     .navbar-actions-cluster .nav-user-name,
-    .navbar-actions-cluster .nav-user-role {
-        max-width: none;
+    .nav-user-name {
+        max-width: 100% !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        line-height: 1.25 !important;
+        font-size: 0.88rem !important;
     }
-    .navbar-actions-cluster .nav-user-dropdown {
-        width: 100%;
+    .navbar-actions-cluster .nav-user-role,
+    .nav-user-role {
+        max-width: 100% !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        font-size: 0.72rem !important;
+        margin-top: 2px !important;
     }
-    .navbar-actions-cluster .nav-user-dropdown .nav-user-capsule {
-        width: 100%;
-        justify-content: flex-start;
+    .nav-avatar-circle {
+        width: 36px !important;
+        height: 36px !important;
+        flex-shrink: 0 !important;
     }
-    .navbar-actions-cluster .nav-user-dropdown .nav-user-details {
-        flex: 1;
+    .nav-dropdown-chevron {
+        flex-shrink: 0 !important;
+        margin-left: auto !important;
     }
-    .navbar-actions-cluster .nav-user-dropdown-menu {
-        width: 100%;
-        margin-top: 0.35rem !important;
+    .navbar-actions-cluster .nav-user-dropdown-menu,
+    .nav-user-dropdown-menu {
+        position: static !important;
+        float: none !important;
+        transform: none !important;
+        inset: auto !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        margin-top: 0.5rem !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid var(--border-light) !important;
+        border-radius: var(--radius-lg, 14px) !important;
+        padding: 0.5rem !important;
+        background: var(--bg-surface-subtle, #f8fafc) !important;
+    }
+    [data-theme="dark"] .navbar-actions-cluster .nav-user-dropdown-menu,
+    [data-theme="dark"] .nav-user-dropdown-menu {
+        background: var(--bg-surface-subtle, #0f172a) !important;
+        border-color: var(--border-color, rgba(255, 255, 255, 0.1)) !important;
+    }
+    .nav-user-dropdown-menu .nav-dropdown-item {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 0.65rem 0.85rem !important;
+        border-radius: var(--radius-md, 10px) !important;
+        font-size: 0.88rem !important;
+        font-weight: 600 !important;
+    }
+    .nav-user-dropdown-menu .dropdown-divider {
+        margin: 0.35rem 0 !important;
+        border-color: var(--border-color) !important;
+    }
+    .nav-user-dropdown-menu .dropdown-header {
+        padding: 0.45rem 0.85rem !important;
     }
     .navbar-actions-cluster .nav-btn-logout,
     .navbar-actions-cluster .nav-btn-primary,
@@ -1684,6 +1768,13 @@ html {
         padding: 0.6rem 1rem !important;
     }
 }
+
+@media (max-width: 480px) {
+    .portal-navbar .navbar-collapse {
+        padding: 1rem 0.85rem;
+    }
+}
+
 
 /* ==========================================================================
    Global Password Visibility Toggle System
@@ -3423,23 +3514,6 @@ img, svg, canvas {
     overflow-wrap: break-word;
 }
 
-@media (max-width: 991.98px) {
-    .nav-user-dropdown {
-        width: 100%;
-    }
-    .nav-user-dropdown-btn {
-        width: 100%;
-        justify-content: space-between;
-    }
-    .nav-user-dropdown-menu {
-        position: static !important;
-        transform: none !important;
-        width: 100%;
-        box-shadow: none;
-        border: 1px solid var(--border-light);
-        margin-top: 0.4rem !important;
-    }
-}
 
 /* Page Containers & Padding */
 @media (max-width: 767.98px) {
