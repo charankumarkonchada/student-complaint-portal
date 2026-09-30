@@ -254,6 +254,7 @@ html {
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    overflow-x: clip;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -275,6 +276,7 @@ body {
     letter-spacing: -0.01em;
     position: relative;
     overflow-x: hidden;
+    overflow-x: clip;
 }
 
 /* Ambient subtle background glow */
@@ -322,12 +324,19 @@ img {
    ========================================================================== */
 
 header {
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1030;
+    width: 100%;
 }
 
 .portal-navbar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    width: 100%;
     background: #ffffff;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
