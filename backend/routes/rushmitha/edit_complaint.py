@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 from backend.database.db import get_db_connection
 from backend.database.queries import complaint_for_student
 from backend.services.auth_service import student_required
-from backend.services.storage_service import allowed_file, upload_to_cloud_storage
+from backend.services.storage_service import allowed_file, upload_to_cloud_storage, delete_from_cloud_storage
 from ml.ml_engine import predict_complaint, find_duplicate
 
 edit_complaint_bp = Blueprint("edit_complaint", __name__)
@@ -124,9 +124,17 @@ def delete_complaint(id):
         flash("Resolved complaints cannot be deleted.", "warning")
         return redirect(url_for("complaints"))
 
+    image_ref = complaint["image"] if "image" in complaint.keys() else None
+
     conn.execute("DELETE FROM complaints WHERE id=? AND student_id=?", (id, session["student_id"]))
     conn.commit()
     conn.close()
+
+    # Clean up complaint attachment from Supabase Storage if present
+    if image_ref:
+        success = delete_from_cloud_storage(image_ref)
+        if not success:
+            current_app.logger.error("Failed to delete attachment from Supabase Storage for complaint %s: %s", id, image_ref)
 
     flash("Complaint Deleted Successfully.", "success")
     return redirect(url_for("complaints"))
