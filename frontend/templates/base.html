@@ -42,10 +42,23 @@
     <!-- Global Design System -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
+    <!-- Immediate BFCache Revalidation for Authenticated Views -->
+    <script>
+        window.addEventListener("pageshow", function(event) {
+            if (event.persisted) {
+                var body = document.body;
+                if (body && body.getAttribute("data-authenticated") === "true") {
+                    body.style.display = "none";
+                    window.location.replace(window.location.href);
+                }
+            }
+        });
+    </script>
+
     {% block head %}{% endblock %}
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body {% if is_authenticated_page %}data-authenticated="true" data-auth-user="{{ auth_user_type }}"{% endif %}>
 
     <!-- Master Navigation Header -->
     <header>

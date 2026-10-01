@@ -409,6 +409,52 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     })();
+
+    // 9. BFCache & Multi-Tab Authentication Synchronization
+    (function initAuthSync() {
+        const body = document.body;
+        if (!body || body.getAttribute("data-authenticated") !== "true") {
+            return;
+        }
+
+        const authUserType = body.getAttribute("data-auth-user") || "student";
+        const loginUrl = authUserType === "admin" ? "/admin_login" : "/login";
+
+        function verifySession() {
+            if (!body || body.getAttribute("data-authenticated") !== "true") return;
+            fetch("/api/auth/status", {
+                method: "GET",
+                cache: "no-store",
+                headers: { "Accept": "application/json" }
+            })
+            .then(function (response) {
+                if (response.status === 401 || !response.ok) {
+                    body.style.display = "none";
+                    window.location.replace(loginUrl);
+                }
+            })
+            .catch(function () {
+                // Ignore transient network errors
+            });
+        }
+
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                body.style.display = "none";
+                window.location.replace(window.location.href);
+            }
+        });
+
+        document.addEventListener("visibilitychange", function () {
+            if (document.visibilityState === "visible") {
+                verifySession();
+            }
+        });
+
+        window.addEventListener("focus", function () {
+            verifySession();
+        });
+    })();
 });
 
 // Keyframe for ripple

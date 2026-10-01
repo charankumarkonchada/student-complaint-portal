@@ -35,7 +35,7 @@ def login():
 
     return render_template("student/login.html")
 
-@login_bp.route("/logout", methods=["POST"])
+@login_bp.route("/logout", methods=["GET", "POST"])
 def logout():
     session.clear()
     flash("Logged Out Successfully.", "success")

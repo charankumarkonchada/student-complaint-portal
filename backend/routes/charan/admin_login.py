@@ -47,7 +47,7 @@ def admin_login():
 
     return render_template("admin/admin_login.html")
 
-@admin_login_bp.route("/admin_logout", methods=["POST"])
+@admin_login_bp.route("/admin_logout", methods=["GET", "POST"])
 def admin_logout():
     session.clear()
     flash("Admin Logged Out Successfully.", "success")

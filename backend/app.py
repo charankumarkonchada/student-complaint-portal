@@ -1,12 +1,45 @@
 import os
 from pathlib import Path
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 import jinja2
 from backend.services.csrf_service import get_csrf_token, validate_csrf_token
 
 import backend.config as config
 from backend.database.queries import init_database, unread_count
 from backend.routes import register_blueprints
+
+ADMIN_BLUEPRINTS = {
+    "admin_dashboard",
+    "manage_complaints",
+    "update_status",
+    "common_issues",
+    "student_id_requests",
+    "analytics",
+    "export_reports",
+}
+
+STUDENT_BLUEPRINTS = {
+    "student_dashboard",
+    "add_complaint",
+    "complaint_history",
+    "view_complaint",
+    "edit_complaint",
+    "profile",
+    "change_password",
+    "notifications",
+    "activity",
+}
+
+PUBLIC_ENDPOINTS = {
+    "static",
+    "home.home",
+    "login.login",
+    "register.register",
+    "admin_login.admin_login",
+    "forgot_password.forgot_password",
+    "verify_reset_otp.verify_reset_otp",
+    "reset_password.reset_password",
+}
 
 
 def create_app():
@@ -54,9 +87,22 @@ def create_app():
 
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-    # CSRF protection for all state-changing requests. Tests may disable explicitly.
+    # CSRF & Route Authorization protection for all requests
     @app.before_request
-    def protect_state_changing_requests():
+    def enforce_security_and_auth():
+        # Centralized route authorization check
+        if request.blueprint in ADMIN_BLUEPRINTS:
+            if not session.get("admin"):
+                if request.path.startswith("/api/") or request.is_json:
+                    return jsonify({"error": "Unauthorized"}), 401
+                return redirect(url_for("admin_login.admin_login"))
+        elif request.blueprint in STUDENT_BLUEPRINTS:
+            if not session.get("student_id"):
+                if request.path.startswith("/api/") or request.is_json:
+                    return jsonify({"error": "Unauthorized"}), 401
+                return redirect(url_for("login.login"))
+
+        # CSRF protection for all state-changing requests. Tests may disable explicitly.
         if app.config.get("TESTING") and not app.config.get("WTF_CSRF_ENABLED", True):
             return None
         validate_csrf_token()
@@ -64,6 +110,30 @@ def create_app():
     @app.context_processor
     def inject_security_globals():
         return {"csrf_token": get_csrf_token}
+
+    @app.context_processor
+    def inject_auth_state():
+        is_auth = False
+        user_type = None
+        if request.blueprint in ADMIN_BLUEPRINTS and session.get("admin"):
+            is_auth = True
+            user_type = "admin"
+        elif request.blueprint in STUDENT_BLUEPRINTS and session.get("student_id"):
+            is_auth = True
+            user_type = "student"
+        return {
+            "is_authenticated_page": is_auth,
+            "auth_user_type": user_type,
+        }
+
+    # Lightweight session verification endpoint for BFCache / Multi-tab validation
+    @app.route("/api/auth/status", methods=["GET"])
+    def auth_status():
+        if session.get("admin"):
+            return jsonify({"authenticated": True, "role": "admin"})
+        elif session.get("student_id"):
+            return jsonify({"authenticated": True, "role": "student"})
+        return jsonify({"authenticated": False}), 401
 
     # Initialize database schema
     init_database()
@@ -87,7 +157,7 @@ def create_app():
         app.logger.exception("Unhandled server exception: %s", e)
         return render_template("errors/500.html"), 500
 
-    # Production HTTP Security Headers
+    # Production HTTP Security & Cache-Control Headers
     @app.after_request
     def set_security_headers(response):
         response.headers["X-Frame-Options"] = "SAMEORIGIN"
@@ -96,6 +166,19 @@ def create_app():
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         if config.IS_PRODUCTION:
             response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+
+        # Centralized no-cache headers for authenticated student and admin responses and logout responses
+        is_auth_route = request.blueprint in ADMIN_BLUEPRINTS or request.blueprint in STUDENT_BLUEPRINTS
+        is_logout_route = request.endpoint in {"login.logout", "admin_login.admin_logout"}
+        is_auth_session = bool(session.get("student_id") or session.get("admin"))
+        is_static = request.endpoint == "static" or (request.path and request.path.startswith("/static/"))
+        is_public = request.endpoint in PUBLIC_ENDPOINTS or request.path == "/"
+
+        if not is_static and (is_auth_route or is_logout_route or request.endpoint == "auth_status" or (is_auth_session and not is_public)):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+
         return response
 
     # Reverse proxy header trust (Nginx / PaaS / Load Balancers)

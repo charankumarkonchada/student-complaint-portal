@@ -326,6 +326,161 @@ class TestLogoutConfirmation(unittest.TestCase):
         self.assertIn('name="csrf_token"', html)
         self.assertIn('action="/logout"', html)
 
+    # -------------------------------------------------------------------------
+    # 6. NO-CACHE & SECURITY HEADERS FOR AUTHENTICATED AND LOGOUT RESPONSES
+    # -------------------------------------------------------------------------
+    def test_10_authenticated_student_pages_send_no_cache_headers(self):
+        """Verify authenticated student pages send no-store/no-cache headers."""
+        self._login_student()
+        for endpoint in ["/dashboard", "/profile", "/complaints", "/activity", "/notifications"]:
+            res = self.client.get(endpoint)
+            self.assertEqual(res.status_code, 200, f"Expected 200 for {endpoint}")
+            self.assertIn("no-store", res.headers.get("Cache-Control", ""))
+            self.assertIn("no-cache", res.headers.get("Cache-Control", ""))
+            self.assertIn("must-revalidate", res.headers.get("Cache-Control", ""))
+            self.assertEqual(res.headers.get("Pragma"), "no-cache")
+            self.assertEqual(res.headers.get("Expires"), "0")
+
+    def test_11_authenticated_admin_pages_send_no_cache_headers(self):
+        """Verify authenticated admin pages send no-store/no-cache headers."""
+        self._login_admin()
+        for endpoint in ["/admin_dashboard", "/manage_complaints", "/analytics", "/admin/common_issues"]:
+            res = self.client.get(endpoint)
+            self.assertEqual(res.status_code, 200, f"Expected 200 for {endpoint}")
+            self.assertIn("no-store", res.headers.get("Cache-Control", ""))
+            self.assertIn("no-cache", res.headers.get("Cache-Control", ""))
+            self.assertIn("must-revalidate", res.headers.get("Cache-Control", ""))
+            self.assertEqual(res.headers.get("Pragma"), "no-cache")
+            self.assertEqual(res.headers.get("Expires"), "0")
+
+    def test_12_logout_responses_send_no_cache_headers(self):
+        """Verify logout responses (redirects) send no-store/no-cache headers."""
+        self._login_student()
+        res_stud = self.client.post("/logout", data={"csrf_token": self._csrf()}, follow_redirects=False)
+        self.assertEqual(res_stud.status_code, 302)
+        self.assertIn("no-store", res_stud.headers.get("Cache-Control", ""))
+        self.assertEqual(res_stud.headers.get("Pragma"), "no-cache")
+        self.assertEqual(res_stud.headers.get("Expires"), "0")
+
+        self._login_admin()
+        res_adm = self.client.post("/admin_logout", data={"csrf_token": self._csrf()}, follow_redirects=False)
+        self.assertEqual(res_adm.status_code, 302)
+        self.assertIn("no-store", res_adm.headers.get("Cache-Control", ""))
+        self.assertEqual(res_adm.headers.get("Pragma"), "no-cache")
+        self.assertEqual(res_adm.headers.get("Expires"), "0")
+
+    def test_13_public_pages_do_not_send_no_store_headers(self):
+        """Verify public guest pages do not send restrictive authenticated no-store headers."""
+        for endpoint in ["/", "/login", "/admin_login", "/register"]:
+            res = self.client.get(endpoint)
+            self.assertEqual(res.status_code, 200)
+            self.assertNotIn("no-store", res.headers.get("Cache-Control", ""))
+
+    def test_14_authenticated_page_data_attribute_and_bfcache_script(self):
+        """Verify data-authenticated attribute is set on authenticated pages and absent on public pages."""
+        self._login_student()
+        res_dash = self.client.get("/dashboard")
+        html_dash = res_dash.get_data(as_text=True)
+        self.assertIn('data-authenticated="true"', html_dash)
+        self.assertIn('data-auth-user="student"', html_dash)
+        self.assertIn('window.addEventListener("pageshow"', html_dash)
+
+        self.client.post("/logout", data={"csrf_token": self._csrf()}, follow_redirects=True)
+        res_public = self.client.get("/")
+        html_public = res_public.get_data(as_text=True)
+        self.assertNotIn('data-authenticated="true"', html_public)
+
+    def test_15_auth_status_api_endpoint(self):
+        """Verify /api/auth/status endpoint for BFCache/multi-tab verification."""
+        # Unauthenticated
+        with self.client.session_transaction() as sess:
+            sess.clear()
+        res = self.client.get("/api/auth/status")
+        self.assertEqual(res.status_code, 401)
+        data = res.get_json()
+        self.assertFalse(data.get("authenticated"))
+
+        # Student authenticated
+        self._login_student()
+        res_s = self.client.get("/api/auth/status")
+        self.assertEqual(res_s.status_code, 200)
+        data_s = res_s.get_json()
+        self.assertTrue(data_s.get("authenticated"))
+        self.assertEqual(data_s.get("role"), "student")
+
+        # Admin authenticated
+        with self.client.session_transaction() as sess:
+            sess.clear()
+        self._login_admin()
+        res_a = self.client.get("/api/auth/status")
+        self.assertEqual(res_a.status_code, 200)
+        data_a = res_a.get_json()
+        self.assertTrue(data_a.get("authenticated"))
+        self.assertEqual(data_a.get("role"), "admin")
+
+    def test_16_logged_out_post_to_authenticated_route_redirects_to_login(self):
+        """Verify that state-changing POST from stale page after logout redirects to login instead of 400 CSRF error."""
+        with self.client.session_transaction() as sess:
+            sess.clear()
+        # Enable CSRF to test production behavior
+        self.app.config["WTF_CSRF_ENABLED"] = True
+        try:
+            # Student logout -> POST to student route redirects to /login
+            res_student_post = self.client.post("/profile/request_id_correction", data={
+                "csrf_token": "stale-token",
+                "requested_id": "O221169",
+                "reason": "Stale post after logout"
+            }, follow_redirects=False)
+            self.assertEqual(res_student_post.status_code, 302)
+            self.assertIn("/login", res_student_post.headers.get("Location", ""))
+
+            # Admin logout -> POST to admin route redirects to /admin_login
+            res_admin_post = self.client.post("/update_status/1", data={
+                "csrf_token": "stale-token",
+                "status": "In Progress"
+            }, follow_redirects=False)
+            self.assertEqual(res_admin_post.status_code, 302)
+            self.assertIn("/admin_login", res_admin_post.headers.get("Location", ""))
+        finally:
+            self.app.config["WTF_CSRF_ENABLED"] = False
+
+    def test_17_authenticated_post_with_invalid_csrf_still_aborts_400(self):
+        """Verify that genuine CSRF attack while authenticated is still rejected with 400 Bad Request."""
+        self._login_student()
+        self.app.config["WTF_CSRF_ENABLED"] = True
+        try:
+            # Post with invalid CSRF token while authenticated
+            res = self.client.post("/profile/request_id_correction", data={
+                "csrf_token": "tampered-csrf-token",
+                "requested_id": "O221169",
+                "reason": "CSRF attack attempt"
+            })
+            self.assertEqual(res.status_code, 400)
+            self.assertIn("Invalid or missing CSRF token", res.get_data(as_text=True))
+        finally:
+            self.app.config["WTF_CSRF_ENABLED"] = False
+
+    def test_18_browser_back_simulation_after_logout(self):
+        """Verify simulated browser Back navigation after logout redirects to login."""
+        # 1. Admin login -> logout -> back to dashboard
+        self._login_admin()
+        res_logout = self.client.post("/admin_logout", data={"csrf_token": self._csrf()}, follow_redirects=True)
+        self.assertEqual(res_logout.status_code, 200)
+
+        # Back navigation requests dashboard
+        res_back = self.client.get("/admin_dashboard", follow_redirects=False)
+        self.assertEqual(res_back.status_code, 302)
+        self.assertIn("/admin_login", res_back.headers.get("Location", ""))
+
+        # 2. Student login -> logout -> back to dashboard
+        self._login_student()
+        res_s_logout = self.client.post("/logout", data={"csrf_token": self._csrf()}, follow_redirects=True)
+        self.assertEqual(res_s_logout.status_code, 200)
+
+        res_s_back = self.client.get("/dashboard", follow_redirects=False)
+        self.assertEqual(res_s_back.status_code, 302)
+        self.assertIn("/login", res_s_back.headers.get("Location", ""))
+
 
 if __name__ == "__main__":
     unittest.main()
