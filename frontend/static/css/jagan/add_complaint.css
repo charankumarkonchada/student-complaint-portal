@@ -246,6 +246,14 @@
     margin-bottom: 0;
 }
 
+.file-input-wrapper {
+    position: relative;
+}
+
+.file-input-wrapper .form-text {
+    color: var(--text-muted);
+}
+
 .image-preview-container {
     display: none;
     margin-top: 1rem;
@@ -661,6 +669,10 @@
 [data-theme="dark"] .image-preview-container {
     background: var(--bg-surface-subtle) !important;
     border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .file-input-wrapper .form-text {
+    color: #94a3b8 !important;
 }
 
 [data-theme="dark"] .char-counter {

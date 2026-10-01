@@ -154,3 +154,13 @@
     border-color: var(--border-light) !important;
 }
 
+[data-theme="dark"] .current-attachment-box {
+    background: var(--bg-surface-subtle) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-heading) !important;
+}
+
+[data-theme="dark"] .current-attachment-box .fw-bold {
+    color: var(--text-heading) !important;
+}
+

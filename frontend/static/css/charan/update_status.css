@@ -102,6 +102,54 @@
     color: var(--primary);
 }
 
+/* Status History Audit Log Styles */
+.status-history-card {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+}
+
+.status-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    background: transparent;
+}
+
+.status-history-item {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color, #E2E8F0) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 0.85rem 1.15rem !important;
+    transition: all var(--transition-fast);
+}
+
+.status-history-item:hover {
+    background-color: #f1f5f9;
+}
+
+.status-history-desc {
+    font-size: 0.92rem;
+    color: var(--text-heading, #102A43);
+    font-weight: 500;
+}
+
+.status-history-desc strong {
+    color: var(--text-heading, #102A43);
+    font-weight: 700;
+}
+
+.status-history-time {
+    font-size: 0.82rem;
+    color: var(--text-muted, #64748B) !important;
+    white-space: nowrap;
+}
+
+.evidence-frame {
+    background: #f8fafc;
+    border-color: var(--border-color, #cbd5e1) !important;
+    transition: all var(--transition-fast);
+}
+
 .action-form-card {
     background: radial-gradient(circle at top right, rgba(14, 165, 168, 0.08) 0%, #ffffff 80%);
     border: 1px solid var(--primary-border);
@@ -169,6 +217,41 @@
 [data-theme="dark"] .action-form-card {
     background: radial-gradient(circle at top right, rgba(255, 107, 74, 0.12) 0%, var(--bg-surface) 80%) !important;
     border-color: var(--primary-border) !important;
+}
+
+/* Status History Audit Log Dark Mode Overrides */
+[data-theme="dark"] .status-history-card {
+    background: #111827 !important;
+    border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .status-history-item,
+[data-theme="dark"] .list-group-item.status-history-item {
+    background-color: #1E293B !important;
+    border-color: #334155 !important;
+    color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .status-history-item:hover,
+[data-theme="dark"] .list-group-item.status-history-item:hover {
+    background-color: #273449 !important;
+}
+
+[data-theme="dark"] .status-history-desc {
+    color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .status-history-desc strong {
+    color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .status-history-time {
+    color: #94A3B8 !important;
+}
+
+[data-theme="dark"] .evidence-frame {
+    background: #1E293B !important;
+    border-color: #334155 !important;
 }
 
 @media (max-width: 768px) {
