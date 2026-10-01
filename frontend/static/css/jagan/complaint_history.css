@@ -265,3 +265,28 @@
     color: #f8fafc !important;
 }
 
+[data-theme="dark"] .history-filter-card {
+    background: #111827 !important;
+    border-color: #243044 !important;
+}
+
+[data-theme="dark"] .history-complaint-card {
+    background: #111827 !important;
+    border-color: #243044 !important;
+}
+
+[data-theme="dark"] .history-complaint-card:hover {
+    border-color: var(--primary) !important;
+}
+
+[data-theme="dark"] .card-complaint-title {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .card-complaint-desc {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .card-id-tag {
+    color: #f8fafc !important;
+}

@@ -134,28 +134,33 @@
    Dark Theme Overrides
    ========================================================================== */
 [data-theme="dark"] .otp-verify-card {
-    background: var(--bg-surface) !important;
-    border-color: var(--border-light) !important;
+    background: #111827 !important;
+    border-color: #243044 !important;
+}
+
+[data-theme="dark"] .otp-verify-card p,
+[data-theme="dark"] .otp-footer-meta {
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .otp-input-control {
-    background-color: var(--bg-input) !important;
-    color: var(--text-heading) !important;
-    -webkit-text-fill-color: var(--text-heading) !important;
-    border-color: var(--border-color) !important;
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    -webkit-text-fill-color: #f8fafc !important;
+    border-color: #334155 !important;
 }
 
 [data-theme="dark"] .otp-input-control:focus {
-    background-color: var(--bg-input) !important;
-    color: var(--text-heading) !important;
-    -webkit-text-fill-color: var(--text-heading) !important;
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    -webkit-text-fill-color: #f8fafc !important;
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 4px var(--primary-glow) !important;
 }
 
 [data-theme="dark"] .otp-input-control::placeholder {
-    color: var(--text-subtle) !important;
-    -webkit-text-fill-color: var(--text-subtle) !important;
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
 }
 
 @media (max-width: 480px) {

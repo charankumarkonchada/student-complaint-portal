@@ -255,3 +255,49 @@
         font-size: 0.68rem;
     }
 }
+
+/* ==========================================================================
+   Dark Theme Overrides
+   ========================================================================== */
+[data-theme="dark"] .admin-header-banner {
+    background: #111827;
+    border-color: #243044;
+}
+
+[data-theme="dark"] .admin-title-wrap h1 {
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .admin-title-wrap p {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .admin-kpi-card {
+    background: #111827;
+    border-color: #243044;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .admin-kpi-card:hover {
+    border-color: var(--primary);
+}
+
+[data-theme="dark"] .admin-kpi-card .kpi-num {
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .admin-kpi-card .kpi-lbl {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .btn-tile-pdf {
+    background: rgba(220, 38, 38, 0.15) !important;
+    color: #f87171 !important;
+    border-color: rgba(220, 38, 38, 0.35) !important;
+}
+
+[data-theme="dark"] .btn-tile-excel {
+    background: rgba(16, 185, 129, 0.15) !important;
+    color: #34d399 !important;
+    border-color: rgba(16, 185, 129, 0.35) !important;
+}

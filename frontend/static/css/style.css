@@ -7,7 +7,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    /* Canvas & Surfaces */
+    /* Semantic Canvas & Surfaces */
+    --bg-primary: #ffffff;
+    --bg-secondary: #F4F8FA;
     --bg-body: #F4F8FA;
     --bg-surface: #ffffff;
     --bg-surface-subtle: #EEF4F7;
@@ -15,6 +17,7 @@
     --bg-glass: rgba(255, 255, 255, 0.94);
     --bg-surface-scrolled: rgba(255, 255, 255, 0.98);
     --bg-card: #ffffff;
+    --bg-elevated: #EEF4F7;
     --bg-input: #ffffff;
     --bg-dropdown: #ffffff;
 
@@ -29,13 +32,15 @@
     --success: #168A5B;
     --warning: #D99000;
     --danger: #D64545;
+    --info: #2563EB;
     --page-bg: #F4F8FA;
     --surface: #FFFFFF;
     --surface-soft: #EEF4F7;
     --surface-teal-soft: #E7F6F6;
-    --text-primary: #102A43;
-    --text-secondary: #52677A;
-    --text-muted: #8293A3;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+    --text-disabled: #94A3B8;
     --border: #D8E3EA;
     --border-soft: #E7EEF2;
 
@@ -47,6 +52,8 @@
     --primary-subtle: #EEF4F7;
     --primary-border: #D8E3EA;
     --primary-glow: rgba(14, 165, 168, 0.22);
+    --accent-primary: #0EA5A8;
+    --accent-secondary: #167D8D;
 
     /* Secondary, CTA & Accent System */
     --secondary: #167D8D;
@@ -116,18 +123,16 @@
     /* Neutrals & Typography */
     --text-main: #102A43;
     --text-heading: #102A43;
-    --text-primary: #102A43; /* legacy alias: --text-primary: #0f172a */
     --text-body: #102A43;
-    --text-secondary: #52677A;
-    --text-muted: #8293A3;
-    --text-subtle: #8293A3;
+    --text-subtle: #64748B;
     --text-placeholder: #8293A3;
     --text-inverse: #ffffff;
     --input-light-bg: #ffffff;
-    --input-light-text: #102A43;
-    --input-light-placeholder: #8293A3;
+    --input-light-text: #0f172a;
+    --input-light-placeholder: #64748b;
 
     --border-color: #D8E3EA;
+    --border-subtle: #E2E8F0;
     --border-light: #E7EEF2;
     --border-focus: #0EA5A8;
 
@@ -160,18 +165,21 @@
 }
 
 [data-theme="dark"] {
-    /* Canvas & Surfaces (Deep dark tone, elevated surfaces) */
+    /* Semantic Canvas & Surfaces (Deep dark tone, elevated surfaces) */
     --bg-body: #0b0f19;
+    --bg-primary: #0F172A;
+    --bg-secondary: #1E293B;
     --bg-surface: #111827;
     --bg-surface-subtle: #1e293b;
     --bg-surface-hover: #273549;
     --bg-glass: rgba(17, 24, 39, 0.85);
     --bg-surface-scrolled: rgba(17, 24, 39, 0.94);
     --bg-card: #111827;
+    --bg-elevated: #1F2937;
     --bg-input: #1e293b;
     --bg-dropdown: #1e293b;
 
-    /* Peach & Orange Primary Accents (Preserved brand identity) */
+    /* Preserved brand identity & test token */
     --primary: #ff6b4a;
     --primary-hover: #ff8566;
     --primary-active: #ff542e;
@@ -179,6 +187,8 @@
     --primary-subtle: rgba(255, 107, 74, 0.10);
     --primary-border: rgba(255, 107, 74, 0.35);
     --primary-glow: rgba(255, 107, 74, 0.35);
+    --accent-primary: #ff6b4a;
+    --accent-secondary: #ff8566;
 
     /* Secondary & Gradient Accents */
     --accent-orange: #f97316;
@@ -189,44 +199,49 @@
     --gradient-subtle: linear-gradient(180deg, #161f30 0%, #111827 100%);
     --gradient-card: linear-gradient(180deg, #151e2e 0%, #111827 100%);
 
-    /* Semantic Status Colors (Comfortable dark contrast) */
-    --status-pending-bg: rgba(245, 158, 11, 0.16);
+    /* Semantic Status Colors (Comfortable, WCAG AA dark contrast) */
+    --status-pending-bg: rgba(245, 158, 11, 0.18);
     --status-pending-text: #fbbf24;
-    --status-pending-border: rgba(245, 158, 11, 0.35);
+    --status-pending-border: rgba(245, 158, 11, 0.4);
 
-    --status-progress-bg: rgba(59, 130, 246, 0.16);
+    --status-progress-bg: rgba(59, 130, 246, 0.18);
     --status-progress-text: #60a5fa;
-    --status-progress-border: rgba(59, 130, 246, 0.35);
+    --status-progress-border: rgba(59, 130, 246, 0.4);
 
-    --status-resolved-bg: rgba(16, 185, 129, 0.16);
+    --status-resolved-bg: rgba(16, 185, 129, 0.18);
     --status-resolved-text: #34d399;
-    --status-resolved-border: rgba(16, 185, 129, 0.35);
+    --status-resolved-border: rgba(16, 185, 129, 0.4);
 
-    --priority-high-bg: rgba(244, 63, 94, 0.16);
+    --priority-high-bg: rgba(244, 63, 94, 0.18);
     --priority-high-text: #fb7185;
-    --priority-high-border: rgba(244, 63, 94, 0.35);
+    --priority-high-border: rgba(244, 63, 94, 0.4);
 
-    --priority-medium-bg: rgba(245, 158, 11, 0.16);
+    --priority-medium-bg: rgba(245, 158, 11, 0.18);
     --priority-medium-text: #fbbf24;
-    --priority-medium-border: rgba(245, 158, 11, 0.35);
+    --priority-medium-border: rgba(245, 158, 11, 0.4);
 
-    --priority-low-bg: rgba(100, 116, 139, 0.18);
-    --priority-low-text: #94a3b8;
-    --priority-low-border: rgba(100, 116, 139, 0.35);
+    --priority-low-bg: rgba(100, 116, 139, 0.22);
+    --priority-low-text: #cbd5e1;
+    --priority-low-border: rgba(100, 116, 139, 0.4);
 
-    /* Neutrals & Typography */
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --info: #60a5fa;
+
+    /* Neutrals & Typography Hierarchy (WCAG AAA/AA) */
     --text-main: #f8fafc;
     --text-heading: #f8fafc;
     --text-primary: #f8fafc;
     --text-body: #cbd5e1;
+    --text-secondary: #cbd5e1;
     --text-muted: #94a3b8;
-    --text-subtle: #64748b;
+    --text-subtle: #94a3b8;
+    --text-disabled: #64748b;
     --text-inverse: #0f172a;
-    --input-light-bg: #ffffff;
-    --input-light-text: #0f172a;
-    --input-light-placeholder: #64748b;
 
     --border-color: #243044;
+    --border-subtle: #334155;
     --border-light: rgba(51, 65, 85, 0.65);
     --border-focus: #ff6b4a;
 
@@ -1946,125 +1961,151 @@ html {
 }
 
 /* ==========================================================================
-   FORM INPUT CONTRAST ARCHITECTURE:
-   Rule 1: Light-Canvas Inputs (Auth & Account fields with clean white canvas)
-           -> Always Dark Text (#0f172a), High-Contrast Placeholder, Dark Autofill
-   Rule 2: Dark-Canvas Inputs (Form controls embedded in dark panels in Dark Mode)
-           -> Light Text (#f8fafc), Muted Placeholder, Dark-Inset Autofill
+   FORM INPUT & CONTROL CONTRAST ARCHITECTURE
    ========================================================================== */
 
-/* 1. Light-Canvas Inputs (Student Login, Admin Login, Register, Reset, Forgot, Change Password) */
+/* Light Mode Input Baseline */
 .login-input,
-[data-theme="dark"] .login-input,
 .admin-input,
-[data-theme="dark"] .admin-input,
 .input-reg,
-[data-theme="dark"] .input-reg,
 .reset-input,
-[data-theme="dark"] .reset-input,
 .recovery-input,
-[data-theme="dark"] .recovery-input,
 .password-input,
-[data-theme="dark"] .password-input {
-    background-color: var(--input-light-bg, #ffffff) !important;
-    color: var(--input-light-text, #0f172a) !important;
-    -webkit-text-fill-color: var(--input-light-text, #0f172a) !important;
-    border-color: var(--border-color) !important;
-}
-
-.login-input:focus,
-[data-theme="dark"] .login-input:focus,
-.admin-input:focus,
-[data-theme="dark"] .admin-input:focus,
-.input-reg:focus,
-[data-theme="dark"] .input-reg:focus,
-.reset-input:focus,
-[data-theme="dark"] .reset-input:focus,
-.recovery-input:focus,
-[data-theme="dark"] .recovery-input:focus,
-.password-input:focus,
-[data-theme="dark"] .password-input:focus {
-    background-color: var(--input-light-bg, #ffffff) !important;
-    color: var(--input-light-text, #0f172a) !important;
-    -webkit-text-fill-color: var(--input-light-text, #0f172a) !important;
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 0 3px var(--primary-glow) !important;
+.form-control,
+.form-select,
+.custom-input,
+textarea,
+select,
+.otp-input-control {
+    background-color: #ffffff;
+    color: #0f172a;
+    border: 1.5px solid #cbd5e1;
 }
 
 .login-input::placeholder,
-[data-theme="dark"] .login-input::placeholder,
 .admin-input::placeholder,
-[data-theme="dark"] .admin-input::placeholder,
 .input-reg::placeholder,
-[data-theme="dark"] .input-reg::placeholder,
 .reset-input::placeholder,
-[data-theme="dark"] .reset-input::placeholder,
 .recovery-input::placeholder,
-[data-theme="dark"] .recovery-input::placeholder,
 .password-input::placeholder,
-[data-theme="dark"] .password-input::placeholder {
-    color: var(--input-light-placeholder, #64748b) !important;
-    -webkit-text-fill-color: var(--input-light-placeholder, #64748b) !important;
-    opacity: 0.8 !important;
+.form-control::placeholder,
+.custom-input::placeholder,
+textarea::placeholder,
+.otp-input-control::placeholder {
+    color: #64748b;
+    opacity: 0.9;
 }
 
-/* Light-Canvas Autofill Handling (Prevent WebKit white-on-white text blindness) */
+/* Light Mode Autofill */
 .login-input:-webkit-autofill,
-.login-input:-webkit-autofill:hover,
-.login-input:-webkit-autofill:focus,
-[data-theme="dark"] .login-input:-webkit-autofill,
-[data-theme="dark"] .login-input:-webkit-autofill:hover,
-[data-theme="dark"] .login-input:-webkit-autofill:focus,
 .admin-input:-webkit-autofill,
-.admin-input:-webkit-autofill:hover,
-.admin-input:-webkit-autofill:focus,
-[data-theme="dark"] .admin-input:-webkit-autofill,
-[data-theme="dark"] .admin-input:-webkit-autofill:hover,
-[data-theme="dark"] .admin-input:-webkit-autofill:focus,
 .input-reg:-webkit-autofill,
-.input-reg:-webkit-autofill:hover,
-.input-reg:-webkit-autofill:focus,
-[data-theme="dark"] .input-reg:-webkit-autofill,
-[data-theme="dark"] .input-reg:-webkit-autofill:hover,
-[data-theme="dark"] .input-reg:-webkit-autofill:focus,
 .reset-input:-webkit-autofill,
-.reset-input:-webkit-autofill:hover,
-.reset-input:-webkit-autofill:focus,
-[data-theme="dark"] .reset-input:-webkit-autofill,
-[data-theme="dark"] .reset-input:-webkit-autofill:hover,
-[data-theme="dark"] .reset-input:-webkit-autofill:focus,
 .recovery-input:-webkit-autofill,
-.recovery-input:-webkit-autofill:hover,
-.recovery-input:-webkit-autofill:focus,
-[data-theme="dark"] .recovery-input:-webkit-autofill,
-[data-theme="dark"] .recovery-input:-webkit-autofill:hover,
-[data-theme="dark"] .recovery-input:-webkit-autofill:focus,
 .password-input:-webkit-autofill,
-.password-input:-webkit-autofill:hover,
-.password-input:-webkit-autofill:focus,
-[data-theme="dark"] .password-input:-webkit-autofill,
-[data-theme="dark"] .password-input:-webkit-autofill:hover,
-[data-theme="dark"] .password-input:-webkit-autofill:focus,
-html:not([data-theme="dark"]) .custom-input:-webkit-autofill,
-html:not([data-theme="dark"]) .custom-input:-webkit-autofill:hover,
-html:not([data-theme="dark"]) .custom-input:-webkit-autofill:focus,
-html:not([data-theme="dark"]) .form-control:-webkit-autofill,
-html:not([data-theme="dark"]) .form-control:-webkit-autofill:hover,
-html:not([data-theme="dark"]) .form-control:-webkit-autofill:focus,
-html:not([data-theme="dark"]) .form-select:-webkit-autofill,
-html:not([data-theme="dark"]) textarea:-webkit-autofill {
+.custom-input:-webkit-autofill,
+.form-control:-webkit-autofill,
+.form-select:-webkit-autofill,
+textarea:-webkit-autofill {
     -webkit-text-fill-color: #0f172a !important;
     -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
     transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Light-Canvas Input Icons & Controls */
+/* Dark Mode Universal Input Styling */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .login-input,
+[data-theme="dark"] .admin-input,
+[data-theme="dark"] .input-reg,
+[data-theme="dark"] .reset-input,
+[data-theme="dark"] .recovery-input,
+[data-theme="dark"] .password-input,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .custom-input:not(.readonly-input),
+[data-theme="dark"] textarea,
+[data-theme="dark"] select,
+[data-theme="dark"] .otp-input-control {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    -webkit-text-fill-color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .login-input:focus,
+[data-theme="dark"] .admin-input:focus,
+[data-theme="dark"] .input-reg:focus,
+[data-theme="dark"] .reset-input:focus,
+[data-theme="dark"] .recovery-input:focus,
+[data-theme="dark"] .password-input:focus,
+[data-theme="dark"] .form-select:focus,
+[data-theme="dark"] .custom-input:not(.readonly-input):focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] .otp-input-control:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-glow) !important;
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    -webkit-text-fill-color: #f8fafc !important;
+}
+
+[data-theme="dark"] .form-control::placeholder,
+[data-theme="dark"] .login-input::placeholder,
+[data-theme="dark"] .admin-input::placeholder,
+[data-theme="dark"] .input-reg::placeholder,
+[data-theme="dark"] .reset-input::placeholder,
+[data-theme="dark"] .recovery-input::placeholder,
+[data-theme="dark"] .password-input::placeholder,
+[data-theme="dark"] textarea::placeholder,
+[data-theme="dark"] .otp-input-control::placeholder,
+[data-theme="dark"] .custom-input::placeholder {
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
+    opacity: 1 !important;
+}
+
+/* Dark Mode Autofill Handling */
+[data-theme="dark"] .form-control:-webkit-autofill,
+[data-theme="dark"] .form-control:-webkit-autofill:hover,
+[data-theme="dark"] .form-control:-webkit-autofill:focus,
+[data-theme="dark"] .login-input:-webkit-autofill,
+[data-theme="dark"] .login-input:-webkit-autofill:hover,
+[data-theme="dark"] .login-input:-webkit-autofill:focus,
+[data-theme="dark"] .admin-input:-webkit-autofill,
+[data-theme="dark"] .admin-input:-webkit-autofill:hover,
+[data-theme="dark"] .admin-input:-webkit-autofill:focus,
+[data-theme="dark"] .input-reg:-webkit-autofill,
+[data-theme="dark"] .input-reg:-webkit-autofill:hover,
+[data-theme="dark"] .input-reg:-webkit-autofill:focus,
+[data-theme="dark"] .reset-input:-webkit-autofill,
+[data-theme="dark"] .reset-input:-webkit-autofill:hover,
+[data-theme="dark"] .reset-input:-webkit-autofill:focus,
+[data-theme="dark"] .recovery-input:-webkit-autofill,
+[data-theme="dark"] .recovery-input:-webkit-autofill:hover,
+[data-theme="dark"] .recovery-input:-webkit-autofill:focus,
+[data-theme="dark"] .password-input:-webkit-autofill,
+[data-theme="dark"] .password-input:-webkit-autofill:hover,
+[data-theme="dark"] .password-input:-webkit-autofill:focus,
+[data-theme="dark"] .custom-input:-webkit-autofill,
+[data-theme="dark"] .custom-input:-webkit-autofill:hover,
+[data-theme="dark"] .custom-input:-webkit-autofill:focus,
+[data-theme="dark"] .otp-input-control:-webkit-autofill,
+[data-theme="dark"] .otp-input-control:-webkit-autofill:hover,
+[data-theme="dark"] .otp-input-control:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f8fafc !important;
+    -webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Input Icons & Controls */
 [data-theme="dark"] .login-input-icon,
 [data-theme="dark"] .admin-input-icon,
 [data-theme="dark"] .input-icon-reg,
 [data-theme="dark"] .reset-input-icon,
-[data-theme="dark"] .field-leading-icon {
-    color: #64748b !important;
+[data-theme="dark"] .field-leading-icon,
+[data-theme="dark"] .recovery-input-icon {
+    color: #94a3b8 !important;
 }
 
 .login-input-wrapper:focus-within .login-input-icon,
@@ -2082,7 +2123,7 @@ html:not([data-theme="dark"]) textarea:-webkit-autofill {
 
 [data-theme="dark"] .password-toggle,
 [data-theme="dark"] .password-toggle i {
-    color: #64748b !important;
+    color: #94a3b8 !important;
 }
 
 [data-theme="dark"] .password-toggle:hover,
@@ -2101,55 +2142,6 @@ html:not([data-theme="dark"]) textarea:-webkit-autofill {
 [data-theme="dark"] .locked-badge {
     background: #334155 !important;
     color: #cbd5e1 !important;
-}
-
-/* 2. Dark-Canvas Inputs (Form controls embedded in dark panels in Dark Mode) */
-[data-theme="dark"] .form-control:not(.login-input):not(.admin-input):not(.input-reg):not(.reset-input):not(.recovery-input):not(.password-input),
-[data-theme="dark"] .form-select,
-[data-theme="dark"] textarea,
-[data-theme="dark"] select,
-[data-theme="dark"] .otp-input-control,
-[data-theme="dark"] .custom-input:not(.readonly-input) {
-    background-color: var(--bg-input) !important;
-    color: var(--text-heading) !important;
-    -webkit-text-fill-color: var(--text-heading) !important;
-    border-color: var(--border-color) !important;
-}
-
-[data-theme="dark"] .form-control:not(.login-input):not(.admin-input):not(.input-reg):not(.reset-input):not(.recovery-input):not(.password-input):focus,
-[data-theme="dark"] .form-select:focus,
-[data-theme="dark"] textarea:focus,
-[data-theme="dark"] select:focus,
-[data-theme="dark"] .otp-input-control:focus,
-[data-theme="dark"] .custom-input:not(.readonly-input):focus {
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 0 3px var(--primary-glow) !important;
-    background-color: var(--bg-input) !important;
-    color: var(--text-heading) !important;
-    -webkit-text-fill-color: var(--text-heading) !important;
-}
-
-[data-theme="dark"] .form-control:not(.login-input):not(.admin-input):not(.input-reg):not(.reset-input):not(.recovery-input):not(.password-input)::placeholder,
-[data-theme="dark"] textarea::placeholder,
-[data-theme="dark"] .otp-input-control::placeholder,
-[data-theme="dark"] .custom-input::placeholder {
-    color: var(--text-subtle) !important;
-    -webkit-text-fill-color: var(--text-subtle) !important;
-}
-
-/* Dark-Canvas Autofill Handling */
-[data-theme="dark"] .form-control:not(.login-input):not(.admin-input):not(.input-reg):not(.reset-input):not(.recovery-input):not(.password-input):-webkit-autofill,
-[data-theme="dark"] .form-control:not(.login-input):not(.admin-input):not(.input-reg):not(.reset-input):not(.recovery-input):not(.password-input):-webkit-autofill:hover,
-[data-theme="dark"] .form-control:not(.login-input):not(.admin-input):not(.input-reg):not(.reset-input):not(.recovery-input):not(.password-input):-webkit-autofill:focus,
-[data-theme="dark"] .custom-input:-webkit-autofill,
-[data-theme="dark"] .custom-input:-webkit-autofill:hover,
-[data-theme="dark"] .custom-input:-webkit-autofill:focus,
-[data-theme="dark"] .otp-input-control:-webkit-autofill,
-[data-theme="dark"] .otp-input-control:-webkit-autofill:hover,
-[data-theme="dark"] .otp-input-control:-webkit-autofill:focus {
-    -webkit-text-fill-color: #f8fafc !important;
-    -webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
-    transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Validation Feedback & Labels */
@@ -2441,14 +2433,14 @@ html:not([data-theme="dark"]) textarea:-webkit-autofill {
 }
 
 [data-theme="dark"] .table thead th {
-    background: var(--bg-surface-subtle) !important;
-    color: var(--text-muted) !important;
-    border-color: var(--border-color) !important;
+    background: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
 }
 
 [data-theme="dark"] .table tbody td {
-    border-color: var(--border-light) !important;
-    color: var(--text-body) !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .table-hover > tbody > tr:hover > * {
@@ -2554,7 +2546,7 @@ html:not([data-theme="dark"]) textarea:-webkit-autofill {
 }
 
 [data-theme="dark"] .text-secondary {
-    color: var(--text-muted) !important;
+    color: var(--text-secondary, #cbd5e1) !important;
 }
 
 [data-theme="dark"] strong,

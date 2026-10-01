@@ -201,3 +201,69 @@
         justify-content: center;
     }
 }
+
+/* ==========================================================================
+   Dark Theme Overrides
+   ========================================================================== */
+[data-theme="dark"] .error-card {
+    background: #111827;
+    border-color: #243044;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .error-display-num {
+    background: linear-gradient(135deg, #ff8f6b 0%, #ff6b4a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme="dark"] .error-badge {
+    background: rgba(255, 107, 74, 0.15);
+    border-color: rgba(255, 107, 74, 0.35);
+    color: #ff8f6b;
+}
+
+[data-theme="dark"] .error-title {
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .error-description {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .btn-error-primary {
+    background: var(--gradient-primary);
+    color: #ffffff;
+}
+
+[data-theme="dark"] .btn-error-secondary {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .btn-error-secondary:hover {
+    background: rgba(255, 107, 74, 0.15);
+    border-color: var(--primary);
+    color: #ff8f6b;
+}
+
+[data-theme="dark"] .error-quick-links {
+    border-top-color: #243044;
+}
+
+[data-theme="dark"] .quick-links-title {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .chip-item {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .chip-item:hover {
+    background: rgba(255, 107, 74, 0.15);
+    border-color: var(--primary);
+    color: #ff8f6b;
+}

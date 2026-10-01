@@ -116,9 +116,9 @@
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
     font-size: 0.95rem;
-    color: var(--input-light-text, #172033);
+    color: var(--input-light-text, #0f172a);
     background-color: var(--input-light-bg, #ffffff);
-    -webkit-text-fill-color: var(--input-light-text, #172033);
+    -webkit-text-fill-color: var(--input-light-text, #0f172a);
     transition: all var(--transition-fast);
 }
 
@@ -126,14 +126,14 @@
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-glow);
-    color: var(--input-light-text, #172033);
+    color: var(--input-light-text, #0f172a);
     background-color: var(--input-light-bg, #ffffff);
-    -webkit-text-fill-color: var(--input-light-text, #172033);
+    -webkit-text-fill-color: var(--input-light-text, #0f172a);
 }
 
 .admin-input::placeholder {
-    color: var(--input-light-placeholder, #94a3b8);
-    -webkit-text-fill-color: var(--input-light-placeholder, #94a3b8);
+    color: var(--input-light-placeholder, #64748b);
+    -webkit-text-fill-color: var(--input-light-placeholder, #64748b);
     opacity: 0.8;
 }
 
@@ -213,4 +213,40 @@
     .admin-login-header h1 {
         font-size: 1.5rem;
     }
+}
+
+/* ==========================================================================
+   Dark Theme Overrides
+   ========================================================================== */
+[data-theme="dark"] .admin-login-card {
+    background: #111827;
+    border-color: #243044;
+}
+
+[data-theme="dark"] .admin-login-icon {
+    background: #1e293b;
+    color: #60a5fa;
+    border: 1px solid #334155;
+}
+
+[data-theme="dark"] .admin-input {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    -webkit-text-fill-color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .admin-input::placeholder {
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
+    opacity: 1;
+}
+
+[data-theme="dark"] .admin-input-icon {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .admin-login-header p,
+[data-theme="dark"] .admin-security-note {
+    color: #cbd5e1;
 }

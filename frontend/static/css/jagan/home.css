@@ -2077,12 +2077,30 @@
    ========================================================================== */
 [data-theme="dark"] .home-page {
     background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 107, 74, 0.08), transparent 70%),
-                radial-gradient(ellipse 60% 40% at 85% 60%, rgba(139, 92, 246, 0.05), transparent 70%);
+                radial-gradient(ellipse 60% 40% at 85% 60%, rgba(139, 92, 246, 0.05), transparent 70%),
+                #0b0f19;
+}
+
+/* Full Section Canvas in Dark Mode (Prevents light canvas flash & invisible text) */
+[data-theme="dark"] .features-section {
+    background: #0b0f19 !important;
+}
+
+[data-theme="dark"] .how-it-works-section {
+    background: #0b0f19 !important;
+}
+
+[data-theme="dark"] .portals-section {
+    background: #0b0f19 !important;
+}
+
+[data-theme="dark"] .about-section {
+    background: #0b0f19 !important;
 }
 
 /* Hero Section */
 [data-theme="dark"] .hero-section {
-    background: radial-gradient(ellipse at 60% 30%, rgba(255, 107, 74, 0.12) 0%, rgba(124, 58, 237, 0.04) 45%, transparent 75%) !important;
+    background: radial-gradient(ellipse at 60% 30%, rgba(255, 107, 74, 0.12) 0%, rgba(124, 58, 237, 0.04) 45%, transparent 75%), #0b0f19 !important;
     border: none !important;
     box-shadow: none !important;
 }
@@ -2099,25 +2117,25 @@
 }
 
 [data-theme="dark"] .hero-description {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .hero-btn-secondary {
-    background: rgba(17, 24, 39, 0.8) !important;
+    background: #111827 !important;
     color: #f8fafc !important;
-    border-color: rgba(255, 255, 255, 0.12) !important;
+    border-color: #334155 !important;
 }
 
 [data-theme="dark"] .hero-btn-secondary:hover {
     background: rgba(255, 107, 74, 0.15) !important;
-    border-color: rgba(255, 107, 74, 0.4) !important;
+    border-color: var(--primary) !important;
     color: #ff8f6b !important;
 }
 
 /* Floating UI Preview Card */
 [data-theme="dark"] .hero-mockup-card {
-    background: rgba(15, 23, 42, 0.85) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: #111827 !important;
+    border-color: #243044 !important;
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 107, 74, 0.06) !important;
 }
 
@@ -2131,7 +2149,7 @@
 }
 
 [data-theme="dark"] .mockup-sub {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .mockup-badge {
@@ -2163,20 +2181,21 @@
 }
 
 [data-theme="dark"] .section-description {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 /* Statistics Cards */
+[data-theme="dark"] .hero-stat-card,
 [data-theme="dark"] .stat-card {
-    background: rgba(17, 24, 39, 0.75) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border-color: rgba(255, 255, 255, 0.07) !important;
+    background: #111827 !important;
+    border: 1px solid #243044 !important;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
 }
 
+[data-theme="dark"] .hero-stat-card:hover,
 [data-theme="dark"] .stat-card:hover {
-    border-color: rgba(255, 107, 74, 0.4) !important;
+    background: #1e293b !important;
+    border-color: var(--primary) !important;
     box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 107, 74, 0.12) !important;
 }
 
@@ -2184,25 +2203,25 @@
     color: #ff8f6b !important;
 }
 
+[data-theme="dark"] .hero-stat-card .stat-number,
 [data-theme="dark"] .stat-number {
     color: #f8fafc !important;
 }
 
+[data-theme="dark"] .hero-stat-card .stat-label,
 [data-theme="dark"] .stat-label {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 /* Portal Role Cards */
 [data-theme="dark"] .portal-card {
-    background: rgba(17, 24, 39, 0.75) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
+    background: #111827 !important;
+    border: 1px solid #243044 !important;
     box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.4) !important;
 }
 
 [data-theme="dark"] .portal-card:hover {
-    border-color: rgba(255, 107, 74, 0.45) !important;
+    border-color: var(--primary) !important;
     box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 107, 74, 0.12) !important;
 }
 
@@ -2211,7 +2230,7 @@
 }
 
 [data-theme="dark"] .portal-card p {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .portal-icon {
@@ -2225,41 +2244,39 @@
 }
 
 [data-theme="dark"] .student-register {
-    background: rgba(30, 41, 59, 0.7) !important;
+    background: #1e293b !important;
     color: #f8fafc !important;
-    border-color: rgba(255, 255, 255, 0.12) !important;
+    border-color: #334155 !important;
 }
 
 [data-theme="dark"] .student-register:hover {
     background: rgba(255, 107, 74, 0.18) !important;
-    border-color: rgba(255, 107, 74, 0.45) !important;
+    border-color: var(--primary) !important;
     color: #ff8f6b !important;
 }
 
 [data-theme="dark"] .admin-login {
     background: #1e293b !important;
     color: #f8fafc !important;
-    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    border: 1px solid #334155 !important;
 }
 
 [data-theme="dark"] .admin-login:hover {
-    background: #2563eb !important;
-    border-color: #3b82f6 !important;
+    background: #273549 !important;
+    border-color: var(--primary) !important;
     box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35) !important;
 }
 
 /* Feature Cards (8 Cards) */
 [data-theme="dark"] .feature-card {
-    background: rgba(17, 24, 39, 0.65) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border-color: rgba(255, 255, 255, 0.07) !important;
+    background: #111827 !important;
+    border: 1px solid #243044 !important;
     box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.3) !important;
 }
 
 [data-theme="dark"] .feature-card:hover {
     transform: translateY(-4px) !important;
-    border-color: rgba(255, 107, 74, 0.35) !important;
+    border-color: var(--primary) !important;
     box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.45), 0 0 20px rgba(255, 107, 74, 0.08) !important;
 }
 
@@ -2268,7 +2285,7 @@
 }
 
 [data-theme="dark"] .feature-card p {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .icon-orange { background: rgba(255, 107, 74, 0.15) !important; color: #ff8f6b !important; }
@@ -2280,19 +2297,19 @@
 
 /* 5. How It Works (Integrated Dark Section) */
 [data-theme="dark"] .how-it-works-container {
-    background: #111827 !important;
-    border-color: #1e293b !important;
-    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.45) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 [data-theme="dark"] .how-it-works-step {
-    background: #0b0f19 !important;
-    border-color: #1e293b !important;
+    background: #111827 !important;
+    border-color: #243044 !important;
 }
 
 [data-theme="dark"] .how-it-works-step:hover {
-    background: #131d2e !important;
-    border-color: #334155 !important;
+    background: #1e293b !important;
+    border-color: var(--primary) !important;
     box-shadow: 0 6px 18px -3px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -2304,7 +2321,7 @@
 
 [data-theme="dark"] .step-nav-number {
     background: #1e293b !important;
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
     border-color: #334155 !important;
 }
 
@@ -2329,11 +2346,11 @@
 }
 
 [data-theme="dark"] .step-nav-subtitle {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .step-nav-arrow {
-    color: #64748B !important;
+    color: #94a3b8 !important;
 }
 
 [data-theme="dark"] .how-it-works-step.active .step-nav-arrow {
@@ -2343,14 +2360,14 @@
 
 [data-theme="dark"] .how-it-works-showcase-card,
 [data-theme="dark"] .how-it-works-visual-stage {
-    background: #0b0f19 !important;
-    border-color: #1e293b !important;
-    background-image: radial-gradient(#1e293b 1.2px, transparent 1.2px) !important;
+    background: #111827 !important;
+    border-color: #243044 !important;
+    background-image: radial-gradient(#243044 1.2px, transparent 1.2px) !important;
 }
 
 [data-theme="dark"] .how-it-works-detail-box {
-    background: #0b0f19 !important;
-    border-color: #1e293b !important;
+    background: #111827 !important;
+    border-color: #243044 !important;
 }
 
 [data-theme="dark"] .showcase-title {
@@ -2358,7 +2375,7 @@
 }
 
 [data-theme="dark"] .showcase-description {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .showcase-tag {
@@ -2397,7 +2414,7 @@
 [data-theme="dark"] .pred-label,
 [data-theme="dark"] .mock-reassurance,
 [data-theme="dark"] .tl-time {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .select-val,
@@ -2460,7 +2477,7 @@
 }
 
 [data-theme="dark"] .showcase-tip {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .how-it-works-showcase-card.theme-ai .showcase-step-badge {
@@ -2483,11 +2500,12 @@
 
 /* 6. About IntelliHostel (Integrated Dark Section) */
 [data-theme="dark"] .info-banner-card {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+    background: #111827 !important;
+    border: 1px solid #243044 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
 }
 
+[data-theme="dark"] .info-banner-card h2,
 [data-theme="dark"] .info-banner-card h3 {
     color: #f8fafc !important;
 }
@@ -2504,11 +2522,13 @@
     color: #f8fafc !important;
 }
 
+[data-theme="dark"] .about-check-item i {
+    color: #34d399 !important;
+}
+
 [data-theme="dark"] .helpdesk-glass-card {
-    background: rgba(17, 24, 39, 0.85) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border: 1px solid rgba(255, 107, 74, 0.25) !important;
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
     box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5), 0 0 35px rgba(255, 107, 74, 0.08) !important;
 }
 
@@ -2522,12 +2542,12 @@
 }
 
 [data-theme="dark"] .helpdesk-sub {
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
 }
 
 [data-theme="dark"] .helpdesk-item {
-    background: rgba(15, 23, 42, 0.6) !important;
-    border-color: rgba(255, 255, 255, 0.06) !important;
+    background: #111827 !important;
+    border-color: #334155 !important;
 }
 
 [data-theme="dark"] .helpdesk-item-icon {

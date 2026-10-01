@@ -9,8 +9,8 @@ function getChartColors() {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     return {
         isDark: isDark,
-        textColor: isDark ? '#cbd5e1' : '#102A43',
-        mutedTextColor: isDark ? '#94a3b8' : '#52677A',
+        textColor: isDark ? '#f8fafc' : '#102A43',
+        mutedTextColor: isDark ? '#cbd5e1' : '#52677A',
         gridColor: isDark ? 'rgba(51, 65, 85, 0.45)' : '#D8E3EA',
         borderColor: isDark ? '#111827' : '#ffffff',
         tooltipBg: isDark ? 'rgba(17, 24, 39, 0.96)' : '#102A43'
