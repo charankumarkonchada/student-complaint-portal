@@ -14,8 +14,8 @@
             <div class="manage-heading-icon" style="background: linear-gradient(135deg, var(--brand-navy, #123B5D), #167D8D);">
                 <i class="fa-solid fa-bullhorn"></i>
             </div>
-            <div>
-                <div class="d-flex align-items-center gap-2 mb-1">
+            <div style="min-width: 0; flex: 1 1 auto;">
+                <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
                     <span class="badge common-issue-badge-count">Master Issue {{ issue.issue_code or ('#' ~ issue.id) }}</span>
                     {% if issue.issue_code %}
                     <span class="badge bg-secondary-subtle text-secondary" style="font-family: monospace;">#{{ issue.id }}</span>
@@ -42,19 +42,19 @@
         <div class="col-lg-5">
             <!-- Master Single-Action Update Form Card -->
             <div class="card border-0 shadow-sm rounded-4 mb-4 common-issue-card">
-                <div class="card-header bg-transparent border-bottom p-4">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="fa-solid fa-arrows-rotate fs-5 text-teal"></i>
-                            <h5 class="fw-bold mb-0 text-dark">Single-Action Master Update</h5>
+                <div class="card-header bg-transparent border-bottom p-3 p-sm-4">
+                    <div class="common-issue-update-header">
+                        <div class="common-issue-update-heading-wrap">
+                            <i class="fa-solid fa-arrows-rotate fs-5 text-teal flex-shrink-0"></i>
+                            <h5 class="fw-bold mb-0 text-dark common-issue-update-heading">Single-Action Master Update</h5>
                         </div>
-                        <span class="badge badge-teal">
+                        <span class="badge badge-teal common-issue-sync-badge">
                             Syncs {{ issue.linked_complaints }} complaint(s) for {{ issue.affected_count }} unique student(s)
                         </span>
                     </div>
                 </div>
 
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-sm-4">
                     <form method="POST" action="{{ url_for('common_issues.update_common_issue', id=issue.id) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="mb-3">
@@ -82,7 +82,7 @@
                         </div>
 
                         <button type="submit" class="btn w-100 py-3 text-white fw-bold shadow-sm"
-                                style="background: var(--gradient-primary); border: none; border-radius: 14px; font-size: 1rem;">
+                                style="background: var(--gradient-primary); border: none; border-radius: 14px; font-size: 1rem; white-space: normal; line-height: 1.35;">
                             <i class="fa-solid fa-arrows-rotate me-2"></i> Update Once & Propagate to All ({{ issue.linked_complaints }} complaints)
                         </button>
                     </form>
@@ -91,7 +91,7 @@
 
             <!-- Master Issue Metadata Card -->
             <div class="card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-sm-4">
                     <h6 class="fw-bold text-dark mb-3">
                         <i class="fa-solid fa-circle-info me-2 text-primary"></i> Incident Information
                     </h6>
@@ -100,26 +100,26 @@
                     {% endif %}
 
                     <div class="d-flex flex-column gap-2 small">
-                        <div class="d-flex justify-content-between border-bottom pb-2">
-                            <span class="text-muted">Hostel Location:</span>
-                            <span class="fw-bold text-dark">{{ issue.hostel }}</span>
+                        <div class="d-flex justify-content-between border-bottom pb-2 gap-2 flex-wrap">
+                            <span class="text-muted text-nowrap">Hostel Location:</span>
+                            <span class="fw-bold text-dark text-end" style="word-break: break-word;">{{ issue.hostel }}</span>
                         </div>
                         {% if issue.location_details %}
-                        <div class="d-flex justify-content-between border-bottom pb-2">
-                            <span class="text-muted">Wing/Details:</span>
-                            <span class="fw-bold text-dark">{{ issue.location_details }}</span>
+                        <div class="d-flex justify-content-between border-bottom pb-2 gap-2 flex-wrap">
+                            <span class="text-muted text-nowrap">Wing/Details:</span>
+                            <span class="fw-bold text-dark text-end" style="word-break: break-word;">{{ issue.location_details }}</span>
                         </div>
                         {% endif %}
-                        <div class="d-flex justify-content-between border-bottom pb-2">
-                            <span class="text-muted">Priority:</span>
+                        <div class="d-flex justify-content-between border-bottom pb-2 gap-2 flex-wrap">
+                            <span class="text-muted text-nowrap">Priority:</span>
                             <span class="badge text-bg-warning">{{ issue.priority }}</span>
                         </div>
-                        <div class="d-flex justify-content-between border-bottom pb-2">
-                            <span class="text-muted">Created Date:</span>
+                        <div class="d-flex justify-content-between border-bottom pb-2 gap-2 flex-wrap">
+                            <span class="text-muted text-nowrap">Created Date:</span>
                             <span class="text-dark">{{ issue.created_at }}</span>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="text-muted">Last Synchronized:</span>
+                        <div class="d-flex justify-content-between gap-2 flex-wrap">
+                            <span class="text-muted text-nowrap">Last Synchronized:</span>
                             <span class="text-dark">{{ issue.updated_at }}</span>
                         </div>
                     </div>
@@ -128,7 +128,7 @@
 
             <!-- Master Audit History -->
             <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-sm-4">
                     <h6 class="fw-bold text-dark mb-3">
                         <i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i> Master Audit History
                     </h6>
@@ -155,9 +155,9 @@
         <!-- Right Column: Associated Student Complaints -->
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-header bg-transparent border-bottom p-4">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <div>
+                <div class="card-header bg-transparent border-bottom p-3 p-sm-4">
+                    <div class="common-issue-table-header">
+                        <div class="common-issue-table-title">
                             <h5 class="fw-bold mb-1 text-dark">
                                 <i class="fa-solid fa-users me-2 text-primary"></i> Associated Student Complaints
                             </h5>
@@ -165,7 +165,7 @@
                                 All {{ complaints|length }} complaints below are synchronized with this master issue.
                             </p>
                         </div>
-                        <span class="badge badge-teal" style="font-size: 0.85rem; padding: 6px 14px;">
+                        <span class="badge badge-teal common-issue-table-badge">
                             {{ complaints|length }} Synced
                         </span>
                     </div>
@@ -205,11 +205,11 @@
                                     </td>
                                     <td>
                                         {% if c.status == 'Pending' %}
-                                            <span class="badge badge-pending">Pending</span>
+                                             <span class="badge badge-pending">Pending</span>
                                         {% elif c.status == 'In Progress' %}
-                                            <span class="badge badge-progress">In Progress</span>
+                                             <span class="badge badge-progress">In Progress</span>
                                         {% else %}
-                                            <span class="badge badge-resolved">Resolved</span>
+                                             <span class="badge badge-resolved">Resolved</span>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -218,7 +218,7 @@
                                     <td style="text-align: right;">
                                         <form method="POST" action="{{ url_for('common_issues.unlink_complaint', id=issue.id, complaint_id=c.id) }}"
                                               class="d-inline" onsubmit="return confirm('Unlink complaint #{{ c.id }} from this common issue?');">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Unlink Complaint">
                                                 <i class="fa-solid fa-unlink"></i>
                                             </button>
@@ -241,7 +241,7 @@
             <!-- Link Additional Complaints in the Same Hostel/Category -->
             {% if unlinked_candidates %}
             <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-sm-4">
                     <h6 class="fw-bold text-dark mb-2">
                         <i class="fa-solid fa-link me-2 text-primary"></i> Link Unassociated Complaints in {{ issue.hostel }}
                     </h6>
@@ -250,9 +250,9 @@
                     </p>
 
                     <form method="POST" action="{{ url_for('common_issues.link_complaint', id=issue.id) }}" class="row g-2 align-items-center">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <div class="col-md-9">
-                            <select class="form-select" name="complaint_id" required>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="col-12 col-md-9">
+                            <select class="form-select text-truncate" name="complaint_id" required style="max-width: 100%;">
                                 <option value="">Select an unlinked complaint...</option>
                                 {% for u in unlinked_candidates %}
                                 <option value="{{ u.id }}">
@@ -261,7 +261,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-12 col-md-3">
                             <button type="submit" class="btn btn-outline-primary w-100 fw-bold">
                                 <i class="fa-solid fa-plus me-1"></i> Link to Issue
                             </button>
