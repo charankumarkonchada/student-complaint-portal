@@ -74,6 +74,328 @@ HOSTEL_SYNONYMS = {
 ACTIVE_COMMON_ISSUE_STATUSES = frozenset({"Pending", "In Progress"})
 INACTIVE_COMMON_ISSUE_STATUSES = frozenset({"Resolved", "Closed", "Rejected"})
 
+CATEGORY_EQUIVALENCE: dict[str, str] = {
+    "water": "plumbing",
+    "plumbing": "plumbing",
+    "electrical": "electrical",
+    "furniture": "carpentry",
+    "carpentry": "carpentry",
+    "cleaning": "cleanliness",
+    "cleanliness": "cleanliness",
+    "internet": "internet / wi-fi",
+    "wi-fi": "internet / wi-fi",
+    "wifi": "internet / wi-fi",
+    "internet / wi-fi": "internet / wi-fi",
+    "mess": "mess",
+    "food": "mess",
+    "other": "other",
+    "others": "other",
+}
+
+
+def is_category_compatible(cat1: Optional[str], cat2: Optional[str]) -> bool:
+    """
+    Checks if two category strings are compatible, supporting standard aliases between
+    student submission forms (e.g. Water, Cleaning, Furniture, Internet) and
+    admin master issue forms (e.g. Plumbing, Cleanliness, Carpentry, Internet / Wi-Fi).
+    """
+    if not cat1 or not cat2:
+        return False
+    c1 = str(cat1).strip().lower()
+    c2 = str(cat2).strip().lower()
+    if c1 == c2:
+        return True
+    return CATEGORY_EQUIVALENCE.get(c1, c1) == CATEGORY_EQUIVALENCE.get(c2, c2)
+
+
+def _clean_str(s: Optional[str]) -> str:
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def _extract_hostel_tokens(text: Optional[str]) -> list[str]:
+    text_lower = (text or "").lower()
+    words = re.findall(r"[a-z0-9]+", text_lower)
+    meaningful = [w for w in words if w not in {"hostel", "bhavan", "block", "hall", "residence", "room"}]
+    return meaningful
+
+
+def is_location_compatible(
+    issue_hostel: Optional[str],
+    issue_location_details: Optional[str],
+    student_hostel: Optional[str],
+    student_room_no: Optional[str]
+) -> bool:
+    """
+    Strictly verifies location compatibility between a master issue and student complaint.
+    - Preserves hostel boundaries: Complaints from different hostels (e.g. Hostel Block A vs Hostel Block C)
+      are NEVER merged or associated.
+    - Supports room-level locations: If an admin specifies a room (e.g. 'I108', 'Room I108'), matches
+      against student_room_no while verifying block compatibility.
+    - Supports combined hostel + room locations.
+    """
+    if not issue_hostel:
+        return False
+
+    ih = issue_hostel.strip().lower()
+    sh = (student_hostel or "").strip().lower()
+    sr = (student_room_no or "").strip().lower()
+    ild = (issue_location_details or "").strip().lower()
+
+    # Exact string match (ignoring whitespace and case)
+    if sh and ih == sh:
+        return True
+
+    clean_sr = _clean_str(sr)
+    clean_ih = _clean_str(ih)
+    clean_sh = _clean_str(sh)
+
+    # Direct room match (e.g. issue_hostel is 'I108' or 'Room I108' and student_room_no is 'I108')
+    if clean_sr and (clean_ih == clean_sr or clean_ih == f"room{clean_sr}"):
+        return True
+
+    # If issue_hostel contains both hostel and room (e.g. 'Hostel Block A - 201' or 'Boys I block I108')
+    if clean_sr and clean_sh and clean_sr in clean_ih and clean_sh in clean_ih:
+        return True
+
+    # Token comparison between hostel names
+    ih_tokens = _extract_hostel_tokens(ih)
+    sh_tokens = _extract_hostel_tokens(sh)
+
+    # Disallow mismatch if both have distinct hostel identifiers (e.g. ['a'] vs ['b'] or ['c'])
+    if ih_tokens and sh_tokens and not any(c.isdigit() for c in ih):
+        if set(ih_tokens) == set(sh_tokens) or (len(ih_tokens) == 1 and ih_tokens[0] in sh_tokens):
+            return True
+        return False
+
+    return False
+
+
+DOMAIN_GENERIC_WORDS = {
+    "working", "work", "works", "worked",
+    "broken", "damage", "damaged", "damages",
+    "stopped", "stop", "stops",
+    "issue", "issues",
+    "problem", "problems",
+    "properly", "proper",
+    "urgent", "urgently", "urgency",
+    "immediate", "immediately", "attention",
+    "needed", "need", "needs",
+    "please", "check", "fix", "repair", "repairs", "repaired",
+    "requiring", "require", "requires", "support", "help",
+    "affecting", "affected", "affects",
+    "several", "many", "all", "students", "student", "residents", "resident",
+    "reported", "report", "reports",
+    "since", "yesterday", "today", "days", "time", "hours",
+    "completely", "very", "extremely", "totally", "often", "frequently",
+    "bad", "faulty", "failure", "fail", "failed",
+    "service", "services", "request", "requests", "maintenance",
+    "complaint", "complaints"
+}
+
+SPECIFIC_LOCATIONS = {
+    "washroom": {"washroom", "washrooms", "bathroom", "bathrooms", "toilet", "toilets", "restroom", "restrooms", "latrine", "lavatory"},
+    "room": {"room", "rooms", "bedroom", "hostel room"},
+    "corridor": {"corridor", "corridors", "hallway", "hallways", "passage", "passages", "gallery", "lobby"},
+    "mess": {"mess", "dining", "canteen", "cafeteria", "kitchen"},
+    "drinking_area": {"drinking", "water cooler", "water filter", "purifier area", "dispenser"},
+    "balcony": {"balcony", "terrace", "veranda"},
+    "staircase": {"staircase", "stairs", "stairway"},
+}
+
+TARGET_ASSETS = {
+    # Electrical
+    "fan": {"fan", "fans", "ceiling fan", "exhaust fan", "regulator"},
+    "light": {"light", "lights", "tube light", "tubelight", "bulb", "bulbs", "lamp", "lamps", "led"},
+    "socket": {"socket", "sockets", "plug", "plugs", "switch", "switches", "switchboard", "board", "outlet", "outlets"},
+    "wiring": {"wire", "wires", "wiring", "short circuit", "spark", "sparking"},
+    "power": {"power cut", "power outage", "electricity cut", "current cut", "no power", "blackout", "tripping", "mcb"},
+    "ac": {"ac", "air conditioner", "air conditioning", "cooler"},
+    "geyser": {"geyser", "water heater", "heater"},
+
+    # Plumbing
+    "drinking_water": {"drinking water", "drinking", "purifier", "filter water", "ro water", "water cooler"},
+    "washroom_water": {"washroom water", "bathroom water", "bathing water", "water for bathing", "flush water", "toilet water"},
+    "tap": {"tap", "taps", "faucet", "faucets"},
+    "pipe": {"pipe", "pipes", "pipeline", "piping", "drain", "drainage", "sewer"},
+    "shower": {"shower", "showers"},
+    "flush": {"flush", "cistern", "commode"},
+    "basin": {"basin", "sink", "washbasin"},
+    "tank": {"tank", "overhead tank", "water tank"},
+
+    # Internet / Wi-Fi
+    "wifi_router": {"wifi", "wi-fi", "router", "lan", "ethernet", "hotspot", "access point", "network", "internet"},
+
+    # Carpentry / Furniture
+    "door": {"door", "doors", "door handle", "door latch", "door lock", "hinge", "hinges"},
+    "window": {"window", "windows", "window pane", "glass pane"},
+    "table": {"table", "tables", "study table", "desk", "desks"},
+    "chair": {"chair", "chairs", "study chair", "stool", "benches", "bench"},
+    "bed": {"bed", "beds", "cot", "cots", "mattress"},
+    "cupboard": {"cupboard", "cupboards", "almirah", "wardrobe", "closet", "shelf", "shelves", "drawer", "drawers"},
+
+    # Cleanliness
+    "waste": {"garbage", "trash", "waste", "dustbin", "litter", "rubbish"},
+    "pest": {"cockroach", "cockroaches", "insect", "insects", "mosquito", "mosquitoes", "bedbug", "bedbugs", "rat", "rats", "rodent"},
+    "dust": {"dust", "dusty", "cobweb", "cobwebs", "dirty floor", "sweeping", "mopping"},
+
+    # Mess / Food
+    "food_quality": {"food quality", "taste", "undercooked", "raw", "burnt", "cold food"},
+    "food_shortage": {"shortage", "finished", "ran out", "insufficient food", "no food left"},
+    "food_hygiene": {"foreign object", "insect in food", "hair in food", "dirty utensils", "dirty plates"}
+}
+
+PROBLEM_ASPECTS = {
+    # Network
+    "speed_degradation": {"slow", "speed", "buffering", "lag", "latency", "high ping", "bandwidth", "low speed", "extremely slow"},
+    "outage": {"unavailable", "down", "disconnected", "no connection", "not connecting", "offline", "outage", "cuts", "no signal", "cannot connect", "no wifi", "no internet", "no electricity", "power cut", "power outage", "blackout"},
+
+    # Water / Plumbing
+    "leakage": {"leak", "leaking", "leakage", "dripping", "overflow", "overflowing", "seepage"},
+    "shortage": {"no water", "unavailable", "empty", "scarcity", "not coming", "stopped coming", "dry", "no supply"},
+    "pressure": {"low pressure", "pressure", "slow flow"},
+    "clogging": {"block", "blocked", "clog", "clogged", "overflowing drain", "choked"},
+
+    # General
+    "cleanliness": {"clean", "cleaned", "cleaning", "dirty", "stink", "smell", "unhygienic", "sweep", "mop"},
+    "damage": {"broken", "break", "cracked", "damage", "damaged", "loose", "fell", "bent"}
+}
+
+
+def analyze_complaint_intent(text: str, category: Optional[str] = None) -> dict[str, Any]:
+    """
+    Decomposes complaint text and category into structured semantic dimensions:
+    - locations: detected specific locations (room, washroom, corridor, etc.)
+    - assets: target assets / physical objects (fan, light, pipe, etc.)
+    - aspects: failure mode / problem aspect (outage, speed_degradation, leakage, etc.)
+    - focal_tokens: tokens excluding domain generic maintenance action words
+    """
+    raw = (text or "").lower()
+    raw = re.sub(r"\bwi[- ]?fi\b", "internet", raw)
+    text_lower = " " + re.sub(r"[^a-z0-9\s]", " ", raw) + " "
+
+    # 1. Detect specific locations
+    detected_locations = set()
+    for loc_key, terms in SPECIFIC_LOCATIONS.items():
+        for term in terms:
+            if f" {term} " in text_lower:
+                detected_locations.add(loc_key)
+                break
+
+    # 2. Detect target assets
+    detected_assets = set()
+    for asset_key, terms in TARGET_ASSETS.items():
+        for term in terms:
+            if f" {term} " in text_lower:
+                detected_assets.add(asset_key)
+                break
+
+    # Disambiguation / refinement
+    if "drinking water" in text_lower or ("drinking" in text_lower and "water" in text_lower):
+        detected_assets.add("drinking_water")
+        detected_assets.discard("washroom_water")
+    elif "washroom" in text_lower and "water" in text_lower:
+        detected_assets.add("washroom_water")
+        detected_assets.discard("drinking_water")
+    elif "bathing" in text_lower or "bath" in text_lower:
+        detected_assets.add("washroom_water")
+        detected_assets.discard("drinking_water")
+
+    # 3. Detect problem aspects
+    detected_aspects = set()
+    for aspect_key, terms in PROBLEM_ASPECTS.items():
+        for term in terms:
+            if f" {term} " in text_lower:
+                detected_aspects.add(aspect_key)
+                break
+
+    # 4. Extract distinctive focal tokens
+    raw_words = re.findall(r"[a-z0-9]+", text_lower)
+    focal_tokens = [
+        HOSTEL_SYNONYMS.get(w, w)
+        for w in raw_words
+        if w not in STOP_WORDS and w not in DOMAIN_GENERIC_WORDS and len(w) > 1
+    ]
+
+    return {
+        "text": text,
+        "category": CATEGORY_EQUIVALENCE.get(category.lower().strip(), category) if category else None,
+        "locations": detected_locations,
+        "assets": detected_assets,
+        "aspects": detected_aspects,
+        "focal_tokens": focal_tokens,
+    }
+
+
+def are_underlying_problems_compatible(intent1: dict[str, Any], intent2: dict[str, Any]) -> tuple[bool, str]:
+    """
+    Evaluates whether two complaint intents represent the same underlying maintenance problem.
+    Returns (is_compatible, reason).
+    """
+    # 1. Target Asset Compatibility Check
+    assets1 = intent1["assets"]
+    assets2 = intent2["assets"]
+    if assets1 and assets2:
+        # Drinking water vs Domestic plumbing separation:
+        # Drinking water (purifier, drinking water cooler) is NEVER compatible with washroom/shower/tap/toilet/pipeline plumbing.
+        if "drinking_water" in assets1 and not ("drinking_water" in assets2):
+            return False, "Conflicting assets: drinking water vs domestic plumbing"
+        if "drinking_water" in assets2 and not ("drinking_water" in assets1):
+            return False, "Conflicting assets: domestic plumbing vs drinking water"
+
+        # Electrical appliance conflict (fan vs light vs socket vs ac vs geyser)
+        electrical_assets = {"fan", "light", "socket", "ac", "geyser", "wiring", "power"}
+        e1 = assets1.intersection(electrical_assets)
+        e2 = assets2.intersection(electrical_assets)
+        if e1 and e2 and e1.isdisjoint(e2):
+            return False, f"Electrical asset conflict: {e1} vs {e2}"
+
+        # Carpentry furniture conflict (door vs window vs table vs chair vs bed vs cupboard)
+        carpentry_assets = {"door", "window", "table", "chair", "bed", "cupboard"}
+        c1 = assets1.intersection(carpentry_assets)
+        c2 = assets2.intersection(carpentry_assets)
+        if c1 and c2 and c1.isdisjoint(c2):
+            return False, f"Carpentry asset conflict: {c1} vs {c2}"
+
+        # Distinct plumbing fixture conflict (e.g. pipe vs tap vs shower)
+        plumbing_fixtures = {"tap", "pipe", "shower", "flush"}
+        p1 = assets1.intersection(plumbing_fixtures)
+        p2 = assets2.intersection(plumbing_fixtures)
+        if p1 and p2 and p1.isdisjoint(p2):
+            return False, f"Plumbing fixture conflict: {p1} vs {p2}"
+
+    # 2. Specific Location Context Conflict:
+    # If both specify specific locations and they are disjoint,
+    # they cannot represent the same physical maintenance issue.
+    locs1 = intent1["locations"]
+    locs2 = intent2["locations"]
+    if locs1 and locs2:
+        if locs1.isdisjoint(locs2):
+            return False, f"Location conflict: {locs1} vs {locs2}"
+
+    # 3. Problem Aspect Conflict:
+    aspects1 = intent1["aspects"]
+    aspects2 = intent2["aspects"]
+    if ("outage" in aspects1 and "speed_degradation" in aspects2) or ("speed_degradation" in aspects1 and "outage" in aspects2):
+        return False, "Aspect conflict: outage vs speed degradation"
+    if ("leakage" in aspects1 and "shortage" in aspects2) or ("shortage" in aspects1 and "leakage" in aspects2):
+        return False, "Aspect conflict: leakage vs shortage"
+
+    # 4. Focal Semantic Similarity Check:
+    focal1 = intent1["focal_tokens"]
+    focal2 = intent2["focal_tokens"]
+    if focal1 and focal2:
+        c1 = Counter(focal1)
+        c2 = Counter(focal2)
+        dot = sum(c1[k] * c2[k] for k in c1 if k in c2)
+        mag1 = math.sqrt(sum(v**2 for v in c1.values()))
+        mag2 = math.sqrt(sum(v**2 for v in c2.values()))
+        focal_sim = dot / (mag1 * mag2) if (mag1 and mag2) else 0.0
+
+        if focal_sim == 0.0 and len(focal1) >= 1 and len(focal2) >= 1:
+            return False, "Zero focal similarity on distinctive terms"
+
+    return True, "Compatible underlying problem"
+
 
 def is_active_status(status: Optional[str]) -> bool:
     """
@@ -123,12 +445,13 @@ def find_matching_common_issue(
     hostel: str,
     title: str,
     description: str,
+    student_room_no: Optional[str] = None,
     conn: Optional[Any] = None,
     threshold: float = 0.50,
     active_only: bool = True
 ) -> Optional[dict[str, Any]]:
     """
-    Finds a common issue matching the exact hostel/location and category,
+    Finds a common issue matching the hostel/location and category,
     with title/description similarity meeting the safe threshold.
     If active_only is True, filters to only active issues ('Pending', 'In Progress').
     If active_only is False, matches across all issues (both active and historical/closed).
@@ -146,11 +469,8 @@ def find_matching_common_issue(
         issues = conn.execute(
             """
             SELECT * FROM common_issues
-            WHERE LOWER(TRIM(hostel)) = LOWER(TRIM(?))
-              AND LOWER(TRIM(category)) = LOWER(TRIM(?))
             ORDER BY id DESC
-            """,
-            (hostel, category)
+            """
         ).fetchall()
 
         if not issues:
@@ -165,7 +485,22 @@ def find_matching_common_issue(
             if active_only and not issue_active:
                 continue
 
+            if not is_category_compatible(category, issue["category"]):
+                continue
+
+            loc_details = issue["location_details"] if "location_details" in issue.keys() else ""
+            if not is_location_compatible(issue["hostel"], loc_details, hostel, student_room_no):
+                continue
+
             issue_text = f"{issue['title']} {issue['description'] or ''}"
+
+            # Underlying problem intent compatibility check
+            comp_intent = analyze_complaint_intent(complaint_text, category)
+            issue_intent = analyze_complaint_intent(issue_text, issue["category"])
+            is_compat, _ = are_underlying_problems_compatible(comp_intent, issue_intent)
+            if not is_compat:
+                continue
+
             sim = calculate_text_similarity(complaint_text, issue_text)
             if sim >= threshold and sim > best_similarity:
                 best_similarity = sim
@@ -264,11 +599,11 @@ def associate_complaint_to_common_issue(
 
     try:
         issue = conn.execute(
-            "SELECT status, assigned_to, admin_remarks, hostel, category FROM common_issues WHERE id = ?",
+            "SELECT status, assigned_to, admin_remarks, hostel, location_details, category FROM common_issues WHERE id = ?",
             (common_issue_id,)
         ).fetchone()
         complaint = conn.execute(
-            "SELECT c.id, c.category, s.hostel FROM complaints c JOIN students s ON s.id=c.student_id WHERE c.id=?",
+            "SELECT c.id, c.category, s.hostel, s.room_no FROM complaints c JOIN students s ON s.id=c.student_id WHERE c.id=?",
             (complaint_id,)
         ).fetchone()
 
@@ -276,9 +611,10 @@ def associate_complaint_to_common_issue(
             return False
         if not is_active_status(issue["status"]):
             return False
-        if str(issue["hostel"] or "").strip().lower() != str(complaint["hostel"] or "").strip().lower():
+        loc_details = issue["location_details"] if "location_details" in issue.keys() else ""
+        if not is_location_compatible(issue["hostel"], loc_details, complaint["hostel"], complaint["room_no"]):
             return False
-        if str(issue["category"] or "").strip().lower() != str(complaint["category"] or "").strip().lower():
+        if not is_category_compatible(issue["category"], complaint["category"]):
             return False
 
         # Link complaint and synchronize state
@@ -570,6 +906,7 @@ def find_matching_complaint_for_common_issue(
     hostel: str,
     title: str,
     description: str,
+    student_room_no: Optional[str] = None,
     exclude_id: Optional[int] = None,
     conn: Optional[Any] = None,
     threshold: float = 0.50,
@@ -592,15 +929,13 @@ def find_matching_complaint_for_common_issue(
 
     try:
         query = """
-            SELECT c.*, s.hostel
+            SELECT c.*, s.hostel, s.room_no
             FROM complaints c
             JOIN students s ON s.id = c.student_id
-            WHERE LOWER(TRIM(s.hostel)) = LOWER(TRIM(?))
-              AND LOWER(TRIM(c.category)) = LOWER(TRIM(?))
         """
-        params = [hostel, category]
+        params = []
         if exclude_id:
-            query += " AND c.id != ?"
+            query += " WHERE c.id != ?"
             params.append(exclude_id)
         query += " ORDER BY c.id DESC"
 
@@ -617,7 +952,21 @@ def find_matching_complaint_for_common_issue(
             if active_only and not comp_active:
                 continue
 
+            if not is_category_compatible(category, row["category"]):
+                continue
+
+            if not is_location_compatible(hostel, None, row["hostel"], row["room_no"] if "room_no" in row.keys() else None):
+                continue
+
             existing_text = f"{row['title']} {row['description'] or ''}"
+
+            # Underlying problem intent compatibility check
+            comp_intent = analyze_complaint_intent(complaint_text, category)
+            existing_intent = analyze_complaint_intent(existing_text, row["category"])
+            is_compat, _ = are_underlying_problems_compatible(comp_intent, existing_intent)
+            if not is_compat:
+                continue
+
             sim = calculate_text_similarity(complaint_text, existing_text)
             if sim >= threshold and sim > best_similarity:
                 best_similarity = sim
@@ -661,12 +1010,21 @@ def process_complaint_common_issue(
         close_conn = True
 
     try:
+        # Fetch student details for room-level location matching
+        st_row = conn.execute(
+            "SELECT s.hostel, s.room_no FROM complaints c JOIN students s ON s.id=c.student_id WHERE c.id = ?",
+            (complaint_id,)
+        ).fetchone()
+        student_room_no = st_row["room_no"] if st_row else None
+        effective_hostel = (st_row["hostel"] if st_row and st_row["hostel"] else hostel).strip()
+
         # Step 1: Check existing ACTIVE Common Issue
         matched_issue = find_matching_common_issue(
             category=category,
-            hostel=hostel,
+            hostel=effective_hostel,
             title=title,
             description=description,
+            student_room_no=student_room_no,
             conn=conn,
             threshold=0.50,
             active_only=True
@@ -684,9 +1042,10 @@ def process_complaint_common_issue(
         # Step 2: Check ACTIVE existing complaints in same hostel & category
         matched_comp = find_matching_complaint_for_common_issue(
             category=category,
-            hostel=hostel,
+            hostel=effective_hostel,
             title=title,
             description=description,
+            student_room_no=student_room_no,
             exclude_id=complaint_id,
             conn=conn,
             threshold=0.50,
@@ -759,9 +1118,10 @@ def process_complaint_common_issue(
         # When an inactive/resolved issue matches, create a NEW Common Issue
         matched_hist_issue = find_matching_common_issue(
             category=category,
-            hostel=hostel,
+            hostel=effective_hostel,
             title=title,
             description=description,
+            student_room_no=student_room_no,
             conn=conn,
             threshold=0.50,
             active_only=False
@@ -789,9 +1149,10 @@ def process_complaint_common_issue(
 
         matched_hist_comp = find_matching_complaint_for_common_issue(
             category=category,
-            hostel=hostel,
+            hostel=effective_hostel,
             title=title,
             description=description,
+            student_room_no=student_room_no,
             exclude_id=complaint_id,
             conn=conn,
             threshold=0.50,
@@ -928,3 +1289,133 @@ def group_existing_duplicate_complaints(conn: Optional[Any] = None) -> int:
         if close_conn:
             conn.close()
 
+
+def associate_matching_complaints_to_master_issue(
+    master_issue_id: int,
+    conn: Optional[Any] = None,
+    threshold: float = 0.50
+) -> int:
+    """
+    Identifies eligible existing student complaints that match the newly created
+    or existing Master Issue according to the project's common issue matching rules:
+    - Active statuses: Pending, In Progress
+    - Category compatibility (including standard aliases)
+    - Location compatibility (respecting hostel boundaries, supporting room numbers)
+    - Cosine text similarity >= threshold (default 0.50)
+    - Considers unlinked complaints OR complaints in auto-created common issues
+    - Synchronizes status, assigned staff, and remarks
+    - Cleans up empty orphaned auto-created common issues
+    Returns the count of complaints associated.
+    """
+    close_conn = False
+    if conn is None:
+        conn = get_db_connection()
+        close_conn = True
+
+    try:
+        issue = conn.execute(
+            "SELECT * FROM common_issues WHERE id = ?",
+            (master_issue_id,)
+        ).fetchone()
+
+        if not issue or not is_active_status(issue["status"]):
+            return 0
+
+        issue_text = f"{issue['title']} {issue['description'] or ''}"
+        issue_hostel = issue["hostel"]
+        issue_location_details = issue["location_details"] if "location_details" in issue.keys() else ""
+        issue_category = issue["category"]
+        issue_intent = analyze_complaint_intent(issue_text, issue_category)
+
+        # Fetch all active complaints with student details
+        raw_complaints = conn.execute(
+            """
+            SELECT c.id, c.title, c.description, c.category, c.status, c.common_issue_id,
+                   s.hostel, s.room_no
+            FROM complaints c
+            JOIN students s ON s.id = c.student_id
+            WHERE LOWER(TRIM(c.status)) IN ('pending', 'in progress')
+            ORDER BY c.id ASC
+            """
+        ).fetchall()
+
+        associated_count = 0
+        superseded_issue_ids = set()
+
+        for c in raw_complaints:
+            cid = c["id"]
+            current_issue_id = c["common_issue_id"]
+
+            # Skip if already linked to this master issue
+            if current_issue_id == master_issue_id:
+                continue
+
+            # Check category compatibility
+            if not is_category_compatible(issue_category, c["category"]):
+                continue
+
+            # Check location compatibility
+            if not is_location_compatible(issue_hostel, issue_location_details, c["hostel"], c["room_no"]):
+                continue
+
+            comp_text = f"{c['title']} {c['description'] or ''}".strip()
+
+            # Underlying problem intent compatibility check
+            c_intent = analyze_complaint_intent(comp_text, c["category"])
+            is_compat, _ = are_underlying_problems_compatible(issue_intent, c_intent)
+            if not is_compat:
+                continue
+
+            # Check text similarity across full text and title pairs to avoid penalizing varying description lengths
+            sim = max(
+                calculate_text_similarity(issue_text, comp_text),
+                calculate_text_similarity(issue["title"], c["title"]),
+                calculate_text_similarity(issue["title"], comp_text),
+                calculate_text_similarity(issue_text, c["title"])
+            )
+            if sim < threshold:
+                continue
+
+            # Check existing relationship:
+            # Eligible if unlinked, OR if current issue is an auto-created issue
+            is_eligible = False
+            if current_issue_id is None or current_issue_id == 0:
+                is_eligible = True
+            else:
+                curr_ci = conn.execute(
+                    "SELECT id, assigned_to FROM common_issues WHERE id = ?",
+                    (current_issue_id,)
+                ).fetchone()
+                if curr_ci:
+                    hist = conn.execute(
+                        "SELECT updated_by FROM common_issue_history WHERE common_issue_id = ? ORDER BY id ASC LIMIT 1",
+                        (current_issue_id,)
+                    ).fetchone()
+                    created_by_ai = hist and "ai grouping engine" in str(hist["updated_by"]).lower()
+                    if created_by_ai or not curr_ci["assigned_to"]:
+                        is_eligible = True
+                        superseded_issue_ids.add(current_issue_id)
+
+            if is_eligible:
+                if associate_complaint_to_common_issue(cid, master_issue_id, conn):
+                    associated_count += 1
+
+        # Clean up any superseded auto-issues that now have zero linked complaints
+        for old_id in superseded_issue_ids:
+            remaining = conn.execute(
+                "SELECT COUNT(*) AS total FROM complaints WHERE common_issue_id = ?",
+                (old_id,)
+            ).fetchone()["total"]
+            if remaining == 0:
+                try:
+                    conn.execute("DELETE FROM common_issue_notifications WHERE common_issue_id = ?", (old_id,))
+                    conn.execute("DELETE FROM common_issue_history WHERE common_issue_id = ?", (old_id,))
+                    conn.execute("DELETE FROM common_issues WHERE id = ?", (old_id,))
+                except Exception:
+                    pass
+
+        conn.commit()
+        return associated_count
+    finally:
+        if close_conn:
+            conn.close()

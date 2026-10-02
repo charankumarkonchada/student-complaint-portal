@@ -13,8 +13,13 @@ from backend.services.common_issue_service import (
     update_common_issue_once,
     create_common_issue,
     associate_complaint_to_common_issue,
+    associate_matching_complaints_to_master_issue,
     unlink_complaint_from_common_issue,
-    is_active_status
+    is_active_status,
+    is_location_compatible,
+    is_category_compatible,
+    analyze_complaint_intent,
+    are_underlying_problems_compatible
 )
 
 common_issues_bp = Blueprint("common_issues", __name__)
@@ -83,20 +88,30 @@ def view_common_issue(id):
 
     complaints = get_common_issue_complaints(id, conn)
 
-    # Fetch available unlinked complaints in the same hostel and category that could be associated
-    unlinked = conn.execute(
+    # Fetch available unlinked complaints in the same hostel/room and category that could be associated
+    candidates = conn.execute(
         """
-        SELECT c.id, c.title, c.created_at, s.name, s.id_no, s.room_no
+        SELECT c.id, c.title, c.description, c.category, c.created_at, s.name, s.id_no, s.room_no, s.hostel
         FROM complaints c
         JOIN students s ON s.id = c.student_id
         WHERE c.common_issue_id IS NULL
-          AND LOWER(TRIM(s.hostel)) = LOWER(TRIM(?))
-          AND LOWER(TRIM(c.category)) = LOWER(TRIM(?))
         ORDER BY c.created_at DESC
-        LIMIT 20
-        """,
-        (issue["hostel"], issue["category"])
+        """
     ).fetchall()
+    loc_details = issue["location_details"] if "location_details" in issue.keys() else ""
+    issue_text = f"{issue['title']} {issue['description'] or ''}"
+    issue_intent = analyze_complaint_intent(issue_text, issue["category"])
+
+    unlinked = []
+    for c in candidates:
+        if (is_location_compatible(issue["hostel"], loc_details, c["hostel"], c["room_no"])
+                and is_category_compatible(issue["category"], c["category"])):
+            c_text = f"{c['title']} {c['description'] or ''}"
+            c_intent = analyze_complaint_intent(c_text, c["category"])
+            compat, _ = are_underlying_problems_compatible(issue_intent, c_intent)
+            if compat:
+                unlinked.append(c)
+    unlinked = unlinked[:20]
 
     conn.close()
 
@@ -145,7 +160,7 @@ def update_common_issue(id):
 
 @common_issues_bp.route("/admin/common_issue/create", methods=["GET", "POST"])
 def create_new_common_issue():
-    """Creates a new master common issue and optionally associates selected complaints."""
+    """Creates a new master common issue and automatically associates matching complaints."""
     if not admin_required():
         return redirect(url_for("admin_login"))
 
@@ -174,7 +189,7 @@ def create_new_common_issue():
                 continue
             row = conn.execute(
                 """
-                SELECT c.id, c.category, c.common_issue_id, s.hostel
+                SELECT c.id, c.category, c.common_issue_id, s.hostel, s.room_no
                 FROM complaints c
                 JOIN students s ON s.id=c.student_id
                 WHERE c.id=?
@@ -182,8 +197,8 @@ def create_new_common_issue():
                 (cid,)
             ).fetchone()
             if (row and row["common_issue_id"] is None
-                    and str(row["hostel"] or "").strip().lower() == hostel.strip().lower()
-                    and str(row["category"] or "").strip().lower() == category.strip().lower()):
+                    and is_location_compatible(hostel, location_details, row["hostel"], row["room_no"])
+                    and is_category_compatible(category, row["category"])):
                 valid_ids.append(cid)
 
         issue_id = create_common_issue(
@@ -199,14 +214,20 @@ def create_new_common_issue():
             conn=conn
         )
 
-        linked_count = 0
+        # 1. Automatically find and associate all eligible matching complaints
+        auto_linked = associate_matching_complaints_to_master_issue(issue_id, conn)
+
+        # 2. Also associate any explicitly selected complaint IDs from the form if provided
         for cid in valid_ids:
             if associate_complaint_to_common_issue(cid, issue_id, conn):
-                linked_count += 1
+                auto_linked += 1
 
         conn.close()
 
-        flash("Master issue created successfully.", "success")
+        if auto_linked > 0:
+            flash(f"Master issue created successfully. Associated and synchronized {auto_linked} matching student complaint(s).", "success")
+        else:
+            flash("Master issue created successfully.", "success")
         return redirect(url_for("common_issues.list_common_issues"))
 
     # GET request - show create form

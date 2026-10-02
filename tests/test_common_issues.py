@@ -33,6 +33,7 @@ from backend.services.common_issue_service import (
     get_common_issue_complaints,
     unlink_complaint_from_common_issue,
     associate_complaint_to_common_issue,
+    associate_matching_complaints_to_master_issue,
 )
 
 class TestCommonIssueScalability(unittest.TestCase):
@@ -1077,6 +1078,600 @@ class TestCommonIssueScalability(unittest.TestCase):
 
         c1_record = conn.execute("SELECT common_issue_id FROM complaints WHERE id = ?", (c1_id,)).fetchone()
         self.assertIsNone(c1_record["common_issue_id"])
+        conn.close()
+
+    # =========================================================================
+    # SCENARIO 13: Master Issue Auto-Association & Safety Rules (Hostel, Category, Status)
+    # =========================================================================
+    def test_scenario_13_master_issue_auto_association_and_safety_rules(self):
+        """
+        Tests:
+        1. Create Master Issue with matching existing complaints -> auto-associated.
+        2. Non-matching hostel complaints are strictly NOT associated.
+        3. Non-matching category complaints are NOT associated.
+        4. Inactive/Resolved complaints are NOT associated.
+        5. Existing complaint records remain unchanged.
+        6. Duplicate association is prevented.
+        7. Master Issue detail page shows associated complaints and correct counts.
+        """
+        conn = get_db_connection()
+        # Seed students in Hostel Block E and Hostel Block F
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (5001, 'Student E1', 'O500001', 'o500001@rguktong.ac.in', '9876550001', 'Hostel Block E', 'E-101', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (5002, 'Student E2', 'O500002', 'o500002@rguktong.ac.in', '9876550002', 'Hostel Block E', 'E-102', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (5003, 'Student E3', 'O500003', 'o500003@rguktong.ac.in', '9876550003', 'Hostel Block E', 'E-103', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (5004, 'Student F1', 'O500004', 'o500004@rguktong.ac.in', '9876550004', 'Hostel Block F', 'F-101', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+
+        # 1. Matching complaint 1 (Hostel Block E, Plumbing)
+        c1 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (5001, 'Plumbing', 'Burst pipe in washroom', 'Water pipe burst leaking across floor', 'High', 'Pending')
+            """
+        ).lastrowid
+        # 2. Matching complaint 2 (Hostel Block E, Water - equivalent category)
+        c2 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (5002, 'Water', 'Pipe burst flooding room', 'Burst pipe flooding washroom corridor', 'High', 'Pending')
+            """
+        ).lastrowid
+        # 3. Non-matching hostel complaint (Hostel Block F, Plumbing) -> Must NOT associate
+        c_diff_hostel = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (5004, 'Plumbing', 'Burst pipe in washroom', 'Water pipe burst leaking across floor', 'High', 'Pending')
+            """
+        ).lastrowid
+        # 4. Non-matching category complaint (Hostel Block E, Electrical) -> Must NOT associate
+        c_diff_cat = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (5003, 'Electrical', 'Burst light fixture', 'Light fixture shorted out in hallway', 'Low', 'Pending')
+            """
+        ).lastrowid
+        # 5. Non-matching status complaint (Hostel Block E, Plumbing, Resolved) -> Must NOT associate
+        c_resolved = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (5001, 'Plumbing', 'Burst pipe in washroom earlier', 'Old resolved leak', 'High', 'Resolved')
+            """
+        ).lastrowid
+        conn.commit()
+        conn.close()
+
+        # Admin logs in and creates Master Issue for Hostel Block E
+        with self.client.session_transaction() as sess:
+            sess["admin"] = config.ADMIN_USERNAME
+
+        resp = self.client.post(
+            "/admin/common_issue/create",
+            data={
+                "title": "Burst Water Pipe Emergency in Hostel Block E",
+                "hostel": "Hostel Block E",
+                "category": "Plumbing",
+                "priority": "High",
+                "description": "Main water pipeline burst flooding corridor and washrooms",
+                "assigned_to": "Emergency Plumbing Squad",
+                "admin_remarks": "Water main valve shut off; team dispatched"
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp.status_code, 200)
+
+        conn = get_db_connection()
+        issue = conn.execute(
+            "SELECT * FROM common_issues WHERE title = 'Burst Water Pipe Emergency in Hostel Block E'"
+        ).fetchone()
+        self.assertIsNotNone(issue)
+        issue_id = issue["id"]
+
+        # Verify matching complaints 1 and 2 are associated
+        comp1 = conn.execute("SELECT * FROM complaints WHERE id = ?", (c1,)).fetchone()
+        comp2 = conn.execute("SELECT * FROM complaints WHERE id = ?", (c2,)).fetchone()
+        self.assertEqual(comp1["common_issue_id"], issue_id)
+        self.assertEqual(comp2["common_issue_id"], issue_id)
+        self.assertEqual(comp1["assigned_to"], "Emergency Plumbing Squad")
+        self.assertEqual(comp2["assigned_to"], "Emergency Plumbing Squad")
+
+        # Verify non-matching complaints are NOT associated
+        comp_f = conn.execute("SELECT * FROM complaints WHERE id = ?", (c_diff_hostel,)).fetchone()
+        comp_el = conn.execute("SELECT * FROM complaints WHERE id = ?", (c_diff_cat,)).fetchone()
+        comp_res = conn.execute("SELECT * FROM complaints WHERE id = ?", (c_resolved,)).fetchone()
+        self.assertIsNone(comp_f["common_issue_id"], "Different hostel must NOT be associated")
+        self.assertIsNone(comp_el["common_issue_id"], "Different category must NOT be associated")
+        self.assertIsNone(comp_res["common_issue_id"], "Resolved complaint must NOT be associated")
+        self.assertEqual(comp_res["status"], "Resolved")
+
+        # Verify original complaint descriptions/student records are unchanged
+        self.assertEqual(comp1["description"], "Water pipe burst leaking across floor")
+        self.assertEqual(comp2["title"], "Pipe burst flooding room")
+
+        # Verify detail page counts
+        resp_detail = self.client.get(f"/admin/common_issue/{issue_id}")
+        self.assertEqual(resp_detail.status_code, 200)
+        html = resp_detail.data.decode("utf-8")
+        self.assertIn("managing <strong>2</strong> linked complaint(s) from <strong>2</strong> unique student(s)", html)
+        self.assertIn("2 Synced", html)
+        self.assertIn("Student E1", html)
+        self.assertIn("Student E2", html)
+        conn.close()
+
+    # =========================================================================
+    # SCENARIO 14: Exact Production Scenario - Room I108 Water Master Issue (CI-002)
+    # =========================================================================
+    def test_scenario_14_exact_production_scenario_room_i108_water(self):
+        """
+        Exact replication of the production issue:
+        - 3 complaints in Room I108: "No water.", "water Problem", "Drinking Water Problem"
+        - Previously grouped into an auto-issue CI-001
+        - Admin creates Master Issue CI-002:
+          Title: "No Drinking Water in Room I108"
+          Hostel/Location: "I108"
+          Category: "Plumbing"
+          Assigned Staff: "Ramesh"
+        - Verifies:
+          1. All 3 complaints are adopted and associated with CI-002.
+          2. Assigned staff "Ramesh" is synchronized.
+          3. Detail page shows 3 linked complaints from 3 unique students.
+          4. "3 Synced" badge is present.
+          5. No duplicate master issues or duplicate complaint associations.
+        """
+        conn = get_db_connection()
+        # Seed the 3 students in Boys I block, room I108
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (6001, 'Charan Kumar Konchada', 'O600001', 'charan@rguktong.ac.in', '9876560001', 'Boys I block', 'I108', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (6002, 'Palepu Siva Koteswara Rao', 'O600002', 'siva@rguktong.ac.in', '9876560002', 'Boys I block', 'I108', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (6003, 'Naidu Yesu Babu', 'O600003', 'naidu@rguktong.ac.in', '9876560003', 'Boys I block', 'I108', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+
+        # Simulate prior AI auto-grouping (Issue CI-001)
+        old_issue_id = create_common_issue(
+            title="Boys I block - No water.",
+            category="Water",
+            hostel="Boys I block",
+            location_details="Boys I block Common Area",
+            description="Auto-grouped master issue for No water. in Boys I block.",
+            created_by="IntelliHostel AI Grouping Engine",
+            conn=conn
+        )
+
+        c1 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status, common_issue_id)
+            VALUES (6001, 'Water', 'No water.', 'There is no drinking water in boys hostel.', 'High', 'Pending', ?)
+            """,
+            (old_issue_id,)
+        ).lastrowid
+        c2 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status, common_issue_id)
+            VALUES (6002, 'Water', 'water Problem', 'there is no drinking water in college.', 'High', 'Pending', ?)
+            """,
+            (old_issue_id,)
+        ).lastrowid
+        c3 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status, common_issue_id)
+            VALUES (6003, 'Water', 'Drinking Water Problem', 'Water dispenser not working', 'High', 'Pending', ?)
+            """,
+            (old_issue_id,)
+        ).lastrowid
+        conn.commit()
+        conn.close()
+
+        # Admin creates Master Issue CI-002
+        with self.client.session_transaction() as sess:
+            sess["admin"] = config.ADMIN_USERNAME
+
+        resp = self.client.post(
+            "/admin/common_issue/create",
+            data={
+                "title": "No Drinking Water in Room I108",
+                "hostel": "I108",
+                "category": "Plumbing",
+                "priority": "High",
+                "location_details": "Room I108 – Drinking Water Area",
+                "description": "Drinking water supply failure affecting students in Room I108.",
+                "assigned_to": "Ramesh",
+                "admin_remarks": "Maintenance crew dispatched"
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp.status_code, 200)
+
+        conn = get_db_connection()
+        new_master = conn.execute(
+            "SELECT * FROM common_issues WHERE title = 'No Drinking Water in Room I108'"
+        ).fetchone()
+        self.assertIsNotNone(new_master)
+        new_master_id = new_master["id"]
+
+        # Verify all 3 complaints are now associated with new_master_id
+        for cid in [c1, c2, c3]:
+            row = conn.execute("SELECT * FROM complaints WHERE id = ?", (cid,)).fetchone()
+            self.assertEqual(row["common_issue_id"], new_master_id, f"Complaint #{cid} must be associated with Master Issue #{new_master_id}")
+            self.assertEqual(row["status"], "Pending")
+            self.assertEqual(row["assigned_to"], "Ramesh")
+            self.assertEqual(row["remarks"], "Maintenance crew dispatched")
+
+        # Verify stats on new master issue
+        stats = get_common_issue_with_stats(new_master_id, conn)
+        self.assertEqual(stats["linked_complaints"], 3)
+        self.assertEqual(stats["affected_count"], 3)
+
+        # Verify detail page /admin/common_issue/<id>
+        resp_detail = self.client.get(f"/admin/common_issue/{new_master_id}")
+        self.assertEqual(resp_detail.status_code, 200)
+        html = resp_detail.data.decode("utf-8")
+        self.assertIn("managing <strong>3</strong> linked complaint(s) from <strong>3</strong> unique student(s)", html)
+        self.assertIn("3 Synced", html)
+        self.assertIn("Charan Kumar Konchada", html)
+        self.assertIn("Palepu Siva Koteswara Rao", html)
+        self.assertIn("Naidu Yesu Babu", html)
+        self.assertIn("Room I108", html)
+
+        # Verify superseded empty auto-issue was cleaned up
+        old_issue = conn.execute("SELECT id FROM common_issues WHERE id = ?", (old_issue_id,)).fetchone()
+        self.assertIsNone(old_issue, "Empty superseded auto-created issue should be cleaned up")
+        conn.close()
+
+    def test_scenario_15_general_purpose_multidimensional_architecture(self):
+        """
+        SCENARIO 15: General-Purpose Multi-Dimensional Master Issue & Category Separation.
+        Verifies:
+        1. Same underlying problem with different wording correctly groups.
+        2. Same category with different underlying problems strictly separates across:
+           - Electrical: Fan vs Light
+           - Plumbing: Drinking water vs Washroom water vs Pipe leakage
+           - Cleanliness: Room cleaning vs Washroom cleaning
+           - Carpentry: Door repair vs Table repair
+           - Internet / Wi-Fi: Connection outage vs Slow speed degradation
+        3. Cross-hostel complaints strictly separate.
+        4. Specific locations (Room vs Washroom) strictly separate.
+        5. High semantic similarity with different failure mode / aspect strictly separate.
+        6. Existing Master Issue matching and synchronization.
+        7. Status-aware active vs resolved isolation.
+        8. Duplicate association prevention.
+        9. Master Issue detail page statistics (linked_complaints, unique students, Synced count).
+        """
+        conn = get_db_connection()
+        # Seed students in Hostel Block D
+        for i in range(101, 115):
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+                VALUES (?, ?, ?, ?, '9876543210', 'Hostel Block D', ?, ?)
+                """,
+                (
+                    i,
+                    f"Student {i}",
+                    f"D200{i}",
+                    f"d{i}@campus.edu",
+                    f"D-{i}",
+                    generate_password_hash("Student@123")
+                )
+            )
+        # Student in another hostel
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO students (id, name, id_no, email, phone, hostel, room_no, password)
+            VALUES (199, 'External Student', 'X200', 'ext@campus.edu', '9876543210', 'Hostel Block Z', 'Z-101', ?)
+            """,
+            (generate_password_hash("Student@123"),)
+        )
+        conn.commit()
+
+        # TEST 1 & 2: ELECTRICAL - Fan complaints vs Light complaints
+        # Fan Complaint 1
+        e_fan1 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (101, 'Electrical', 'Fan in my room is not working', 'Ceiling fan is completely stopped and not rotating', 'Medium', 'Pending')
+            """
+        ).lastrowid
+        # Fan Complaint 2 (different wording, same issue)
+        e_fan2 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (102, 'Electrical', 'Ceiling fan has stopped', 'Fan in room does not spin at all', 'Medium', 'Pending')
+            """
+        ).lastrowid
+        # Light Complaint 1 (same category 'Electrical', same hostel, DIFFERENT problem)
+        e_light1 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (103, 'Electrical', 'Light in my room is not working', 'Tube light has failed and is not turning on', 'Medium', 'Pending')
+            """
+        ).lastrowid
+        # Light Complaint 2 (different wording, same issue)
+        e_light2 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (104, 'Electrical', 'Tube light flickering and stopped working', 'Room bulb and tube light not working', 'Medium', 'Pending')
+            """
+        ).lastrowid
+
+        # TEST 2: PLUMBING - Drinking water vs Washroom water vs Pipe leakage
+        p_drink1 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (105, 'Water', 'No drinking water', 'Water cooler and purifier are dry', 'High', 'Pending')
+            """
+        ).lastrowid
+        p_drink2 = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (106, 'Plumbing', 'Drinking water unavailable', 'No water for drinking in the water filter area', 'High', 'Pending')
+            """
+        ).lastrowid
+        p_washroom = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (107, 'Plumbing', 'No water in washroom', 'No water for bathing in bathroom taps', 'High', 'Pending')
+            """
+        ).lastrowid
+        p_pipe = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (108, 'Plumbing', 'Pipe leakage', 'Water pipeline is leaking and dripping continuously', 'Medium', 'Pending')
+            """
+        ).lastrowid
+
+        # TEST 2 & 4: CLEANLINESS - Room cleaning vs Washroom cleaning
+        c_room = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (109, 'Cleaning', 'My room has not been cleaned', 'Room cleaning has not been done since yesterday', 'Low', 'Pending')
+            """
+        ).lastrowid
+        c_washroom = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (110, 'Cleanliness', 'Bathroom is dirty', 'Washroom has not been cleaned and requires sweeping', 'Low', 'Pending')
+            """
+        ).lastrowid
+
+        # TEST 2: CARPENTRY - Door broken vs Table broken
+        carp_door = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (111, 'Furniture', 'Room door is broken', 'Door handle and latch broken cannot close door', 'Medium', 'Pending')
+            """
+        ).lastrowid
+        carp_table = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (112, 'Carpentry', 'Study table is broken', 'Wood table leg damaged and cracked', 'Medium', 'Pending')
+            """
+        ).lastrowid
+
+        # TEST 2 & 5: INTERNET - Outage vs Speed degradation
+        net_outage = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (113, 'Internet', 'No Wi-Fi connection', 'Wi-Fi is completely unavailable and disconnected', 'High', 'Pending')
+            """
+        ).lastrowid
+        net_slow = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (114, 'Internet / Wi-Fi', 'Wi-Fi is very slow', 'Internet speed is extremely low and buffering', 'Medium', 'Pending')
+            """
+        ).lastrowid
+
+        # TEST 3: CROSS-HOSTEL COMPLAINT (Different hostel, same problem)
+        e_fan_diff_hostel = conn.execute(
+            """
+            INSERT INTO complaints (student_id, category, title, description, priority, status)
+            VALUES (199, 'Electrical', 'Fan in my room is not working', 'Ceiling fan is stopped', 'Medium', 'Pending')
+            """
+        ).lastrowid
+
+        conn.commit()
+        conn.close()
+
+        # Admin logs in
+        with self.client.session_transaction() as sess:
+            sess["admin"] = config.ADMIN_USERNAME
+
+        # -------------------------------------------------------------
+        # 1. CREATE MASTER ISSUE FOR FAN REPAIR IN HOSTEL BLOCK D
+        # -------------------------------------------------------------
+        resp = self.client.post(
+            "/admin/common_issue/create",
+            data={
+                "title": "Ceiling Fan Malfunction in Hostel Block D",
+                "hostel": "Hostel Block D",
+                "category": "Electrical",
+                "priority": "Medium",
+                "description": "Ceiling fan stopped working across rooms in Hostel Block D",
+                "assigned_to": "Electrician Suresh",
+                "admin_remarks": "Technician checking regulators and capacitors"
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp.status_code, 200)
+
+        conn = get_db_connection()
+        fan_master = conn.execute(
+            "SELECT * FROM common_issues WHERE title = 'Ceiling Fan Malfunction in Hostel Block D'"
+        ).fetchone()
+        self.assertIsNotNone(fan_master)
+        fan_master_id = fan_master["id"]
+
+        # Verify fan complaints 1 and 2 are associated and synchronized
+        f1 = conn.execute("SELECT * FROM complaints WHERE id = ?", (e_fan1,)).fetchone()
+        f2 = conn.execute("SELECT * FROM complaints WHERE id = ?", (e_fan2,)).fetchone()
+        self.assertEqual(f1["common_issue_id"], fan_master_id, "Fan complaint 1 must link to Fan Master Issue")
+        self.assertEqual(f2["common_issue_id"], fan_master_id, "Fan complaint 2 must link to Fan Master Issue")
+        self.assertEqual(f1["assigned_to"], "Electrician Suresh")
+        self.assertEqual(f2["assigned_to"], "Electrician Suresh")
+
+        # Verify light complaints (same Electrical category) are STRICTLY NOT associated
+        l1 = conn.execute("SELECT * FROM complaints WHERE id = ?", (e_light1,)).fetchone()
+        l2 = conn.execute("SELECT * FROM complaints WHERE id = ?", (e_light2,)).fetchone()
+        self.assertIsNone(l1["common_issue_id"], "Light complaint must NOT be linked to Fan Master Issue")
+        self.assertIsNone(l2["common_issue_id"], "Light complaint must NOT be linked to Fan Master Issue")
+
+        # Verify cross-hostel fan complaint is STRICTLY NOT associated
+        f_diff = conn.execute("SELECT * FROM complaints WHERE id = ?", (e_fan_diff_hostel,)).fetchone()
+        self.assertIsNone(f_diff["common_issue_id"], "Cross-hostel complaint must NOT be linked")
+
+        # -------------------------------------------------------------
+        # 2. CREATE MASTER ISSUE FOR LIGHT REPAIR IN HOSTEL BLOCK D
+        # -------------------------------------------------------------
+        resp2 = self.client.post(
+            "/admin/common_issue/create",
+            data={
+                "title": "Tube Light Failure in Hostel Block D",
+                "hostel": "Hostel Block D",
+                "category": "Electrical",
+                "priority": "Medium",
+                "description": "Tube light flickering and stopped working in rooms",
+                "assigned_to": "Electrician Suresh",
+                "admin_remarks": "Replacing tube light ballasts"
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp2.status_code, 200)
+
+        light_master = conn.execute(
+            "SELECT * FROM common_issues WHERE title = 'Tube Light Failure in Hostel Block D'"
+        ).fetchone()
+        self.assertIsNotNone(light_master)
+        light_master_id = light_master["id"]
+
+        l1_after = conn.execute("SELECT * FROM complaints WHERE id = ?", (e_light1,)).fetchone()
+        l2_after = conn.execute("SELECT * FROM complaints WHERE id = ?", (e_light2,)).fetchone()
+        self.assertEqual(l1_after["common_issue_id"], light_master_id, "Light complaint 1 must link to Light Master Issue")
+        self.assertEqual(l2_after["common_issue_id"], light_master_id, "Light complaint 2 must link to Light Master Issue")
+        # Ensure fan complaints remain associated to fan_master_id and not overwritten
+        f1_after = conn.execute("SELECT * FROM complaints WHERE id = ?", (e_fan1,)).fetchone()
+        self.assertEqual(f1_after["common_issue_id"], fan_master_id, "Fan complaint must remain linked to Fan Master Issue")
+
+        # -------------------------------------------------------------
+        # 3. CREATE MASTER ISSUE FOR DRINKING WATER IN HOSTEL BLOCK D
+        # -------------------------------------------------------------
+        resp3 = self.client.post(
+            "/admin/common_issue/create",
+            data={
+                "title": "Drinking Water Supply Outage in Hostel Block D",
+                "hostel": "Hostel Block D",
+                "category": "Plumbing",
+                "priority": "High",
+                "description": "Purifier and drinking water cooler out of order",
+                "assigned_to": "Plumber Ramesh",
+                "admin_remarks": "Replacing filter cartridge"
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp3.status_code, 200)
+
+        drink_master = conn.execute(
+            "SELECT * FROM common_issues WHERE title = 'Drinking Water Supply Outage in Hostel Block D'"
+        ).fetchone()
+        self.assertIsNotNone(drink_master)
+        drink_master_id = drink_master["id"]
+
+        pd1 = conn.execute("SELECT * FROM complaints WHERE id = ?", (p_drink1,)).fetchone()
+        pd2 = conn.execute("SELECT * FROM complaints WHERE id = ?", (p_drink2,)).fetchone()
+        pw = conn.execute("SELECT * FROM complaints WHERE id = ?", (p_washroom,)).fetchone()
+        pp = conn.execute("SELECT * FROM complaints WHERE id = ?", (p_pipe,)).fetchone()
+
+        self.assertEqual(pd1["common_issue_id"], drink_master_id, "Drinking water 1 must link to Drinking Water Master")
+        self.assertEqual(pd2["common_issue_id"], drink_master_id, "Drinking water 2 must link to Drinking Water Master")
+        # Washroom water and Pipe leakage must NOT be associated with Drinking water
+        self.assertIsNone(pw["common_issue_id"], "Washroom water must NOT link to Drinking water master issue")
+        self.assertIsNone(pp["common_issue_id"], "Pipe leakage must NOT link to Drinking water master issue")
+
+        # -------------------------------------------------------------
+        # 4. CREATE MASTER ISSUE FOR INTERNET OUTAGE
+        # -------------------------------------------------------------
+        resp4 = self.client.post(
+            "/admin/common_issue/create",
+            data={
+                "title": "Wi-Fi Connection Outage in Hostel Block D",
+                "hostel": "Hostel Block D",
+                "category": "Internet / Wi-Fi",
+                "priority": "High",
+                "description": "Wi-Fi access point down and disconnected across Block D",
+                "assigned_to": "Network Admin",
+                "admin_remarks": "Router rebooting"
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(resp4.status_code, 200)
+
+        net_master = conn.execute(
+            "SELECT * FROM common_issues WHERE title = 'Wi-Fi Connection Outage in Hostel Block D'"
+        ).fetchone()
+        self.assertIsNotNone(net_master)
+        net_master_id = net_master["id"]
+
+        no = conn.execute("SELECT * FROM complaints WHERE id = ?", (net_outage,)).fetchone()
+        ns = conn.execute("SELECT * FROM complaints WHERE id = ?", (net_slow,)).fetchone()
+        self.assertEqual(no["common_issue_id"], net_master_id, "Outage complaint must link to Wi-Fi Outage Master")
+        self.assertIsNone(ns["common_issue_id"], "Slow speed complaint must NOT link to Outage Master")
+
+        # -------------------------------------------------------------
+        # 5. DETAIL VIEW VERIFICATION: STATS & UI TABLE
+        # -------------------------------------------------------------
+        resp_detail = self.client.get(f"/admin/common_issue/{fan_master_id}")
+        self.assertEqual(resp_detail.status_code, 200)
+        html = resp_detail.data.decode("utf-8")
+        self.assertIn("managing <strong>2</strong> linked complaint(s) from <strong>2</strong> unique student(s)", html)
+        self.assertIn("2 Synced", html)
+        self.assertIn("Student 101", html)
+        self.assertIn("Student 102", html)
+        self.assertNotIn("Student 103", html)  # Light complaint student must not be in fan table
+
+        # -------------------------------------------------------------
+        # 6. STATUS-AWARE & DUPLICATE PREVENTION VERIFICATION
+        # -------------------------------------------------------------
+        # Re-associating already linked complaints does not create duplicate
+        repeat_linked = associate_matching_complaints_to_master_issue(fan_master_id, conn)
+        self.assertEqual(repeat_linked, 0, "No duplicate associations on re-run")
+
         conn.close()
 
 
