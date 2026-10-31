@@ -68,7 +68,10 @@ def create_postgresql_tables(conn):
             ai_priority_confidence DOUBLE PRECISION,
             ai_resolution_days DOUBLE PRECISION,
             ai_duplicate_id BIGINT,
-            ai_duplicate_similarity DOUBLE PRECISION
+            ai_duplicate_similarity DOUBLE PRECISION,
+            resolution_image TEXT,
+            resolved_at TIMESTAMP,
+            resolution_remarks TEXT
         )
         """,
 
@@ -247,7 +250,10 @@ def create_sqlite_tables(conn):
             ai_priority_confidence REAL,
             ai_resolution_days REAL,
             ai_duplicate_id INTEGER,
-            ai_duplicate_similarity REAL
+            ai_duplicate_similarity REAL,
+            resolution_image TEXT,
+            resolved_at TIMESTAMP,
+            resolution_remarks TEXT
         )
         """,
 
@@ -372,6 +378,27 @@ def migrate_sqlite(conn):
         conn.execute("ALTER TABLE complaints ADD COLUMN common_issue_id INTEGER REFERENCES common_issues(id) ON DELETE SET NULL")
         conn.commit()
 
+    if "resolution_image" not in columns:
+        try:
+            conn.execute("ALTER TABLE complaints ADD COLUMN resolution_image TEXT")
+            conn.commit()
+        except Exception:
+            pass
+
+    if "resolved_at" not in columns:
+        try:
+            conn.execute("ALTER TABLE complaints ADD COLUMN resolved_at TIMESTAMP")
+            conn.commit()
+        except Exception:
+            pass
+
+    if "resolution_remarks" not in columns:
+        try:
+            conn.execute("ALTER TABLE complaints ADD COLUMN resolution_remarks TEXT")
+            conn.commit()
+        except Exception:
+            pass
+
     ci_cursor = conn.execute("PRAGMA table_info(common_issues)")
     ci_columns = [row[1] for row in ci_cursor.fetchall()]
     if "issue_code" not in ci_columns:
@@ -465,6 +492,18 @@ def migrate_postgresql(conn):
         if not cur.fetchone():
             conn.execute("ALTER TABLE complaints ADD COLUMN common_issue_id BIGINT REFERENCES common_issues(id) ON DELETE SET NULL")
             conn.commit()
+
+        for col_name, col_type in [("resolution_image", "TEXT"), ("resolved_at", "TIMESTAMP"), ("resolution_remarks", "TEXT")]:
+            col_cur = conn.execute(
+                f"""
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_name = 'complaints' AND column_name = '{col_name}'
+                """
+            )
+            if not col_cur.fetchone():
+                conn.execute(f"ALTER TABLE complaints ADD COLUMN {col_name} {col_type}")
+                conn.commit()
 
         ci_cur = conn.execute(
             """

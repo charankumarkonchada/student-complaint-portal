@@ -135,7 +135,7 @@
                 </div>
                 <p class="small text-muted mb-4">Changes made here trigger immediate student notifications and activity logs.</p>
 
-                <form method="POST" id="updateComplaintForm">
+                <form method="POST" id="updateComplaintForm" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <!-- Status -->
                     <div class="mb-3">
@@ -150,6 +150,74 @@
                             {% endfor %}
                         </select>
                         <small class="text-muted">Setting to Resolved finalizes the repair.</small>
+                    </div>
+
+                    <!-- Resolution Proof Image Section (Shown when Resolved is selected) -->
+                    <div id="resolutionProofSection" class="resolution-proof-section mb-3" style="display: {% if complaint.status == 'Resolved' %}block{% else %}none{% endif %};">
+                        <div class="proof-section-header mb-2">
+                            <label class="form-label fw-bold mb-0">
+                                <i class="fa-solid fa-camera me-1 text-primary"></i> Resolution Proof Image <span class="text-danger">*</span>
+                            </label>
+                            <div class="small text-muted">Upload an actual photograph showing the issue has been resolved.</div>
+                        </div>
+
+                        <!-- Drag and Drop Dropzone -->
+                        <div id="resolutionDropZone" class="resolution-dropzone {% if complaint.resolution_image %}has-image{% endif %}">
+                            <input type="file" id="resolutionImageInput" name="resolution_image" accept=".jpg,.jpeg,.png,.webp" class="d-none">
+
+                            <!-- Placeholder State: No Image Selected -->
+                            <div id="dropZonePlaceholder" class="dropzone-placeholder text-center p-3" style="display: {% if complaint.resolution_image %}none{% else %}block{% endif %};">
+                                <div class="dropzone-icon mb-2">
+                                    <i class="fa-solid fa-cloud-arrow-up fs-2 text-muted"></i>
+                                </div>
+                                <p class="mb-2 small fw-semibold text-secondary">Drag and drop resolution proof photo here, or</p>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="btnUploadImage">
+                                    <i class="fa-solid fa-upload me-1"></i> Upload Image
+                                </button>
+                                <div class="mt-2 text-muted" style="font-size: 0.75rem;">
+                                    Supported: JPG, JPEG, PNG, WEBP (Max: 5 MB)
+                                </div>
+                            </div>
+
+                            <!-- Preview State: Image Selected or Existing Proof Available -->
+                            <div id="dropZonePreview" class="dropzone-preview text-center p-3" style="display: {% if complaint.resolution_image %}block{% else %}none{% endif %};">
+                                <div class="preview-image-container position-relative d-inline-block mb-2">
+                                    <img id="resolutionImagePreview" src="{{ complaint.resolution_image or '' }}" alt="Resolution Proof Preview" class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: contain;">
+                                </div>
+                                <div id="previewFilename" class="small fw-semibold text-secondary mb-2">
+                                    {% if complaint.resolution_image %}Existing Proof on File{% endif %}
+                                </div>
+                                <div class="preview-actions d-flex justify-content-center gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="btnReplaceImage">
+                                        <i class="fa-solid fa-arrows-rotate me-1"></i> Replace Image
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" id="btnRemoveImage">
+                                        <i class="fa-solid fa-trash me-1"></i> Remove Image
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden fields to track state -->
+                        <input type="hidden" id="hasExistingProof" value="{% if complaint.resolution_image %}1{% else %}0{% endif %}">
+                        <input type="hidden" id="removeResolutionImage" name="remove_resolution_image" value="0">
+
+                        <!-- Client-side error message -->
+                        <div id="resolutionImageError" class="text-danger small mt-1 fw-semibold" style="display: none;"></div>
+
+                        <!-- Optional Resolution Remarks -->
+                        <div class="mt-3">
+                            <label class="form-label small fw-bold text-muted" for="resolution_remarks">
+                                Resolution Remarks (Optional)
+                            </label>
+                            <textarea
+                                class="form-control"
+                                id="resolution_remarks"
+                                name="resolution_remarks"
+                                rows="2"
+                                maxlength="500"
+                                placeholder="Add specific resolution notes (e.g. Replaced faulty wiring, sealed pipe joint)...">{{ complaint.resolution_remarks or '' }}</textarea>
+                        </div>
                     </div>
 
                     <!-- Assigned Staff -->

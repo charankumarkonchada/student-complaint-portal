@@ -11,6 +11,7 @@ CONTENT_TYPES = {
     "jpg": "image/jpeg",
     "jpeg": "image/jpeg",
     "png": "image/png",
+    "webp": "image/webp",
 }
 MAGIC = {
     "jpg": ((b"\xff\xd8\xff",),),
@@ -35,7 +36,10 @@ def _validate_content(file_obj, ext):
         raise ValueError("Attachment exceeds the maximum allowed size.")
     header = file_obj.read(16)
     file_obj.seek(0)
-    if not any(header.startswith(sig) for group in MAGIC.get(ext, ()) for sig in group):
+    if ext == "webp":
+        if not (header.startswith(b"RIFF") and len(header) >= 12 and header[8:12] == b"WEBP"):
+            raise ValueError("Attachment content does not match its file type.")
+    elif not any(header.startswith(sig) for group in MAGIC.get(ext, ()) for sig in group):
         raise ValueError("Attachment content does not match its file type.")
 
 def upload_to_cloud_storage(file_obj, original_name, student_id):
@@ -77,6 +81,43 @@ def upload_to_cloud_storage(file_obj, original_name, student_id):
     return f"/static/uploads/{safe_name}"
 
 
+def upload_resolution_proof(file_obj, original_name, complaint_id):
+    if not original_name or not allowed_file(original_name):
+        raise ValueError("Invalid resolution proof filename.")
+    ext = original_name.rsplit(".", 1)[1].lower()
+    _validate_content(file_obj, ext)
+    safe_name = f"{uuid.uuid4().hex}.{ext}"
+    object_path = f"resolution_proofs/{complaint_id}/{safe_name}"
+    content_type = CONTENT_TYPES[ext]
+
+    if config.SUPABASE_URL and config.SUPABASE_SERVICE_ROLE_KEY and config.SUPABASE_STORAGE_BUCKET:
+        try:
+            url = f"{config.SUPABASE_URL.rstrip('/')}/storage/v1/object/{config.SUPABASE_STORAGE_BUCKET}/{object_path}"
+            file_obj.seek(0)
+            data = file_obj.read()
+            response = requests.post(url, headers={
+                "Authorization": f"Bearer {config.SUPABASE_SERVICE_ROLE_KEY}",
+                "apikey": config.SUPABASE_SERVICE_ROLE_KEY,
+                "Content-Type": content_type,
+                "x-upsert": "false"
+            }, data=data, timeout=20)
+            if response.ok:
+                return f"{config.SUPABASE_URL.rstrip('/')}/storage/v1/object/public/{config.SUPABASE_STORAGE_BUCKET}/{object_path}"
+            logger.error("Supabase resolution proof upload failed with HTTP %s", response.status_code)
+        except Exception:
+            logger.exception("Supabase resolution proof upload failed")
+
+    if not config.ALLOW_LOCAL_STORAGE_FALLBACK:
+        raise RuntimeError("Cloud attachment storage is unavailable and local fallback is disabled.")
+
+    res_folder = os.path.join(config.UPLOAD_FOLDER, "resolution_proofs", str(complaint_id))
+    os.makedirs(res_folder, exist_ok=True)
+    local_path = os.path.join(res_folder, safe_name)
+    file_obj.seek(0)
+    file_obj.save(local_path)
+    return f"/static/uploads/resolution_proofs/{complaint_id}/{safe_name}"
+
+
 def extract_storage_path(image_ref: str, bucket_name: str = "") -> str:
     """
     Safely extracts the relative object path in Supabase Storage from an image reference or URL.
@@ -104,8 +145,8 @@ def extract_storage_path(image_ref: str, bucket_name: str = "") -> str:
         if raw_path and not raw_path.startswith("..") and "/" in raw_path:
             return raw_path
 
-    # If already a relative storage path starting with complaints/
-    if cleaned.startswith("complaints/"):
+    # If already a relative storage path starting with complaints/ or resolution_proofs/
+    if cleaned.startswith("complaints/") or cleaned.startswith("resolution_proofs/"):
         raw_path = cleaned.split("?")[0].strip().lstrip("/")
         if raw_path and not raw_path.startswith("..") and "/" in raw_path:
             return raw_path
@@ -142,15 +183,21 @@ def delete_from_cloud_storage(image_refs, bucket_name: str = "") -> bool:
     # 1. Safely remove local file if a local fallback upload path was provided
     for ref in refs:
         if isinstance(ref, str) and (ref.strip().startswith("/static/uploads/") or ref.strip().startswith("static/uploads/")):
+            rel_subpath = ref.strip().replace("/static/uploads/", "").replace("static/uploads/", "").lstrip("/")
             local_fname = os.path.basename(ref.strip())
+            candidate_paths = []
+            if rel_subpath and not rel_subpath.startswith(".."):
+                candidate_paths.append(os.path.join(config.UPLOAD_FOLDER, rel_subpath))
             if local_fname and not local_fname.startswith(".."):
-                local_path = os.path.join(config.UPLOAD_FOLDER, local_fname)
+                candidate_paths.append(os.path.join(config.UPLOAD_FOLDER, local_fname))
+
+            for path in candidate_paths:
                 try:
-                    if os.path.exists(local_path) and os.path.isfile(local_path):
-                        os.remove(local_path)
-                        logger.info("Deleted local fallback attachment file: %s", local_path)
+                    if os.path.exists(path) and os.path.isfile(path):
+                        os.remove(path)
+                        logger.info("Deleted local fallback attachment file: %s", path)
                 except Exception as e:
-                    logger.warning("Could not delete local fallback attachment %s: %s", local_path, e)
+                    logger.warning("Could not delete local fallback attachment %s: %s", path, e)
 
     # 2. Extract and sanitize Supabase Storage paths
     target_paths = []

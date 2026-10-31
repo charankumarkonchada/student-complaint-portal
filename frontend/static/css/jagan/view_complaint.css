@@ -371,3 +371,22 @@
 [data-theme="dark"] .timeline-time {
     color: var(--text-muted) !important;
 }
+
+/* Resolution Proof Submitted by Administration Styles */
+.resolution-proof-card {
+    border-left: 4px solid #10b981;
+}
+
+.resolution-attachment-frame {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+[data-theme="dark"] .resolution-proof-card {
+    border-left-color: #10b981 !important;
+}
+
+[data-theme="dark"] .resolution-attachment-frame {
+    background: #064e3b20 !important;
+    border-color: #065f46 !important;
+}

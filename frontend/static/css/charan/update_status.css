@@ -254,6 +254,62 @@
     border-color: #334155 !important;
 }
 
+/* Resolution Proof Section Styles */
+.resolution-proof-section {
+    background: var(--bg-surface-subtle, #f8fafc);
+    border: 1px dashed var(--brand-teal, #0EA5A8);
+    border-radius: var(--radius-lg, 0.75rem);
+    padding: 1.25rem;
+    transition: all var(--transition-fast, 0.2s ease);
+}
+
+.resolution-dropzone {
+    border: 2px dashed var(--border-color, #cbd5e1);
+    border-radius: var(--radius-md, 0.5rem);
+    background: #ffffff;
+    transition: all var(--transition-fast, 0.2s ease);
+    cursor: default;
+}
+
+.resolution-dropzone.dragover {
+    border-color: var(--brand-teal, #0EA5A8);
+    background: rgba(14, 165, 168, 0.05);
+}
+
+.resolution-dropzone.has-image {
+    border-style: solid;
+    border-color: var(--border-light, #e2e8f0);
+}
+
+.dropzone-placeholder .dropzone-icon i {
+    color: var(--brand-teal, #0EA5A8);
+}
+
+.preview-image-container img {
+    border-color: var(--border-light, #e2e8f0) !important;
+    max-width: 100%;
+}
+
+/* Dark Mode Overrides for Resolution Proof */
+[data-theme="dark"] .resolution-proof-section {
+    background: #1e293b !important;
+    border-color: #0ea5a8 !important;
+}
+
+[data-theme="dark"] .resolution-dropzone {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .resolution-dropzone.dragover {
+    background: rgba(14, 165, 168, 0.15) !important;
+    border-color: #14b8a6 !important;
+}
+
+[data-theme="dark"] .resolution-dropzone.has-image {
+    border-color: #334155 !important;
+}
+
 @media (max-width: 768px) {
     .update-header {
         flex-direction: column;

@@ -25,28 +25,84 @@ def update_status(id):
             return redirect(url_for("update_status", id=id))
         assigned = request.form.get("assigned_to", "").strip()
         remarks = request.form.get("remarks", "").strip()
+        resolution_remarks = request.form.get("resolution_remarks", "").strip()
+        remove_resolution_image = request.form.get("remove_resolution_image", "0") == "1"
         old_status = complaint["status"]
 
-        conn.execute(
-            """
-            UPDATE complaints
-            SET status=?, assigned_to=?, remarks=?
-            WHERE id=?
-            """,
-            (status, assigned, remarks, id)
-        )
+        resolution_image = None if remove_resolution_image else (complaint["resolution_image"] if "resolution_image" in complaint.keys() else None)
+        resolved_at = complaint["resolved_at"] if "resolved_at" in complaint.keys() else None
+        existing_res_remarks = complaint["resolution_remarks"] if "resolution_remarks" in complaint.keys() else None
+        res_remarks_to_save = resolution_remarks or existing_res_remarks
 
-        if old_status != status:
+        new_image_ref = None
+
+        if status == "Resolved":
+            file = request.files.get("resolution_image")
+            has_file = file is not None and getattr(file, "filename", "") != ""
+
+            if not has_file and not resolution_image:
+                conn.close()
+                flash("A resolution proof image is required when marking a complaint as Resolved.", "danger")
+                return redirect(url_for("update_status", id=id))
+
+            if has_file:
+                try:
+                    from backend.services.storage_service import upload_resolution_proof
+                    new_image_ref = upload_resolution_proof(file, file.filename, id)
+                    resolution_image = new_image_ref
+                    from datetime import datetime
+                    resolved_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                except ValueError as ve:
+                    conn.close()
+                    flash(str(ve), "danger")
+                    return redirect(url_for("update_status", id=id))
+                except Exception as ex:
+                    current_app.logger.exception("Failed to upload resolution proof for complaint %s", id)
+                    conn.close()
+                    flash("Failed to upload resolution proof image. Please try again.", "danger")
+                    return redirect(url_for("update_status", id=id))
+            elif not resolved_at:
+                from datetime import datetime
+                resolved_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            if resolution_remarks and not remarks:
+                remarks = resolution_remarks
+            elif remarks and not resolution_remarks:
+                res_remarks_to_save = remarks
+
+        try:
             conn.execute(
-                "INSERT INTO complaint_history(complaint_id, status) VALUES(?,?)",
-                (id, status)
-            )
-            conn.execute(
-                "INSERT INTO notifications(student_id, message) VALUES(?,?)",
-                (complaint["student_id"], f"Your complaint #{id} status changed to {status}.")
+                """
+                UPDATE complaints
+                SET status=?, assigned_to=?, remarks=?, resolution_image=?, resolved_at=?, resolution_remarks=?
+                WHERE id=?
+                """,
+                (status, assigned, remarks, resolution_image, resolved_at, res_remarks_to_save, id)
             )
 
-        conn.commit()
+            if old_status != status:
+                conn.execute(
+                    "INSERT INTO complaint_history(complaint_id, status) VALUES(?,?)",
+                    (id, status)
+                )
+                conn.execute(
+                    "INSERT INTO notifications(student_id, message) VALUES(?,?)",
+                    (complaint["student_id"], f"Your complaint #{id} status changed to {status}.")
+                )
+
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            conn.close()
+            if new_image_ref:
+                try:
+                    from backend.services.storage_service import delete_from_cloud_storage
+                    delete_from_cloud_storage(new_image_ref)
+                except Exception:
+                    pass
+            current_app.logger.exception("Failed to update status in database for complaint %s", id)
+            flash("Database error while updating complaint status.", "danger")
+            return redirect(url_for("update_status", id=id))
 
         # Fetch student details for email dispatch
         student = conn.execute(
