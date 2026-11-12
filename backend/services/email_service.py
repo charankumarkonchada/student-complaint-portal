@@ -1,6 +1,8 @@
 import os
 import sys
 import smtplib
+import ssl
+import socket
 import logging
 from email.message import EmailMessage
 from typing import Optional, Any
@@ -59,6 +61,217 @@ def is_smtp_mocked() -> bool:
     return False
 
 
+def sanitize_smtp_password(raw_password: str, host: str = "") -> str:
+    """
+    Sanitizes SMTP password/secret.
+    Specifically for Gmail App Passwords, Google generates 16 lowercase characters
+    grouped as 'xxxx xxxx xxxx xxxx'. If entered with spaces or whitespace in environment
+    variables, strips the spaces so authentication succeeds.
+    """
+    if not raw_password:
+        return ""
+    cleaned = raw_password.strip()
+    if "gmail" in (host or "").lower() or len(cleaned.replace(" ", "")) == 16:
+        return cleaned.replace(" ", "")
+    return cleaned
+
+
+def resolve_smtp_mode(port: int, use_tls: bool) -> str:
+    """
+    Determines the SMTP connection mode based on port and TLS settings.
+    - Port 465: SMTPS (Implicit SSL)
+    - Port 587 / 2525: SMTP with STARTTLS
+    - Other ports: Respects use_tls (True -> STARTTLS, False -> SSL if port 465 else plain/SSL)
+    """
+    if port == 465:
+        return "SSL"
+    if port in {587, 2525}:
+        return "STARTTLS"
+    return "STARTTLS" if use_tls else "SSL"
+
+
+def _connect_and_send(
+    host: str,
+    port: int,
+    mode: str,
+    username: str,
+    password: str,
+    msg: EmailMessage,
+    timeout: int = 20
+) -> None:
+    """
+    Establishes an SMTP connection matching the specified mode (STARTTLS vs SSL),
+    authenticates using RFC 3207-compliant sequencing, and delivers the message.
+    Logs diagnostic progress safely without exposing credentials or secrets.
+    """
+    logger.info("Initiating SMTP connection to %s:%d (mode=%s, timeout=%ds)", host, port, mode, timeout)
+
+    ssl_context = None
+    try:
+        ssl_context = ssl.create_default_context()
+    except Exception as exc:
+        logger.debug("Could not create default SSL context: %s. Using standard SSL defaults.", exc)
+
+    if mode == "STARTTLS":
+        with smtplib.SMTP(host, port, timeout=timeout) as smtp:
+            logger.info("TCP socket connected successfully to %s:%d", host, port)
+            try:
+                smtp.ehlo()
+            except Exception as e:
+                logger.debug("Initial EHLO before STARTTLS on %s:%d: %s", host, port, e)
+
+            if ssl_context is not None:
+                smtp.starttls(context=ssl_context)
+            else:
+                smtp.starttls()
+            logger.info("STARTTLS handshake successful with %s:%d", host, port)
+
+            # RFC 3207: Client MUST re-issue EHLO after TLS negotiation completes
+            try:
+                smtp.ehlo()
+            except Exception as e:
+                logger.debug("Post-STARTTLS EHLO on %s:%d: %s", host, port, e)
+
+            if username and password:
+                smtp.login(username, password)
+                logger.info("SMTP authentication successful with %s:%d", host, port)
+
+            smtp.send_message(msg)
+            logger.info("Email message delivered successfully via %s:%d (STARTTLS)", host, port)
+    else:
+        # Implicit SSL (e.g. port 465)
+        connect_kwargs: dict[str, Any] = {"timeout": timeout}
+        if ssl_context is not None:
+            connect_kwargs["context"] = ssl_context
+        with smtplib.SMTP_SSL(host, port, **connect_kwargs) as smtp:
+            logger.info("Implicit SSL socket connected successfully to %s:%d", host, port)
+            try:
+                smtp.ehlo()
+            except Exception as e:
+                logger.debug("Implicit SSL EHLO on %s:%d: %s", host, port, e)
+
+            if username and password:
+                smtp.login(username, password)
+                logger.info("SMTP authentication successful with %s:%d", host, port)
+
+            smtp.send_message(msg)
+            logger.info("Email message delivered successfully via %s:%d (SSL)", host, port)
+
+
+def _dispatch_smtp_message(
+    msg: EmailMessage,
+    recipient: str,
+    subject: str,
+    is_otp: bool = False
+) -> bool:
+    """
+    Dispatches an email message with safe diagnostics, robust exception handling,
+    and automatic port fallback (e.g., port 587 STARTTLS <-> port 465 SSL) for cloud/serverless environments.
+    """
+    host = getattr(config, "SMTP_HOST", "smtp.gmail.com") or "smtp.gmail.com"
+    host = host.strip()
+    try:
+        port = int(getattr(config, "SMTP_PORT", 587))
+    except (ValueError, TypeError):
+        port = 587
+    use_tls = getattr(config, "SMTP_USE_TLS", True)
+    username = (getattr(config, "SMTP_USERNAME", "") or "").strip()
+    raw_password = (getattr(config, "SMTP_PASSWORD", "") or "").strip()
+    password = sanitize_smtp_password(raw_password, host)
+    mail_from = (getattr(config, "MAIL_FROM", "") or "").strip() or username
+
+    if not username or not password or not mail_from:
+        err_msg = "SMTP credentials not fully configured in environment (SMTP_USERNAME, SMTP_PASSWORD, MAIL_FROM)."
+        logger.warning("%s Skipping email delivery to %s.", err_msg, recipient)
+        if is_otp:
+            raise RuntimeError(f"SMTP configuration error: {err_msg}")
+        return False
+
+    mode = resolve_smtp_mode(port, use_tls)
+
+    # Determine fallback port/mode for resilience against serverless socket drops
+    # (e.g. Vercel IP range blocked on 587 -> fallback to 465 SSL, or vice versa)
+    fallback_port = None
+    fallback_mode = None
+    if not is_smtp_mocked():
+        if port == 587 and ("gmail" in host.lower() or "google" in host.lower() or port != 465):
+            fallback_port = 465
+            fallback_mode = "SSL"
+        elif port == 465 and ("gmail" in host.lower() or "google" in host.lower() or port != 587):
+            fallback_port = 587
+            fallback_mode = "STARTTLS"
+
+    attempts = [(port, mode)]
+    if fallback_port and fallback_mode:
+        attempts.append((fallback_port, fallback_mode))
+
+    last_error: Optional[Exception] = None
+
+    for attempt_idx, (curr_port, curr_mode) in enumerate(attempts, start=1):
+        try:
+            _connect_and_send(
+                host=host,
+                port=curr_port,
+                mode=curr_mode,
+                username=username,
+                password=password,
+                msg=msg,
+                timeout=15 if len(attempts) > 1 else 20
+            )
+            logger.info("Email successfully dispatched to %s: '%s'", recipient, subject)
+            return True
+        except (smtplib.SMTPServerDisconnected, smtplib.SMTPConnectError, socket.timeout, TimeoutError, ConnectionError) as net_err:
+            last_error = net_err
+            logger.warning(
+                "SMTP network error on attempt %d/%d (%s:%d, mode=%s): %s: %s",
+                attempt_idx, len(attempts), host, curr_port, curr_mode,
+                type(net_err).__name__, net_err
+            )
+            if attempt_idx < len(attempts):
+                next_port, next_mode = attempts[attempt_idx]
+                logger.info(
+                    "Attempting automatic fallback to alternative SMTP port %s:%d (mode=%s)...",
+                    host, next_port, next_mode
+                )
+                continue
+        except smtplib.SMTPAuthenticationError as auth_err:
+            last_error = auth_err
+            logger.error(
+                "SMTP authentication error on %s:%d (mode=%s): %s. "
+                "Verify SMTP_USERNAME and Google App Password (SMTP_PASSWORD) are valid and 2-Step Verification is active.",
+                host, curr_port, curr_mode, auth_err
+            )
+            break  # Do not retry another port when authentication credentials fail
+        except smtplib.SMTPException as smtp_err:
+            last_error = smtp_err
+            logger.error(
+                "SMTP protocol error on %s:%d (mode=%s): %s: %s",
+                host, curr_port, curr_mode, type(smtp_err).__name__, smtp_err
+            )
+            if attempt_idx < len(attempts):
+                continue
+            break
+        except Exception as gen_err:
+            last_error = gen_err
+            logger.exception(
+                "Unexpected exception during SMTP delivery to %s on %s:%d: %s",
+                recipient, host, curr_port, gen_err
+            )
+            break
+
+    # If execution reached here, all attempts failed
+    logger.error(
+        "Failed to deliver email to %s for subject '%s'. Final exception: %s: %s",
+        recipient, subject, type(last_error).__name__ if last_error else "None", last_error
+    )
+
+    if is_otp:
+        safe_msg = f"{type(last_error).__name__}: {last_error}" if last_error else "SMTP dispatch failure"
+        raise RuntimeError(f"Unable to deliver OTP email: {safe_msg}")
+
+    return False
+
+
 def send_email(recipient: str, subject: str, text_body: str, html_body: Optional[str] = None) -> bool:
     """
     Sends an email to the specified recipient via SMTP.
@@ -106,22 +319,7 @@ def send_email(recipient: str, subject: str, text_body: str, html_body: Optional
         logger.warning("SMTP network socket creation blocked by test safety guard.")
         return False
 
-    try:
-        if config.SMTP_USE_TLS:
-            with smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT, timeout=15) as smtp:
-                smtp.starttls()
-                smtp.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
-                smtp.send_message(msg)
-        else:
-            with smtplib.SMTP_SSL(config.SMTP_HOST, config.SMTP_PORT, timeout=15) as smtp:
-                smtp.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
-                smtp.send_message(msg)
-
-        logger.info("Email successfully sent to %s: '%s'", recipient, subject)
-        return True
-    except Exception as e:
-        logger.exception("Failed to deliver email to %s for subject '%s': %s", recipient, subject, e)
-        return False
+    return _dispatch_smtp_message(msg=msg, recipient=recipient, subject=subject, is_otp=False)
 
 
 def send_otp_email(recipient: str, otp: str) -> None:
@@ -176,29 +374,7 @@ def send_otp_email(recipient: str, otp: str) -> None:
         logger.warning("SMTP network socket creation for OTP blocked by test safety guard.")
         return
 
-    if config.SMTP_USE_TLS:
-        with smtplib.SMTP(
-            config.SMTP_HOST,
-            config.SMTP_PORT,
-            timeout=20
-        ) as smtp:
-            smtp.starttls()
-            smtp.login(
-                config.SMTP_USERNAME,
-                config.SMTP_PASSWORD
-            )
-            smtp.send_message(msg)
-    else:
-        with smtplib.SMTP_SSL(
-            config.SMTP_HOST,
-            config.SMTP_PORT,
-            timeout=20
-        ) as smtp:
-            smtp.login(
-                config.SMTP_USERNAME,
-                config.SMTP_PASSWORD
-            )
-            smtp.send_message(msg)
+    _dispatch_smtp_message(msg=msg, recipient=recipient, subject=msg["Subject"], is_otp=True)
 
 
 def send_complaint_status_email(

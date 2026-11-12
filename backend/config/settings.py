@@ -24,13 +24,14 @@ COLLEGE_NAME = os.environ.get('COLLEGE_NAME', 'RGUKT Ongole')
 COLLEGE_DOMAIN = os.environ.get('COLLEGE_DOMAIN', '@rguktong.ac.in')
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'change-me')
-SMTP_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
-SMTP_PORT = int(os.environ.get('SMTP_PORT', '587'))
-SMTP_USERNAME = os.environ.get('SMTP_USERNAME', '')
-SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
-MAIL_FROM = os.environ.get('MAIL_FROM', '') or SMTP_USERNAME
-SMTP_USE_TLS = os.environ.get('SMTP_USE_TLS', '1').lower() in {'1', 'true', 'yes', 'on'}
+SMTP_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com').strip()
+SMTP_PORT = int(os.environ.get('SMTP_PORT', '587').strip())
+SMTP_USERNAME = os.environ.get('SMTP_USERNAME', '').strip()
+SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '').strip()
+MAIL_FROM = os.environ.get('MAIL_FROM', '').strip() or SMTP_USERNAME
+SMTP_USE_TLS = os.environ.get('SMTP_USE_TLS', '1').strip().lower() in {'1', 'true', 'yes', 'on'}
 _default_email_enabled = '0' if os.environ.get('TESTING', '').strip().lower() in {'1', 'true', 'yes'} else '1'
+EMAIL_NOTIFICATIONS_ENABLED = os.environ.get('EMAIL_NOTIFICATIONS_ENABLED', _default_email_enabled).strip().lower() in {'1', 'true', 'yes', 'on'}
 DEFAULT_APP_BASE_URL = (
     'https://student-complaint-portal-beta.vercel.app'
     if IS_PRODUCTION or os.environ.get('VERCEL') == '1'
