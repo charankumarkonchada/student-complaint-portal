@@ -84,7 +84,10 @@
                                 placeholder="e.g. oxxxxxx@rguktong.ac.in"
                                 required>
                         </div>
-                        <div class="reg-help-text">Must match your university email address (e.g., [your-id]@rguktong.ac.in).</div>
+                        <div class="reg-help-text">Must be your university email ending in <strong>@rguktong.ac.in</strong>. A 6-digit verification code will be sent.</div>
+                        <div id="emailDomainError" class="text-danger small mt-1" style="display:none;">
+                            Only @rguktong.ac.in college email addresses are accepted. Personal emails (Gmail, Yahoo, etc.) are rejected.
+                        </div>
                         <div id="emailMismatchError" class="text-danger small mt-1" style="display:none;">
                             College email address must correspond to your ID number.
                         </div>
@@ -179,9 +182,9 @@
 
                 </div>
 
-                <button type="submit" class="register-btn">
-                    <i class="fa-solid fa-user-plus"></i>
-                    <span>Complete Registration</span>
+                <button type="submit" class="register-btn" id="regSubmitBtn">
+                    <i class="fa-solid fa-envelope-circle-check"></i>
+                    <span>Verify College Email & Register</span>
                 </button>
             </form>
 

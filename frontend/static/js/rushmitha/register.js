@@ -24,6 +24,18 @@ function validateRegistration() {
 
     const emailInput = document.getElementById("email");
     const emailMismatchError = document.getElementById("emailMismatchError");
+    const emailDomainError = document.getElementById("emailDomainError");
+
+    if (emailInput && emailInput.value) {
+        const emailVal = emailInput.value.trim().toLowerCase();
+        if (!emailVal.endsWith("@rguktong.ac.in") || emailVal === "@rguktong.ac.in" || emailVal.split("@")[0] === "") {
+            if (emailDomainError) emailDomainError.style.display = "block";
+            emailInput.classList.add("is-invalid");
+            valid = false;
+        } else {
+            if (emailDomainError) emailDomainError.style.display = "none";
+        }
+    }
 
     if (idInput && emailInput && idInput.value && emailInput.value) {
         const idVal = idInput.value.trim().toLowerCase();
@@ -36,7 +48,9 @@ function validateRegistration() {
                 valid = false;
             } else {
                 if (emailMismatchError) emailMismatchError.style.display = "none";
-                emailInput.classList.remove("is-invalid");
+                if (!emailDomainError || emailDomainError.style.display === "none") {
+                    emailInput.classList.remove("is-invalid");
+                }
             }
         }
     }
@@ -59,9 +73,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const idInput = document.getElementById("id_no");
     const idError = document.getElementById("idError");
     const emailInput = document.getElementById("email");
-    const emailMismatchError = document.getElementById("emailMismatchError");
+    const emailDomainError = document.getElementById("emailDomainError");
 
     function checkEmailIdMatch() {
+        if (emailInput) {
+            const emailVal = emailInput.value.trim().toLowerCase();
+            if (emailVal && (!emailVal.endsWith("@rguktong.ac.in") || emailVal === "@rguktong.ac.in" || emailVal.split("@")[0] === "")) {
+                if (emailDomainError) emailDomainError.style.display = "block";
+            } else {
+                if (emailDomainError) emailDomainError.style.display = "none";
+            }
+        }
+
         if (idInput && emailInput && emailMismatchError) {
             const idVal = idInput.value.trim().toLowerCase();
             const emailVal = emailInput.value.trim().toLowerCase();
@@ -71,7 +94,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     emailMismatchError.style.display = "block";
                 } else {
                     emailMismatchError.style.display = "none";
-                    emailInput.classList.remove("is-invalid");
+                    if (!emailDomainError || emailDomainError.style.display === "none") {
+                        emailInput.classList.remove("is-invalid");
+                    }
                 }
             } else {
                 emailMismatchError.style.display = "none";

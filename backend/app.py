@@ -35,6 +35,8 @@ PUBLIC_ENDPOINTS = {
     "home.home",
     "login.login",
     "register.register",
+    "register.verify_registration_otp",
+    "register.resend_registration_otp",
     "admin_login.admin_login",
     "forgot_password.forgot_password",
     "verify_reset_otp.verify_reset_otp",

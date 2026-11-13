@@ -22,6 +22,7 @@ def create_postgresql_tables(conn):
             hostel TEXT,
             room_no TEXT,
             password TEXT NOT NULL,
+            is_verified INTEGER DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """,
@@ -172,6 +173,20 @@ def create_postgresql_tables(conn):
         """,
 
         """
+        CREATE TABLE IF NOT EXISTS registration_otps (
+            id BIGSERIAL PRIMARY KEY,
+            email TEXT NOT NULL,
+            id_no TEXT NOT NULL,
+            otp_hash TEXT NOT NULL,
+            registration_data TEXT NOT NULL,
+            expires_at TIMESTAMP NOT NULL,
+            attempts INTEGER DEFAULT 0,
+            verified INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+
+        """
         CREATE TABLE IF NOT EXISTS admin (
             id BIGSERIAL PRIMARY KEY,
             username TEXT UNIQUE NOT NULL,
@@ -204,6 +219,7 @@ def create_sqlite_tables(conn):
             hostel TEXT,
             room_no TEXT,
             password TEXT NOT NULL,
+            is_verified INTEGER DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """,
@@ -354,6 +370,20 @@ def create_sqlite_tables(conn):
         """,
 
         """
+        CREATE TABLE IF NOT EXISTS registration_otps (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            id_no TEXT NOT NULL,
+            otp_hash TEXT NOT NULL,
+            registration_data TEXT NOT NULL,
+            expires_at TIMESTAMP NOT NULL,
+            attempts INTEGER DEFAULT 0,
+            verified INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+
+        """
         CREATE TABLE IF NOT EXISTS admin (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
@@ -428,6 +458,39 @@ def migrate_sqlite(conn):
             conn.commit()
         except Exception:
             pass
+
+    # Ensure students has is_verified column
+    stud_cursor = conn.execute("PRAGMA table_info(students)")
+    stud_cols = [row[1] for row in stud_cursor.fetchall()]
+    if "is_verified" not in stud_cols:
+        try:
+            conn.execute("ALTER TABLE students ADD COLUMN is_verified INTEGER DEFAULT 1")
+            conn.commit()
+        except Exception:
+            pass
+
+    # Ensure registration_otps exists
+    try:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS registration_otps (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT NOT NULL,
+                id_no TEXT NOT NULL,
+                otp_hash TEXT NOT NULL,
+                registration_data TEXT NOT NULL,
+                expires_at TIMESTAMP NOT NULL,
+                attempts INTEGER DEFAULT 0,
+                verified INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_reg_otps_email ON registration_otps(email)")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_reg_otps_id_no ON registration_otps(id_no)")
+        conn.commit()
+    except Exception:
+        pass
 
     # Create performance indexes
     indexes = [
@@ -539,6 +602,40 @@ def migrate_postgresql(conn):
             conn.execute("ALTER TABLE notification_reads ADD COLUMN is_archived INTEGER DEFAULT 0")
             conn.execute("ALTER TABLE notification_reads ADD COLUMN archived_at TIMESTAMP")
             conn.commit()
+
+        stud_cur = conn.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = 'students' AND column_name = 'is_verified'
+            """
+        )
+        if not stud_cur.fetchone():
+            conn.execute("ALTER TABLE students ADD COLUMN is_verified INTEGER DEFAULT 1")
+            conn.commit()
+
+        # Ensure registration_otps exists
+        try:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS registration_otps (
+                    id BIGSERIAL PRIMARY KEY,
+                    email TEXT NOT NULL,
+                    id_no TEXT NOT NULL,
+                    otp_hash TEXT NOT NULL,
+                    registration_data TEXT NOT NULL,
+                    expires_at TIMESTAMP NOT NULL,
+                    attempts INTEGER DEFAULT 0,
+                    verified INTEGER DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_reg_otps_email ON registration_otps(email)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_reg_otps_id_no ON registration_otps(id_no)")
+            conn.commit()
+        except Exception:
+            conn.rollback()
 
         indexes = [
             "CREATE INDEX IF NOT EXISTS idx_complaints_common_issue ON complaints(common_issue_id)",

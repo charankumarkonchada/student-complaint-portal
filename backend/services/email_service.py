@@ -377,6 +377,107 @@ def send_otp_email(recipient: str, otp: str) -> None:
     _dispatch_smtp_message(msg=msg, recipient=recipient, subject=msg["Subject"], is_otp=True)
 
 
+def send_registration_otp_email(recipient: str, otp: str, expiry_minutes: int = 5) -> None:
+    """Sends student registration email verification OTP to RGUKT email via configured SMTP server."""
+    if not getattr(config, "EMAIL_NOTIFICATIONS_ENABLED", True) and not is_smtp_mocked():
+        logger.info("Email notifications disabled via EMAIL_NOTIFICATIONS_ENABLED=false. Skipping registration OTP email to %s", recipient)
+        return
+
+    if not recipient or "@" not in recipient:
+        logger.warning("Invalid recipient email address '%s'. Skipping registration OTP dispatch.", recipient)
+        return
+
+    # Global Test Safety Guard: prevent real SMTP traffic during automated tests
+    if is_test_environment() and not is_smtp_mocked():
+        logger.info(
+            "Registration OTP email suppressed: automated test environment detected and SMTP is not mocked. "
+            "Recipient: %s",
+            recipient
+        )
+        return
+
+    subject = f"{config.COLLEGE_NAME} Hostel Complaint Portal - Email Verification OTP"
+    text_content = (
+        f"Dear RGUKT Student,\n\n"
+        f"Your verification code for registering your account on the {config.COLLEGE_NAME} "
+        f"Hostel Complaint Portal (IntelliHostel) is:\n\n"
+        f"    {otp}\n\n"
+        f"This OTP is valid for {expiry_minutes} minutes and can only be used once.\n\n"
+        f"Do not share this code with anyone.\n"
+        f"If you did not initiate this registration request, please ignore this email.\n\n"
+        f"Regards,\n"
+        f"IntelliHostel Administration\n"
+        f"{config.COLLEGE_NAME}"
+    )
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }}
+        .card {{ max-width: 540px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }}
+        .header {{ background: #0f172a; padding: 24px; color: #ffffff; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }}
+        .header p {{ margin: 6px 0 0 0; font-size: 13px; color: #94a3b8; }}
+        .content {{ padding: 28px 24px; text-align: center; }}
+        .greeting {{ font-size: 15px; margin-bottom: 12px; font-weight: 500; text-align: left; }}
+        .info-text {{ font-size: 14px; line-height: 1.5; color: #475569; margin: 0 0 20px 0; text-align: left; }}
+        .otp-box {{ background: #f0fdf4; border: 2px dashed #16a34a; border-radius: 8px; padding: 16px; margin: 20px 0; display: inline-block; min-width: 200px; }}
+        .otp-code {{ font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 32px; font-weight: 700; letter-spacing: 6px; color: #15803d; }}
+        .timer-warning {{ font-size: 13px; color: #dc2626; font-weight: 600; margin-top: 10px; }}
+        .footer {{ padding: 16px 24px; background: #f1f5f9; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }}
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <div class="header">
+          <h1>{config.COLLEGE_NAME} IntelliHostel</h1>
+          <p>Hostel Student Registration</p>
+        </div>
+        <div class="content">
+          <div class="greeting">Dear RGUKT Student,</div>
+          <p class="info-text">Please enter the one-time verification code below to verify your college email address and complete your account registration.</p>
+          <div class="otp-box">
+            <div class="otp-code">{otp}</div>
+            <div class="timer-warning">Expires in {expiry_minutes} minutes</div>
+          </div>
+          <p class="info-text" style="font-size: 12px; color: #64748b; margin-top: 16px;">This OTP can only be used once. Never share this code with anyone. If you did not request this, please disregard this email.</p>
+        </div>
+        <div class="footer">
+          IntelliHostel Portal • {config.COLLEGE_NAME}<br>
+          Automated security dispatch. Please do not reply.
+        </div>
+      </div>
+    </body>
+    </html>
+    """
+
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = config.MAIL_FROM
+    msg["To"] = recipient.strip()
+    msg.set_content(text_content)
+    msg.add_alternative(html_content, subtype="html")
+
+    if (
+        not config.SMTP_USERNAME
+        or not config.SMTP_PASSWORD
+        or not config.MAIL_FROM
+    ):
+        raise RuntimeError(
+            "SMTP_USERNAME, SMTP_PASSWORD and MAIL_FROM must be configured in .env"
+        )
+
+    # Final boundary check immediately before socket creation
+    if is_test_environment() and not is_smtp_mocked():
+        logger.warning("SMTP network socket creation for registration OTP blocked by test safety guard.")
+        return
+
+    _dispatch_smtp_message(msg=msg, recipient=recipient, subject=subject, is_otp=True)
+
+
 def send_complaint_status_email(
     student_name: str,
     student_email: str,

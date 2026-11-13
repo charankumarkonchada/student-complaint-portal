@@ -21,6 +21,10 @@ def login():
         conn.close()
 
         if student and check_password_hash(student["password"], password):
+            if "is_verified" in student.keys() and student["is_verified"] not in (1, True, "1"):
+                flash("Your account email is not verified. Please contact administration.", "danger")
+                return render_template("student/login.html")
+
             session.clear()
             session["student_id"] = student["id"]
             session["student_name"] = student["name"]

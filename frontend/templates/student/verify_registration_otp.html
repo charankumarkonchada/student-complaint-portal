@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Verify College Email - Hostel Complaint Portal{% endblock %}
+
+{% block favicon %}
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon-lock.svg') }}">
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rushmitha/verify_registration_otp.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="otp-verify-page">
+    <div class="otp-verify-card">
+
+        <div class="otp-verify-icon">
+            <i class="fa-solid fa-envelope-circle-check"></i>
+        </div>
+
+        <h2>Verify College Email</h2>
+        <p class="otp-instruction">
+            We have sent a 6-digit verification code to your official RGUKT email:<br>
+            <strong class="masked-email-badge" id="maskedEmailDisplay">{{ masked_email }}</strong>
+        </p>
+
+        <form method="POST" action="{{ url_for('register.verify_registration_otp') }}" id="verifyOtpForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="mb-3">
+                <label for="otp" class="visually-hidden">6-digit Verification Code</label>
+                <input
+                    type="text"
+                    id="otp"
+                    class="otp-input-control"
+                    name="otp"
+                    value=""
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                    maxlength="6"
+                    pattern="[0-9]{6}"
+                    placeholder="------"
+                    required
+                    autofocus>
+            </div>
+
+            <button type="submit" class="otp-verify-btn" id="verifyOtpBtn">
+                <i class="fa-solid fa-circle-check" id="verifyIcon"></i>
+                <span id="verifyBtnText">Verify & Complete Registration</span>
+            </button>
+        </form>
+
+        <div class="otp-resend-section">
+            <div class="otp-timer-text" id="timerContainer">
+                <i class="fa-regular fa-clock me-1"></i>
+                <span>Code expires in <strong>{{ expiry_minutes }} minutes</strong>.</span>
+            </div>
+
+            <div class="resend-control mt-3">
+                <form method="POST" action="{{ url_for('register.resend_registration_otp') }}" id="resendOtpForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button
+                        type="submit"
+                        id="resendBtn"
+                        class="btn-resend-otp"
+                        {% if cooldown and cooldown > 0 %}disabled{% endif %}>
+                        <i class="fa-solid fa-rotate-right me-1" id="resendIcon"></i>
+                        <span id="resendText">
+                            {% if cooldown and cooldown > 0 %}
+                                Resend Code in <span id="cooldownSeconds">{{ cooldown }}</span>s
+                            {% else %}
+                                Resend Verification Code
+                            {% endif %}
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="otp-footer-meta">
+            <a href="{{ url_for('register.register') }}" class="back-to-reg-link">
+                <i class="fa-solid fa-arrow-left me-1"></i> Edit Registration Details
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/rushmitha/verify_registration_otp.js') }}"></script>
+{% endblock %}

@@ -3,6 +3,7 @@ import sys
 import time
 import unittest
 import io
+from unittest.mock import patch
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if BASE_DIR not in sys.path:
@@ -79,30 +80,38 @@ class TestIntelliHostelE2EWorkflows(unittest.TestCase):
         self.assertIn(b"ID Number and college email do not match", res.data)
 
         # Successful registration Student 1
-        res = self.client.post("/register", data={
-            "name": "Student Alpha",
-            "id_no": "O210001",
-            "email": "o210001@rguktong.ac.in",
-            "phone": "9876543210",
-            "hostel": "Hostel Block A",
-            "room": "101",
-            "password": "password123",
-            "confirm_password": "password123"
-        }, follow_redirects=True)
-        self.assertIn(b"Registration Successful", res.data)
+        with patch("backend.routes.rushmitha.register.secrets.randbelow", return_value=123456):
+            res = self.client.post("/register", data={
+                "name": "Student Alpha",
+                "id_no": "O210001",
+                "email": "o210001@rguktong.ac.in",
+                "phone": "9876543210",
+                "hostel": "Hostel Block A",
+                "room": "101",
+                "password": "password123",
+                "confirm_password": "password123"
+            }, follow_redirects=True)
+            self.assertIn(b"verification code has been sent", res.data)
+            # Verify OTP to complete account creation
+            res = self.client.post("/verify-registration-otp", data={"otp": "123456"}, follow_redirects=True)
+            self.assertIn(b"Registration Successful", res.data)
 
         # Successful registration Student 2
-        res = self.client.post("/register", data={
-            "name": "Student Beta",
-            "id_no": "O210002",
-            "email": "o210002@rguktong.ac.in",
-            "phone": "9876543211",
-            "hostel": "Hostel Block A",
-            "room": "102",
-            "password": "password123",
-            "confirm_password": "password123"
-        }, follow_redirects=True)
-        self.assertIn(b"Registration Successful", res.data)
+        with patch("backend.routes.rushmitha.register.secrets.randbelow", return_value=654321):
+            res = self.client.post("/register", data={
+                "name": "Student Beta",
+                "id_no": "O210002",
+                "email": "o210002@rguktong.ac.in",
+                "phone": "9876543211",
+                "hostel": "Hostel Block A",
+                "room": "102",
+                "password": "password123",
+                "confirm_password": "password123"
+            }, follow_redirects=True)
+            self.assertIn(b"verification code has been sent", res.data)
+            # Verify OTP to complete account creation
+            res = self.client.post("/verify-registration-otp", data={"otp": "654321"}, follow_redirects=True)
+            self.assertIn(b"Registration Successful", res.data)
 
         # Duplicate registration rejection
         res = self.client.post("/register", data={
