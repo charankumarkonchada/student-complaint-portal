@@ -84,8 +84,8 @@ class EmailNotificationTestSuite(unittest.TestCase):
         # Seed complaint 1
         conn.execute(
             """
-            INSERT INTO complaints (id, student_id, category, title, description, priority, status)
-            VALUES (1, 1, 'Electrical', 'Ceiling fan making noise', 'Noise from fan regulator', 'Medium', 'Pending')
+            INSERT INTO complaints (id, student_id, category, title, description, priority, status, resolution_image)
+            VALUES (1, 1, 'Electrical', 'Ceiling fan making noise', 'Noise from fan regulator', 'Medium', 'Pending', 'resolution_proofs/sample.jpg')
             """
         )
         conn.commit()

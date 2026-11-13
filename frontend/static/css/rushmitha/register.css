@@ -1,5 +1,5 @@
 /* ==========================================================================
-   IntelliHostel — Student Registration Styles (Modern SaaS)
+   IntelliHostel — Student Registration Styles (Modern SaaS Two-Column Layout)
    ========================================================================== */
 
 .register-page {
@@ -8,11 +8,14 @@
     align-items: center;
     justify-content: center;
     padding: 2.5rem 1rem;
+    box-sizing: border-box;
 }
 
-.register-card {
+.register-wrapper {
     width: 100%;
-    max-width: 700px;
+    max-width: 1040px;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
     background: #ffffff;
     border: 1px solid var(--border-light);
     border-radius: var(--radius-2xl);
@@ -32,54 +35,203 @@
     }
 }
 
-.register-header {
+/* ==========================================================================
+   Left Brand Panel
+   ========================================================================== */
+.register-brand {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3.5rem 2.5rem;
+    overflow: hidden;
+    color: #ffffff;
+    background: linear-gradient(135deg, #123B5D 0%, #167D8D 60%, #0EA5A8 100%);
     text-align: center;
-    padding: 3rem 2.5rem 1.5rem;
-    border-bottom: 1px solid var(--border-light);
-    background: radial-gradient(circle at top, rgba(14, 165, 168, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
 }
 
-.register-icon {
-    width: 60px;
-    height: 60px;
+[data-theme="dark"] .register-brand {
+    background: radial-gradient(circle at top left, #ff8f6b 0%, #ff6b4a 60%, #ea5836 100%);
+}
+
+.register-brand::before {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    top: -80px;
+    right: -80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+}
+
+.register-brand::after {
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    bottom: -60px;
+    left: -60px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.05);
+    pointer-events: none;
+}
+
+/* Constrained Logo Container & Image */
+.register-brand-logo-container {
+    width: 100px;
+    height: 100px;
     border-radius: var(--radius-xl);
-    background: var(--primary-light);
-    color: var(--primary);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.6rem;
-    margin: 0 auto 1.25rem;
-    box-shadow: 0 8px 20px rgba(14, 165, 168, 0.15);
+    margin-bottom: 1.25rem;
+    padding: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    position: relative;
+    z-index: 1;
+}
+
+.register-brand-logo {
+    max-width: 84px;
+    max-height: 84px;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    display: block;
+}
+
+.register-brand h2 {
+    color: #ffffff;
+    font-size: 1.85rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.03em;
+    position: relative;
+    z-index: 1;
+}
+
+.register-brand-subtitle {
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.88);
+    margin-bottom: 2rem;
+    max-width: 280px;
+    line-height: 1.45;
+    position: relative;
+    z-index: 1;
+}
+
+.register-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 300px;
+    text-align: left;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.register-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.12);
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.register-feature-item i {
+    font-size: 1rem;
+    color: #ffffff;
+    width: 20px;
+    text-align: center;
+}
+
+.register-brand-footer {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* ==========================================================================
+   Right Form Panel
+   ========================================================================== */
+.register-form-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2.5rem 2.5rem;
+    background: #ffffff;
+}
+
+.register-header {
+    text-align: left;
+    margin-bottom: 1.35rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.register-mobile-logo {
+    display: none;
+}
+
+.register-header-logo {
+    max-width: 48px;
+    max-height: 48px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    display: block;
 }
 
 .register-header h1 {
-    font-size: 1.85rem;
+    font-size: 1.7rem;
     font-weight: 800;
     color: var(--text-heading);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
 }
 
 .register-header p {
-    font-size: 0.94rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
     margin-bottom: 0;
 }
 
 .register-body {
-    padding: 2.5rem;
+    padding: 0;
 }
 
 .form-group-reg {
-    margin-bottom: 1.35rem;
+    margin-bottom: 0.95rem;
 }
 
 .form-label-reg {
     display: block;
-    font-size: 0.86rem;
+    font-size: 0.84rem;
     font-weight: 600;
     color: var(--text-heading);
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.35rem;
 }
 
 .form-label-reg .req-star {
@@ -94,19 +246,19 @@
 
 .input-icon-reg {
     position: absolute;
-    left: 1rem;
+    left: 0.95rem;
     color: var(--text-subtle);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     pointer-events: none;
     transition: color var(--transition-fast);
 }
 
 .input-reg {
     width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    padding: 0.65rem 0.9rem 0.65rem 2.55rem;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: var(--input-light-text, #0f172a);
     background-color: var(--input-light-bg, #ffffff);
     -webkit-text-fill-color: var(--input-light-text, #0f172a);
@@ -133,9 +285,10 @@
 }
 
 .reg-help-text {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: var(--text-muted);
-    margin-top: 0.35rem;
+    margin-top: 0.3rem;
+    line-height: 1.35;
 }
 
 .register-btn {
@@ -143,9 +296,9 @@
     background: var(--gradient-primary);
     color: #ffffff;
     border: none;
-    padding: 0.85rem 1.5rem;
+    padding: 0.8rem 1.5rem;
     border-radius: var(--radius-md);
-    font-size: 1rem;
+    font-size: 0.98rem;
     font-weight: 700;
     cursor: pointer;
     box-shadow: var(--shadow-primary-btn);
@@ -154,7 +307,7 @@
     justify-content: center;
     gap: 0.5rem;
     transition: all var(--transition-fast);
-    margin-top: 2rem;
+    margin-top: 1.25rem;
 }
 
 .register-btn:hover {
@@ -164,42 +317,101 @@
 
 .register-footer-text {
     text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
+    margin-top: 1.25rem;
+    font-size: 0.88rem;
     color: var(--text-muted);
 }
 
 .register-footer-text a {
     color: var(--primary);
     font-weight: 600;
+    text-decoration: none;
+}
+
+.register-footer-text a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 960px) {
+    .register-wrapper {
+        grid-template-columns: 1fr;
+        max-width: 580px;
+    }
+
+    .register-brand {
+        display: none;
+    }
+
+    .register-mobile-logo {
+        display: block;
+        margin-bottom: 0.75rem;
+    }
+
+    .register-mobile-logo .register-header-logo {
+        margin: 0 auto;
+    }
+
+    .register-header {
+        text-align: center;
+    }
+
+    .register-form-panel {
+        padding: 2.25rem 1.75rem;
+    }
 }
 
 @media (max-width: 480px) {
     .register-page {
-        padding: 1.5rem 0.75rem;
+        padding: 1.25rem 0.6rem;
     }
-    .register-header {
-        padding: 2rem 1.25rem 1.25rem;
+
+    .register-form-panel {
+        padding: 1.5rem 1rem;
     }
-    .register-body {
-        padding: 1.5rem 1.25rem;
-    }
+
     .register-header h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+    }
+
+    .register-header p {
+        font-size: 0.84rem;
+    }
+
+    .register-header-logo {
+        max-width: 42px;
+        max-height: 42px;
+    }
+
+    .input-reg {
+        font-size: 0.88rem;
+        padding: 0.6rem 0.8rem 0.6rem 2.4rem;
     }
 }
 
 /* ==========================================================================
    Dark Theme Overrides
    ========================================================================== */
-[data-theme="dark"] .register-card {
+[data-theme="dark"] .register-wrapper,
+[data-theme="dark"] .register-card,
+[data-theme="dark"] .register-form-panel {
     background: #111827;
     border-color: #243044;
 }
 
+[data-theme="dark"] .register-brand {
+    background: radial-gradient(circle at top left, #ff8f6b 0%, #ff6b4a 60%, #ea5836 100%);
+}
+
 [data-theme="dark"] .register-header {
-    background: radial-gradient(circle at top, rgba(255, 107, 74, 0.12) 0%, transparent 70%);
     border-color: #243044;
+}
+
+[data-theme="dark"] .register-header h1,
+[data-theme="dark"] .form-label-reg {
+    color: #f8fafc;
 }
 
 [data-theme="dark"] .input-reg {
@@ -224,3 +436,4 @@
 [data-theme="dark"] .register-footer-text {
     color: #cbd5e1;
 }
+

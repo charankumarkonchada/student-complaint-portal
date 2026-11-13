@@ -12,186 +12,225 @@
 
 {% block content %}
 <div class="register-page">
-    <div class="register-card">
+    <div class="register-wrapper register-card">
 
-        <div class="register-header">
-            <div class="register-icon">
-                <i class="fa-solid fa-user-plus"></i>
+        <!-- Left Brand / Illustration Column -->
+        <div class="register-brand">
+            <div class="register-brand-logo-container">
+                <img
+                    src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}"
+                    alt="IntelliHostel Portal Logo"
+                    class="register-brand-logo">
             </div>
-            <h1>Student Registration</h1>
-            <p>Create your RGUKT student account to access hostel maintenance services</p>
+            <h2>IntelliHostel</h2>
+            <p class="register-brand-subtitle">RGUKT Ongole Campus Complaint Management System</p>
+
+            <div class="register-features">
+                <div class="register-feature-item">
+                    <i class="fa-solid fa-envelope-circle-check"></i>
+                    <span>Verified RGUKT Student Access</span>
+                </div>
+                <div class="register-feature-item">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Quick Maintenance Requests</span>
+                </div>
+                <div class="register-feature-item">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Live Resolution & OTP Tracking</span>
+                </div>
+            </div>
+
+            <div class="register-brand-footer">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Official Campus Complaint Portal</span>
+            </div>
         </div>
 
-        <div class="register-body">
-            <form method="POST" action="{{ url_for('register') }}" onsubmit="return validateRegistration()">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="row g-3">
-
-                    <!-- Full Name -->
-                    <div class="col-md-6 form-group-reg">
-                        <label class="form-label-reg" for="name">
-                            Full Name <span class="req-star">*</span>
-                        </label>
-                        <div class="input-wrapper-reg">
-                            <i class="fa-solid fa-user input-icon-reg"></i>
-                            <input
-                                type="text"
-                                class="input-reg"
-                                id="name"
-                                name="name"
-                                placeholder="Enter your full name"
-                                required>
-                        </div>
-                    </div>
-
-                    <!-- ID Number -->
-                    <div class="col-md-6 form-group-reg">
-                        <label class="form-label-reg" for="id_no">
-                            University ID No. <span class="req-star">*</span>
-                        </label>
-                        <div class="input-wrapper-reg">
-                            <i class="fa-solid fa-id-card input-icon-reg"></i>
-                            <input
-                                type="text"
-                                class="input-reg"
-                                id="id_no"
-                                name="id_no"
-                                placeholder="e.g. OXXXXXX, NXXXXXX, RXXXXXX, SXXXXXX"
-                                maxlength="7"
-                                minlength="7"
-                                pattern="[ONRSonrs][0-9]{6}"
-                                style="text-transform: uppercase;"
-                                required>
-                        </div>
-                        <div class="reg-help-text">Format: O, N, R, or S followed by 6 digits.</div>
-                        <div id="idError" class="text-danger small mt-1" style="display:none;">
-                            ID must start with O, N, R, or S followed by 6 digits.
-                        </div>
-                    </div>
-
-                    <!-- College Email -->
-                    <div class="col-12 form-group-reg">
-                        <label class="form-label-reg" for="email">
-                            College Email Address <span class="req-star">*</span>
-                        </label>
-                        <div class="input-wrapper-reg">
-                            <i class="fa-solid fa-envelope input-icon-reg"></i>
-                            <input
-                                type="email"
-                                class="input-reg"
-                                id="email"
-                                name="email"
-                                placeholder="e.g. oxxxxxx@rguktong.ac.in"
-                                required>
-                        </div>
-                        <div class="reg-help-text">Must be your university email ending in <strong>@rguktong.ac.in</strong>. A 6-digit verification code will be sent.</div>
-                        <div id="emailDomainError" class="text-danger small mt-1" style="display:none;">
-                            Only @rguktong.ac.in college email addresses are accepted. Personal emails (Gmail, Yahoo, etc.) are rejected.
-                        </div>
-                        <div id="emailMismatchError" class="text-danger small mt-1" style="display:none;">
-                            College email address must correspond to your ID number.
-                        </div>
-                    </div>
-
-                    <!-- Phone Number -->
-                    <div class="col-md-4 form-group-reg">
-                        <label class="form-label-reg" for="phone">Phone Number</label>
-                        <div class="input-wrapper-reg">
-                            <i class="fa-solid fa-phone input-icon-reg"></i>
-                            <input
-                                type="tel"
-                                class="input-reg"
-                                id="phone"
-                                name="phone"
-                                placeholder="10-digit mobile number">
-                        </div>
-                    </div>
-
-                    <!-- Hostel -->
-                    <div class="col-md-4 form-group-reg">
-                        <label class="form-label-reg" for="hostel">Hostel Wing / Block</label>
-                        <div class="input-wrapper-reg">
-                            <i class="fa-solid fa-hotel input-icon-reg"></i>
-                            <input
-                                type="text"
-                                class="input-reg"
-                                id="hostel"
-                                name="hostel"
-                                placeholder="e.g. KKR Boys / BH-1">
-                        </div>
-                    </div>
-
-                    <!-- Room Number -->
-                    <div class="col-md-4 form-group-reg">
-                        <label class="form-label-reg" for="room">Room Number</label>
-                        <div class="input-wrapper-reg">
-                            <i class="fa-solid fa-door-closed input-icon-reg"></i>
-                            <input
-                                type="text"
-                                class="input-reg"
-                                id="room"
-                                name="room"
-                                placeholder="e.g. 204">
-                        </div>
-                    </div>
-
-                    <!-- Password -->
-                    <div class="col-md-6 form-group-reg">
-                        <label class="form-label-reg" for="password">
-                            Password <span class="req-star">*</span>
-                        </label>
-                        <div class="input-wrapper-reg">
-                            <i class="fa-solid fa-lock input-icon-reg"></i>
-                            <input
-                                type="password"
-                                class="input-reg"
-                                id="password"
-                                name="password"
-                                placeholder="Min. 6 characters"
-                                minlength="6"
-                                required>
-                            <button type="button" class="password-toggle" id="passwordToggle" data-target="password" aria-controls="password" aria-label="Show password" aria-pressed="false" title="Show password">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Confirm Password -->
-                    <div class="col-md-6 form-group-reg">
-                        <label class="form-label-reg" for="confirm_password">
-                            Confirm Password <span class="req-star">*</span>
-                        </label>
-                        <div class="input-wrapper-reg">
-                            <i class="fa-solid fa-lock-open input-icon-reg"></i>
-                            <input
-                                type="password"
-                                class="input-reg"
-                                id="confirm_password"
-                                name="confirm_password"
-                                placeholder="Re-enter password"
-                                minlength="6"
-                                required>
-                            <button type="button" class="password-toggle" id="confirmPasswordToggle" data-target="confirm_password" aria-controls="confirm_password" aria-label="Show password" aria-pressed="false" title="Show password">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                        </div>
-                        <div id="passwordError" class="text-danger small mt-1" style="display:none;">
-                            Passwords do not match.
-                        </div>
-                    </div>
-
+        <!-- Right Registration Form Column -->
+        <div class="register-form-panel">
+            <div class="register-header">
+                <div class="register-mobile-logo">
+                    <img
+                        src="{{ url_for('static', filename='images/student_complaint_portal_logo.jpeg') }}"
+                        alt="IntelliHostel Portal Logo"
+                        class="register-header-logo">
                 </div>
-
-                <button type="submit" class="register-btn" id="regSubmitBtn">
-                    <i class="fa-solid fa-envelope-circle-check"></i>
-                    <span>Verify College Email & Register</span>
-                </button>
-            </form>
-
-            <div class="register-footer-text">
-                <span>Already registered? </span>
-                <a href="{{ url_for('login') }}"><i class="fa-solid fa-right-to-bracket me-1"></i>Sign In to Your Account</a>
+                <h1>Student Registration</h1>
+                <p>Create your RGUKT student account to access hostel maintenance services</p>
             </div>
+
+            <div class="register-body">
+                <form method="POST" action="{{ url_for('register') }}" onsubmit="return validateRegistration()">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="row g-3">
+
+                        <!-- Full Name -->
+                        <div class="col-md-6 form-group-reg">
+                            <label class="form-label-reg" for="name">
+                                Full Name <span class="req-star">*</span>
+                            </label>
+                            <div class="input-wrapper-reg">
+                                <i class="fa-solid fa-user input-icon-reg"></i>
+                                <input
+                                    type="text"
+                                    class="input-reg"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Enter your full name"
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- ID Number -->
+                        <div class="col-md-6 form-group-reg">
+                            <label class="form-label-reg" for="id_no">
+                                University ID No. <span class="req-star">*</span>
+                            </label>
+                            <div class="input-wrapper-reg">
+                                <i class="fa-solid fa-id-card input-icon-reg"></i>
+                                <input
+                                    type="text"
+                                    class="input-reg"
+                                    id="id_no"
+                                    name="id_no"
+                                    placeholder="e.g. OXXXXXX, NXXXXXX, RXXXXXX, SXXXXXX"
+                                    maxlength="7"
+                                    minlength="7"
+                                    pattern="[ONRSonrs][0-9]{6}"
+                                    style="text-transform: uppercase;"
+                                    required>
+                            </div>
+                            <div class="reg-help-text">Format: O, N, R, or S followed by 6 digits.</div>
+                            <div id="idError" class="text-danger small mt-1" style="display:none;">
+                                ID must start with O, N, R, or S followed by 6 digits.
+                            </div>
+                        </div>
+
+                        <!-- College Email -->
+                        <div class="col-12 form-group-reg">
+                            <label class="form-label-reg" for="email">
+                                College Email Address <span class="req-star">*</span>
+                            </label>
+                            <div class="input-wrapper-reg">
+                                <i class="fa-solid fa-envelope input-icon-reg"></i>
+                                <input
+                                    type="email"
+                                    class="input-reg"
+                                    id="email"
+                                    name="email"
+                                    placeholder="e.g. oxxxxxx@rguktong.ac.in"
+                                    required>
+                            </div>
+                            <div class="reg-help-text">Must be your university email ending in <strong>@rguktong.ac.in</strong>. A 6-digit verification code will be sent.</div>
+                            <div id="emailDomainError" class="text-danger small mt-1" style="display:none;">
+                                Only @rguktong.ac.in college email addresses are accepted. Personal emails (Gmail, Yahoo, etc.) are rejected.
+                            </div>
+                            <div id="emailMismatchError" class="text-danger small mt-1" style="display:none;">
+                                College email address must correspond to your ID number.
+                            </div>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="col-md-4 form-group-reg">
+                            <label class="form-label-reg" for="phone">Phone Number</label>
+                            <div class="input-wrapper-reg">
+                                <i class="fa-solid fa-phone input-icon-reg"></i>
+                                <input
+                                    type="tel"
+                                    class="input-reg"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="10-digit mobile number">
+                            </div>
+                        </div>
+
+                        <!-- Hostel -->
+                        <div class="col-md-4 form-group-reg">
+                            <label class="form-label-reg" for="hostel">Hostel Wing / Block</label>
+                            <div class="input-wrapper-reg">
+                                <i class="fa-solid fa-hotel input-icon-reg"></i>
+                                <input
+                                    type="text"
+                                    class="input-reg"
+                                    id="hostel"
+                                    name="hostel"
+                                    placeholder="e.g. KKR Boys / BH-1">
+                            </div>
+                        </div>
+
+                        <!-- Room Number -->
+                        <div class="col-md-4 form-group-reg">
+                            <label class="form-label-reg" for="room">Room Number</label>
+                            <div class="input-wrapper-reg">
+                                <i class="fa-solid fa-door-closed input-icon-reg"></i>
+                                <input
+                                    type="text"
+                                    class="input-reg"
+                                    id="room"
+                                    name="room"
+                                    placeholder="e.g. 204">
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="col-md-6 form-group-reg">
+                            <label class="form-label-reg" for="password">
+                                Password <span class="req-star">*</span>
+                            </label>
+                            <div class="input-wrapper-reg">
+                                <i class="fa-solid fa-lock input-icon-reg"></i>
+                                <input
+                                    type="password"
+                                    class="input-reg"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Min. 6 characters"
+                                    minlength="6"
+                                    required>
+                                <button type="button" class="password-toggle" id="passwordToggle" data-target="password" aria-controls="password" aria-label="Show password" aria-pressed="false" title="Show password">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="col-md-6 form-group-reg">
+                            <label class="form-label-reg" for="confirm_password">
+                                Confirm Password <span class="req-star">*</span>
+                            </label>
+                            <div class="input-wrapper-reg">
+                                <i class="fa-solid fa-lock-open input-icon-reg"></i>
+                                <input
+                                    type="password"
+                                    class="input-reg"
+                                    id="confirm_password"
+                                    name="confirm_password"
+                                    placeholder="Re-enter password"
+                                    minlength="6"
+                                    required>
+                                <button type="button" class="password-toggle" id="confirmPasswordToggle" data-target="confirm_password" aria-controls="confirm_password" aria-label="Show password" aria-pressed="false" title="Show password">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                            <div id="passwordError" class="text-danger small mt-1" style="display:none;">
+                                Passwords do not match.
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="register-btn" id="regSubmitBtn">
+                        <i class="fa-solid fa-envelope-circle-check"></i>
+                        <span>Verify College Email & Register</span>
+                    </button>
+                </form>
+
+                <div class="register-footer-text">
+                    <span>Already registered? </span>
+                    <a href="{{ url_for('login') }}"><i class="fa-solid fa-right-to-bracket me-1"></i>Sign In to Your Account</a>
+                </div>
+            </div>
+
         </div>
 
     </div>
